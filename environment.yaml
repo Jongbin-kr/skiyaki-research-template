@@ -1,0 +1,47 @@
+# AI/ML Research Project Environment
+# 
+# This file defines the Conda environment for the research project.
+# Modify channels and dependencies based on your specific needs.
+#
+# To create the environment:
+#   conda env create -f environment.yaml
+#
+# To activate:
+#   conda activate <project-name>
+#
+# To update:
+#   conda env update -f environment.yaml --prune
+
+name: my-research-project
+
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - pytorch::pytorch
+  - pytorch::torchvision
+  - pytorch::torchaudio
+  - pip
+  - pip:
+      # Core ML libraries
+      - transformers>=4.36.0
+      - datasets>=2.16.0
+      - accelerate>=0.25.0
+      - peft>=0.7.0
+      
+      # Experiment tracking
+      - wandb>=0.16.0
+      
+      # Model Hub
+      - huggingface-hub>=0.20.0
+      
+      # Development tools
+      - jupyter
+      - ipython
+      - pytest
+      
+      # Optional: Add your project-specific dependencies here
+      # - your-package>=1.0.0

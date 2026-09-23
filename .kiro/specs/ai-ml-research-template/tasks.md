@@ -14,8 +14,8 @@ The implementation focuses on creating a complete, self-documenting template tha
   - Set up proper directory permissions
   - _Requirements: 1.1, 12.1, 12.2, 12.3, 12.4, 12.5, 12.6_
 
-- [ ] 2. Create core configuration files
-  - [ ] 2.1 Create AGENTS.md with core research workflow rules
+- [x] 2. Create core configuration files
+  - [x] 2.1 Create AGENTS.md with core research workflow rules
     - Define workflow principles
     - Document approval requirements
     - List execution requirements
@@ -23,7 +23,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Keep content concise for consistent Codex application
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
   
-  - [ ] 2.2 Create environment.yaml template
+  - [x] 2.2 Create environment.yaml template
     - Include Python version specification
     - Add PyTorch and CUDA channels
     - List core ML dependencies (transformers, datasets, peft)
@@ -31,7 +31,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include helpful comments for customization
     - _Requirements: 10.1, 10.2, 10.3, 10.4_
   
-  - [ ] 2.3 Create project-plan.md template
+  - [x] 2.3 Create project-plan.md template
     - Design YAML frontmatter schema with all configuration fields
     - Add environment manager specification
     - Add execution and Slurm configuration
@@ -40,13 +40,13 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include clear warnings against committing secrets
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9_
   
-  - [ ] 2.4 Create project-log.md template
+  - [x] 2.4 Create project-log.md template
     - Write format guidelines and instructions
     - Include example entry format
     - Add initial setup entry
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
   
-  - [ ] 2.5 Create .gitignore file
+  - [x] 2.5 Create .gitignore file
     - Exclude Python cache and build artifacts
     - Exclude secrets and credentials patterns
     - Exclude outputs/ directory while preserving .gitkeep
@@ -56,12 +56,12 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Add .gitkeep preservation rules
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9_
   
-  - [ ] 2.6 Create VERSION file
+  - [x] 2.6 Create VERSION file
     - Set initial version to 0.1.0
     - Document semantic versioning scheme
     - _Requirements: 15.1, 15.2, 15.3_
   
-  - [ ] 2.7 Create LICENSE file
+  - [x] 2.7 Create LICENSE file
     - Choose between MIT and Apache 2.0
     - Include appropriate license text
     - _Requirements: 1.4_

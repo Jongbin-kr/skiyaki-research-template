@@ -1,0 +1,186 @@
+# AI/ML Research Template - Git Exclusions
+#
+# This file excludes secrets, large artifacts, and generated files from version control
+# while preserving directory structure through .gitkeep files.
+
+# ============================================================================
+# Python Cache and Build Artifacts
+# ============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# ============================================================================
+# Secrets and Credentials
+# ============================================================================
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Token files
+*.token
+*.key
+*.pem
+
+# SSH keys
+id_rsa
+id_ed25519
+
+# API keys and credentials
+credentials.json
+secrets.yaml
+secrets.yml
+
+# ============================================================================
+# Outputs Directory (exclude contents, preserve structure)
+# ============================================================================
+
+# Exclude all contents of outputs/
+outputs/*
+
+# But keep the .gitkeep file to preserve directory structure
+!outputs/.gitkeep
+
+# ============================================================================
+# Experiment Run Logs
+# ============================================================================
+
+# Slurm logs in experiment runs
+experiments/*/runs/*/logs/*.out
+experiments/*/runs/*/logs/*.err
+
+# All log files in run logs directories
+experiments/*/runs/*/logs/*.log
+
+# ============================================================================
+# Weights & Biases Cache
+# ============================================================================
+
+# W&B directories in experiments
+experiments/*/wandb/
+
+# W&B directories at root (if accidentally created)
+wandb/
+
+# ============================================================================
+# Model Checkpoints and Large Artifacts
+# ============================================================================
+
+# PyTorch checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# TensorFlow checkpoints
+*.h5
+*.hdf5
+
+# Model directories (often contain large files)
+experiments/*/runs/*/checkpoints/
+experiments/*/runs/*/models/
+
+# ============================================================================
+# Jupyter Notebook Checkpoints
+# ============================================================================
+
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ============================================================================
+# Editor and IDE Files
+# ============================================================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# Operating System Files
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============================================================================
+# Data Files (optional - uncomment if needed)
+# ============================================================================
+
+# Uncomment to exclude data directory contents while preserving structure
+# data/*
+# !data/.gitkeep
+# !data/README.md
+
+# ============================================================================
+# Preserve Directory Structure
+# ============================================================================
+
+# Never ignore .gitkeep files - they preserve empty directories
+!.gitkeep
+!**/.gitkeep
