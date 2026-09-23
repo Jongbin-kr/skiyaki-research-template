@@ -126,36 +126,36 @@ The implementation focuses on creating a complete, self-documenting template tha
     - List prohibited actions (no auto-commit, must verify artifacts)
     - _Requirements: 3.1, 3.7_
 
-- [ ] 5. Create agent descriptions
-  - [ ] 5.1 Create research-journal-git.md
+- [x] 5. Create agent descriptions
+  - [x] 5.1 Create research-journal-git.md
     - Document mission and two modes (discovery, finalize)
     - List allowed actions (read, analyze, draft, propose)
     - List prohibited actions (no submit, no push, no auto-commit)
     - Define required outputs for each mode
     - _Requirements: 14.1, 14.2, 14.7_
   
-  - [ ] 5.2 Create wandb-analyst.md
+  - [x] 5.2 Create wandb-analyst.md
     - Document mission (training analysis, run comparison)
     - List allowed actions (W&B API queries, analysis, reporting)
     - List prohibited actions (no job submission, no config changes)
     - Define required outputs
     - _Requirements: 14.1, 14.3, 14.7_
   
-  - [ ] 5.3 Create huggingface-managing-specialist.md
+  - [x] 5.3 Create huggingface-managing-specialist.md
     - Document mission (Hub management, model cards)
     - List allowed actions (Hub operations, card creation)
     - List prohibited actions (no unauthorized uploads, respect push policy)
     - Define required outputs
     - _Requirements: 14.1, 14.4, 14.7_
   
-  - [ ] 5.4 Create visualization-specialist.md
+  - [x] 5.4 Create visualization-specialist.md
     - Document mission (research presentation graphics)
     - List allowed actions (create figures, format for publication)
     - List prohibited actions (no data manipulation)
     - Define required outputs
     - _Requirements: 14.1, 14.5, 14.7_
   
-  - [ ] 5.5 Create slurm-managing-specialist.md
+  - [x] 5.5 Create slurm-managing-specialist.md
     - Document mission (Slurm debugging and troubleshooting)
     - List allowed actions (diagnose issues, suggest fixes)
     - List prohibited actions (no changes without approval)
