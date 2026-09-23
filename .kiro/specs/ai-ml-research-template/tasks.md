@@ -71,15 +71,15 @@ The implementation focuses on creating a complete, self-documenting template tha
   - Verify .gitignore patterns work correctly
   - Ask user if questions arise
 
-- [ ] 4. Create skill definitions
-  - [ ] 4.1 Create grill-me skill
+- [x] 4. Create skill definitions
+  - [x] 4.1 Create grill-me skill
     - Create .agents/skills/grill-me/ directory
     - Write SKILL.md with purpose, when to use, procedure, and output
     - Document one-question-at-a-time approach
     - Include gap identification and prioritization logic
     - _Requirements: 3.1, 3.2_
   
-  - [ ] 4.2 Create discover-prior-research skill
+  - [x] 4.2 Create discover-prior-research skill
     - Create .agents/skills/discover-prior-research/ directory
     - Write SKILL.md with search procedure
     - Document project-log and experiment search logic
@@ -87,7 +87,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Document duplication detection procedure
     - _Requirements: 3.1, 3.3_
   
-  - [ ] 4.3 Create plan-ml-experiment skill
+  - [x] 4.3 Create plan-ml-experiment skill
     - Create .agents/skills/plan-ml-experiment/ directory
     - Write SKILL.md with planning procedure
     - Document plan.md creation steps
@@ -97,7 +97,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Create references/ subdirectory with example plans
     - _Requirements: 3.1, 3.4, 3.8_
   
-  - [ ] 4.4 Create train-llm skill
+  - [x] 4.4 Create train-llm skill
     - Create .agents/skills/train-llm/ directory
     - Write SKILL.md with execution procedure
     - Document preflight checks (approval, environment, resources)
@@ -107,7 +107,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Note Phase 6+ Slurm integration as future work
     - _Requirements: 3.1, 3.5_
   
-  - [ ] 4.5 Create evaluate-llm skill
+  - [x] 4.5 Create evaluate-llm skill
     - Create .agents/skills/evaluate-llm/ directory
     - Write SKILL.md with evaluation procedure
     - Document checkpoint loading and metric calculation
@@ -116,7 +116,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include results.yaml drafting procedure
     - _Requirements: 3.1, 3.6_
   
-  - [ ] 4.6 Create finalize-experiment skill
+  - [x] 4.6 Create finalize-experiment skill
     - Create .agents/skills/finalize-experiment/ directory
     - Write SKILL.md with finalization procedure
     - Document completeness verification checks
