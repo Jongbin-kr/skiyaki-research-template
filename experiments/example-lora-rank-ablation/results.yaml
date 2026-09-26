@@ -1,0 +1,100 @@
+# Experiment Results (Example)
+# 
+# This file records the final outcomes of the LoRA rank ablation experiment.
+
+experiment_id: example-lora-rank-ablation
+completed_at: 2025-01-15T20:15:00Z
+
+# Best performing run
+best_run:
+  run_id: train-r16__20250115T142530
+  job_id: train-lora-rank
+  checkpoint: my-lab/roberta-base-sst2-lora-r16
+  lora_rank: 16
+
+# Primary metric
+primary_metric:
+  name: accuracy
+  value: 0.874
+  baseline_value: 0.853
+  improvement: 0.021  # 2.1% absolute improvement
+  improvement_percentage: 2.46
+
+# Secondary metrics
+secondary_metrics:
+  - name: f1
+    value: 0.872
+    baseline_value: 0.851
+    improvement: 0.021
+  - name: training_time_hours
+    value: 4.36
+  - name: peak_memory_gb
+    value: 8.2
+  - name: trainable_parameters
+    value: 294912
+    percentage_of_total: 0.23
+
+# All runs summary (for comparison)
+all_runs:
+  - lora_rank: 4
+    run_id: train-r4__20250115T100000
+    accuracy: 0.866
+    training_time_hours: 3.8
+    peak_memory_gb: 7.1
+  - lora_rank: 8
+    run_id: train-r8__20250115T110000
+    accuracy: 0.871
+    training_time_hours: 4.1
+    peak_memory_gb: 7.6
+  - lora_rank: 16
+    run_id: train-r16__20250115T142530
+    accuracy: 0.874
+    training_time_hours: 4.36
+    peak_memory_gb: 8.2
+  - lora_rank: 32
+    run_id: train-r32__20250115T160000
+    accuracy: 0.875
+    training_time_hours: 5.2
+    peak_memory_gb: 9.8
+
+# Success assessment
+success:
+  criteria_met: true
+  rationale: |
+    Experiment met success criteria: achieved 2.1% improvement over baseline (target: ≥2%).
+    Hypothesis confirmed: rank 16 provides excellent accuracy (0.874) with reasonable
+    efficiency. Rank 32 shows only marginal improvement (+0.1%) while requiring 19%
+    more training time and 19.5% more memory. Rank 8 performs well (0.871) and could
+    be viable for memory-constrained deployments.
+
+# Key findings
+findings:
+  - Performance saturates between rank 16 and 32 (diminishing returns)
+  - Rank 4 surprisingly competitive (0.866), only 0.8% behind best
+  - Training time scales roughly linearly with rank
+  - Memory usage increases moderately with rank
+  - All ranks substantially outperform baseline (≥1.5% improvement)
+
+# Limitations
+limitations:
+  - Single task (SST-2) - generalization to other tasks unverified
+  - Fixed learning rate - optimal LR may vary by rank
+  - Single model architecture (RoBERTa-base)
+  - No inference latency measurements
+  - No statistical significance testing (single seed)
+
+# Recommendations
+recommendations:
+  use_case: production
+  recommended_rank: 16
+  rationale: Best balance of accuracy (0.874) and efficiency
+  
+  alternative_low_memory:
+    recommended_rank: 8
+    accuracy: 0.871
+    tradeoff: -0.3% accuracy for -6% training time and -7% memory
+  
+  alternative_maximum_accuracy:
+    recommended_rank: 32
+    accuracy: 0.875
+    tradeoff: +0.1% accuracy for +19% training time and +19.5% memory

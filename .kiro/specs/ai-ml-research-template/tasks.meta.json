@@ -622,6 +622,21 @@
         "executionId": "f8c6623c-3b15-4a1a-9534-cbfc99ed6faa",
         "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
         "timestamp": 1790146543314
+      },
+      {
+        "executionId": "a1991886-72b1-4e26-bfbc-3769ca9e14b9",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790411590514
+      },
+      {
+        "executionId": "3520516c-4db9-4074-b7b5-3bf249b09538",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790412797218
+      },
+      {
+        "executionId": "3520516c-4db9-4074-b7b5-3bf249b09538",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790412856681
       }
     ],
     "12.1 Verify directory structure completeness": [
@@ -720,6 +735,13 @@
         "executionId": "2c88bb82-1090-41bf-a318-99f7e92e68d5",
         "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
         "timestamp": 1790410273410
+      }
+    ],
+    "11. Create example experiment (optional reference)": [
+      {
+        "executionId": "3520516c-4db9-4074-b7b5-3bf249b09538",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790412856728
       }
     ]
   }

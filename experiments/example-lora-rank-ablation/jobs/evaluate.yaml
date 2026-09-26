@@ -1,0 +1,44 @@
+# Evaluation Job Configuration (Example)
+# 
+# This file defines evaluation settings for the LoRA rank ablation study.
+
+job_id: eval-lora-rank
+type: evaluate
+
+# Execution
+entrypoint: src/evaluate.py
+config_style: argument
+
+# Parameters
+parameters:
+  checkpoint: null  # Filled at runtime from best training run
+  dataset_name: glue
+  dataset_config: sst2
+  dataset_split: test
+  batch_size: 16
+  
+  # Metrics to compute
+  metrics:
+    - accuracy
+    - f1
+    - precision
+    - recall
+  
+  # Output configuration
+  output_dir: outputs/example-lora-rank-ablation/eval
+
+# Resources (evaluation typically needs less than training)
+resources:
+  backend: slurm
+  gpus: 1
+  cpus: 4
+  memory_gb: 16
+  time: "02:00:00"
+
+# Tracking
+wandb:
+  enabled: true
+  group: example-lora-rank-ablation
+  tags:
+    - evaluation
+    - example

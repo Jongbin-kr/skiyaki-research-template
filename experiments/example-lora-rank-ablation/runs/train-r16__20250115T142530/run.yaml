@@ -1,0 +1,48 @@
+# Run Execution Record (Example)
+# 
+# This file tracks a single execution attempt of the training job with rank 16.
+
+run_id: train-r16__20250115T142530
+experiment_id: example-lora-rank-ablation
+job_id: train-lora-rank
+job_file: jobs/train.yaml
+
+# Execution status
+status: succeeded
+started_at: 2025-01-15T14:25:30Z
+completed_at: 2025-01-15T18:47:15Z
+exit_code: 0
+
+# Slurm tracking
+slurm:
+  job_id: 123456
+  array_task_id: 2  # Corresponds to matrix index for rank 16
+  partition: gpu
+  node: compute-g-01
+
+# W&B tracking
+wandb:
+  run_id: vibrant-wave-42
+  url: https://wandb.ai/my-lab/my-research-project/runs/vibrant-wave-42
+  sync_status: synced
+
+# Resolved configuration
+resolved_config: resolved-job.yaml
+
+# Artifacts produced
+artifacts:
+  checkpoints:
+    - checkpoint-epoch-1
+    - checkpoint-epoch-2
+    - checkpoint-epoch-3
+  logs:
+    - logs/train.log
+  figures: []
+
+# Performance summary (from logs)
+metrics:
+  final_train_loss: 0.234
+  final_eval_loss: 0.287
+  final_accuracy: 0.874
+  training_time_hours: 4.36
+  peak_memory_gb: 8.2

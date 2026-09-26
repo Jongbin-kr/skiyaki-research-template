@@ -89,6 +89,7 @@ your-project/
 ├── agent-descriptions/       # Subagent role definitions
 ├── templates/               # File templates for experiments
 ├── experiments/             # All experimental work
+│   ├── example-lora-rank-ablation/  # Example experiment (see below)
 │   └── <experiment-id>/
 │       ├── plan.md          # Research question and design
 │       ├── jobs/            # Training/eval configurations
@@ -104,6 +105,26 @@ your-project/
 ├── notebooks/               # Jupyter notebooks
 └── data/                    # Datasets (not in Git)
 ```
+
+### Example Experiment
+
+The template includes a complete example experiment at `experiments/example-lora-rank-ablation/` demonstrating:
+
+- **Realistic research question**: Optimal LoRA rank for fine-tuning RoBERTa-base on SST-2
+- **Complete documentation**: Plan, job configurations, run records, results, history, and journal
+- **Best practices**: Hypothesis, baseline comparison, success criteria, detailed analysis
+- **Real-world structure**: Shows what a finished experiment looks like
+
+**Example files**:
+- `plan.md`: Research objective, hypothesis, design rationale
+- `jobs/train.yaml`: Training configuration with LoRA rank ablation matrix
+- `jobs/evaluate.yaml`: Evaluation configuration
+- `runs/train-r16__20250115T142530/`: Example run with logs and metadata
+- `results.yaml`: Metrics, comparisons, recommendations
+- `history.md`: Timeline of execution events
+- `journal.md`: Detailed analysis and insights
+
+This example is safe to delete when you start your own research, or keep it as a reference.
 
 ## Core Concepts
 

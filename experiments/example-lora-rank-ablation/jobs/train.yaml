@@ -1,0 +1,61 @@
+# Training Job Configuration (Example)
+# 
+# This file defines reproducible training settings for the LoRA rank ablation study.
+
+job_id: train-lora-rank
+type: train
+
+# Execution
+entrypoint: src/train_lora.py
+config_style: argument
+
+# Hyperparameter matrix (ablation)
+matrix:
+  lora_rank: [4, 8, 16, 32]
+
+# Parameters passed to entrypoint
+parameters:
+  model_name: roberta-base
+  dataset_name: glue
+  dataset_config: sst2
+  dataset_split: train
+  learning_rate: 2.0e-4
+  num_epochs: 3
+  batch_size: 8
+  gradient_accumulation_steps: 4
+  seed: 42
+  
+  # LoRA parameters
+  lora_alpha: null  # Set to 2 × lora_rank at runtime
+  lora_dropout: 0.1
+  lora_target_modules: ["query", "value"]
+  
+  # Output configuration
+  output_dir: outputs/example-lora-rank-ablation
+  save_strategy: epoch
+  logging_steps: 50
+  eval_steps: 500
+
+# Resource requirements
+resources:
+  backend: slurm
+  gpus: 1
+  cpus: 8
+  memory_gb: 32
+  time: "08:00:00"
+
+# Weights & Biases tracking
+wandb:
+  enabled: true
+  group: example-lora-rank-ablation
+  tags:
+    - lora
+    - ablation
+    - roberta
+    - sst2
+    - example
+
+# Hugging Face Hub
+huggingface:
+  push: milestone
+  repo: null  # Auto-determined from project-plan.md

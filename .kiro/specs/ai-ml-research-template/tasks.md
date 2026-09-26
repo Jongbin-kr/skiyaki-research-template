@@ -292,8 +292,8 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include license information
     - _Requirements: 13.6, 1.4_
 
-- [ ] 11. Create example experiment (optional reference)
-  - [ ] 11.1 Create example LoRA rank ablation experiment
+- [x] 11. Create example experiment (optional reference)
+  - [x] 11.1 Create example LoRA rank ablation experiment
     - Create experiments/example-lora-rank-ablation/ directory
     - Write example plan.md with realistic research question
     - Create example train.yaml and evaluate.yaml in jobs/
