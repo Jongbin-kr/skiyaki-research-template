@@ -1,0 +1,92 @@
+# Evaluation Job Configuration
+#
+# This file defines reproducible evaluation settings for an ML experiment.
+# Evaluation runs typically assess a trained model's performance on held-out data.
+#
+# Instructions for use:
+# 1. Replace all angle-bracketed placeholders (e.g., <experiment-id>) with actual values
+# 2. The checkpoint field will typically be filled automatically from the best training run
+# 3. Adjust metrics list to match your evaluation requirements
+# 4. Configure resources based on model size (evaluation typically needs less than training)
+
+# Job metadata
+job_id: eval-<experiment-id>    # Unique identifier for this evaluation job (use kebab-case)
+type: evaluate                  # Job type: evaluate
+
+# Execution configuration
+entrypoint: src/evaluate.py     # Python script to execute (relative to workspace root)
+config_style: argument          # How to pass parameters to script: argument, hydra, json, yaml
+
+# Evaluation parameters
+# These values will be passed to the entrypoint script according to config_style
+parameters:
+  # Checkpoint configuration
+  checkpoint: null                # Path to model checkpoint to evaluate
+                                  # Typically filled at runtime from best training run
+                                  # Example: outputs/train-exp001__20250115T142530/checkpoint-1000
+  
+  # Data configuration
+  dataset_name: <dataset-name>    # Dataset identifier (must match training dataset)
+  dataset_split: test             # Split to use for evaluation (typically "test" or "validation")
+  
+  # Evaluation settings
+  batch_size: 16                  # Evaluation batch size (can be larger than training batch size)
+  
+  # Metrics to compute
+  # List all metrics that should be calculated during evaluation
+  metrics:
+    - accuracy                    # Classification accuracy
+    - f1                          # F1 score (harmonic mean of precision and recall)
+    # Add additional metrics as needed:
+    # - precision                 # Precision score
+    # - recall                    # Recall score
+    # - perplexity                # Language modeling perplexity
+    # - bleu                      # BLEU score (for generation tasks)
+    # - rouge                     # ROUGE scores (for summarization)
+  
+  # Uncomment and configure task-specific parameters:
+  
+  # Generation parameters (for text generation evaluation):
+  # max_new_tokens: 128           # Maximum number of tokens to generate
+  # temperature: 1.0              # Sampling temperature (higher = more random)
+  # top_p: 0.9                    # Nucleus sampling threshold
+  # top_k: 50                     # Top-k sampling parameter
+  # num_beams: 1                  # Number of beams for beam search (1 = greedy)
+  
+  # Few-shot evaluation:
+  # num_shots: 0                  # Number of examples in prompt (0 = zero-shot)
+  # shot_selection: random        # How to select examples (random, fixed, similarity)
+  
+  # Subset evaluation (for faster iteration):
+  # max_samples: null             # Limit evaluation to N samples (null = use all)
+  
+  # Reproducibility:
+  # seed: 42                      # Random seed for reproducible evaluation
+
+# Resource requirements
+# Evaluation typically requires less resources than training since no gradients are computed
+resources:
+  backend: slurm      # Execution backend: local (Phase 2), slurm (future phases)
+  gpus: 1             # Number of GPUs required (often 1 GPU is sufficient)
+  cpus: 4             # Number of CPU cores (typically fewer than training)
+  memory_gb: 16       # RAM in gigabytes (typically less than training)
+  time: "02:00:00"    # Maximum runtime in HH:MM:SS format (evaluation is usually faster)
+
+# Weights & Biases experiment tracking
+# Requires W&B account and API key configured (Phase 7+)
+# Evaluation results will be logged to the same W&B group as training runs
+wandb:
+  enabled: true                   # Enable W&B tracking for this evaluation
+  group: <experiment-id>          # Must match training group to link results
+  tags:                           # Tags for organizing and filtering runs
+    - evaluation
+  # Optional W&B settings:
+  # name: <custom-run-name>       # Override default run name
+  # notes: <run-description>      # Description of this evaluation run
+  # job_type: evaluation          # Job type label in W&B
+
+# Hugging Face Hub integration
+# Evaluation jobs typically don't push artifacts, but can log results as metadata
+huggingface:
+  push: never                     # Evaluation typically doesn't push checkpoints
+  repo: null                      # Repository name (if needed for logging results)

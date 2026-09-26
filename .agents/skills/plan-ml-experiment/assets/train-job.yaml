@@ -1,0 +1,113 @@
+# Training Job Configuration
+# 
+# This file defines reproducible training settings for an ML experiment.
+# It will be copied to runs/<run-id>/resolved-job.yaml before execution.
+#
+# Instructions for use:
+# 1. Replace all angle-bracketed placeholders (e.g., <model-name>) with actual values
+# 2. Uncomment optional sections as needed for your experiment
+# 3. Configure the matrix section for ablation studies (testing multiple hyperparameter values)
+# 4. Adjust resource requirements based on model size and available infrastructure
+
+# Job metadata
+job_id: train-<experiment-id>  # Unique identifier for this job (use kebab-case)
+type: train                     # Job type: train, evaluate, or custom
+
+# Execution configuration
+entrypoint: src/train.py        # Python script to execute (relative to workspace root)
+config_style: argument          # How to pass parameters to script: argument, hydra, json, yaml
+
+# Hyperparameter matrix for ablation studies
+# Define parameters with multiple values to create separate runs for each combination
+# Example ablation study:
+#   lora_rank: [4, 8, 16, 32]           # Tests 4 different LoRA rank values
+#   learning_rate: [1e-4, 2e-4, 5e-4]   # Tests 3 different learning rates
+# This creates 4 × 3 = 12 training runs total
+matrix:
+  {}
+
+# Training parameters
+# These values will be passed to the entrypoint script according to config_style
+parameters:
+  # Model configuration
+  model_name: <model-name>              # Base model identifier (e.g., meta-llama/Llama-2-7b-hf)
+  
+  # Data configuration
+  dataset_name: <dataset-name>          # Dataset identifier (e.g., tatsu-lab/alpaca)
+  dataset_split: train                  # Split to use for training (typically "train")
+  
+  # Core hyperparameters
+  learning_rate: 2.0e-4                 # Learning rate for optimizer
+  num_epochs: 3                         # Number of training epochs
+  batch_size: 8                         # Training batch size per device
+  gradient_accumulation_steps: 4        # Steps to accumulate gradients before optimizer step
+  seed: 42                              # Random seed for reproducibility
+  
+  # Uncomment and configure model-specific parameters as needed:
+  
+  # LoRA (Low-Rank Adaptation) parameters:
+  # lora_r: 16                          # LoRA rank (typical values: 4, 8, 16, 32)
+  # lora_alpha: 32                      # LoRA alpha scaling parameter (often 2×lora_r)
+  # lora_dropout: 0.1                   # Dropout probability for LoRA layers
+  # lora_target_modules:                # Modules to apply LoRA to
+  #   - q_proj
+  #   - v_proj
+  
+  # Optimizer settings:
+  # optimizer: adamw                    # Optimizer type (adamw, adam, sgd)
+  # weight_decay: 0.01                  # Weight decay coefficient for regularization
+  # warmup_steps: 100                   # Learning rate warmup steps
+  # lr_scheduler: cosine                # Learning rate schedule (linear, cosine, constant)
+  
+  # Precision and efficiency:
+  # fp16: true                          # Use mixed precision training (FP16)
+  # bf16: false                         # Use brain float 16 (if supported by hardware)
+  # gradient_checkpointing: true        # Trade compute for memory (enables larger batches)
+  
+  # Checkpoint settings:
+  # save_strategy: epoch                # When to save checkpoints (epoch, steps, no)
+  # save_steps: 500                     # Save every N steps (if save_strategy is "steps")
+  # save_total_limit: 3                 # Maximum number of checkpoints to keep
+  # eval_strategy: epoch                # When to run evaluation (epoch, steps, no)
+  # eval_steps: 500                     # Evaluate every N steps (if eval_strategy is "steps")
+  
+  # Logging:
+  # logging_steps: 10                   # Log metrics every N steps
+
+# Resource requirements
+# Adjust these based on model size, batch size, and available infrastructure
+resources:
+  backend: slurm      # Execution backend: local (Phase 2), slurm (future phases)
+  gpus: 1             # Number of GPUs required (0 for CPU-only)
+  cpus: 8             # Number of CPU cores
+  memory_gb: 32       # RAM in gigabytes
+  time: "08:00:00"    # Maximum runtime in HH:MM:SS format (used by Slurm scheduler)
+
+# Weights & Biases experiment tracking
+# Requires W&B account and API key configured (Phase 7+)
+# Set enabled to true to track metrics, hyperparameters, and artifacts in W&B
+wandb:
+  enabled: true                   # Enable W&B tracking for this run
+  group: <experiment-id>          # Group name for organizing related runs (use experiment ID)
+  tags:                           # Tags for filtering and organizing runs in W&B UI
+    - <experiment-tag>
+  # Optional W&B settings:
+  # name: <custom-run-name>       # Override default run name (auto-generated if not set)
+  # notes: <run-description>      # Free-form description of this training run
+  # job_type: training            # Job type label in W&B
+
+# Hugging Face Hub integration
+# Controls automatic model checkpoint uploading to HuggingFace Hub (Phase 8+)
+# Requires HF token configured and appropriate permissions
+huggingface:
+  push: milestone                 # Push policy:
+                                  #   - never: Don't upload checkpoints
+                                  #   - final_only: Upload only the final checkpoint
+                                  #   - milestone: Upload checkpoints that improve metrics
+                                  #   - every_save: Upload every checkpoint (high bandwidth)
+  repo: null                      # Repository name (e.g., username/model-name)
+                                  # If null, auto-determined from project-plan.md namespace
+  # Optional Hub settings:
+  # private: false                # Make repository and checkpoints private
+  # commit_message: null          # Custom commit message for checkpoint pushes
+  # branch: main                  # Branch name for uploads
