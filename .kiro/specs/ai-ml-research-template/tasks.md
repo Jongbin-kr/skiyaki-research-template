@@ -248,45 +248,45 @@ The implementation focuses on creating a complete, self-documenting template tha
   - Verify markdown templates follow format guidelines
   - Ask user if questions arise
 
-- [ ] 10. Create comprehensive README
-  - [ ] 10.1 Write introduction and quick start
+- [x] 10. Create comprehensive README
+  - [x] 10.1 Write introduction and quick start
     - Explain what the template is and who it's for
     - Provide 5-minute setup guide
     - Show example of requesting an experiment from Codex
     - _Requirements: 13.1, 13.5_
   
-  - [ ] 10.2 Document project structure
+  - [x] 10.2 Document project structure
     - Explain directory layout
     - Describe purpose of each major directory
     - Explain relationship between AGENTS.md, skills, and templates
     - _Requirements: 13.4, 13.7_
   
-  - [ ] 10.3 Document configuration
+  - [x] 10.3 Document configuration
     - Explain how to customize project-plan.md
     - Explain how to customize environment.yaml
     - Provide examples of common configurations
     - _Requirements: 13.3_
   
-  - [ ] 10.4 Document core concepts
+  - [x] 10.4 Document core concepts
     - Define Experiment, Job, Run
     - Explain workflow from request to completion
     - Describe approval gates
     - _Requirements: 13.1, 13.2_
   
-  - [ ] 10.5 Document skills and subagents
+  - [x] 10.5 Document skills and subagents
     - List available skills with brief descriptions
     - Explain when to use each skill
     - List available subagents with purposes
     - Link to detailed skill and agent documentation
     - _Requirements: 13.1, 13.7_
   
-  - [ ] 10.6 Add phase status and roadmap
+  - [x] 10.6 Add phase status and roadmap
     - Document Phase 1 completion status
     - List future phases and planned features
     - Set expectations about current limitations
     - _Requirements: 15.4_
   
-  - [ ] 10.7 Add contributing and license sections
+  - [x] 10.7 Add contributing and license sections
     - Link to Codex documentation
     - Explain how to improve the template
     - Include license information
