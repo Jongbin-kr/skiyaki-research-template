@@ -66,7 +66,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include appropriate license text
     - _Requirements: 1.4_
 
-- [ ] 3. Checkpoint - Verify core structure
+- [x] 3. Checkpoint - Verify core structure
   - Ensure all configuration files are valid
   - Verify .gitignore patterns work correctly
   - Ask user if questions arise
@@ -162,7 +162,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Define required outputs
     - _Requirements: 14.1, 14.6, 14.7_
 
-- [ ] 6. Checkpoint - Verify skills and agent descriptions
+- [x] 6. Checkpoint - Verify skills and agent descriptions
   - Ensure all SKILL.md files follow consistent format
   - Verify agent descriptions have all required sections
   - Ask user if questions arise
@@ -242,7 +242,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Suggest alternatives for large datasets (symlinks, data registries)
     - _Requirements: 12.4_
 
-- [ ] 9. Checkpoint - Verify templates
+- [x] 9. Checkpoint - Verify templates
   - Ensure all templates are complete and consistent
   - Verify YAML templates are valid
   - Verify markdown templates follow format guidelines
@@ -304,32 +304,32 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Mark directory as optional/example in README
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1, 7.2, 8.1, 9.1, 9.2, 9.3_
 
-- [ ] 12. Final verification and polish
-  - [ ] 12.1 Verify directory structure completeness
+- [x] 12. Final verification and polish
+  - [x] 12.1 Verify directory structure completeness
     - Check all required directories exist
     - Verify .gitkeep files are in place
     - Verify no placeholder content remains in production files
     - _Requirements: 1.1, 12.6_
   
-  - [ ] 12.2 Verify .gitignore effectiveness
+  - [x] 12.2 Verify .gitignore effectiveness
     - Test that secrets patterns are excluded
     - Test that outputs/ is excluded with .gitkeep preserved
     - Test that logs are excluded
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.9_
   
-  - [ ] 12.3 Verify all cross-references
+  - [x] 12.3 Verify all cross-references
     - Check that AGENTS.md references to skills are correct
     - Check that README links to correct files
     - Check that templates reference correct paths
     - _Requirements: 2.7, 13.7_
   
-  - [ ] 12.4 Verify YAML validity
+  - [x] 12.4 Verify YAML validity
     - Validate environment.yaml syntax
     - Validate all template YAML files
     - Validate YAML frontmatter in markdown files
     - _Requirements: 4.2, 7.3, 8.2, 9.5_
   
-  - [ ] 12.5 Test template creation flow
+  - [x] 12.5 Test template creation flow
     - Create a test project using "Use this template"
     - Verify all files are copied correctly
     - Verify .gitignore works in the new project
