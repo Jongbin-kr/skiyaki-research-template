@@ -1,0 +1,47 @@
+# Experiment Results
+# 
+# This file records the final outcomes of the experiment.
+
+experiment_id: <experiment-id>
+completed_at: <timestamp>
+
+# Best performing run
+best_run:
+  run_id: <run-id>
+  job_id: <job-id>
+  checkpoint: <checkpoint-path-or-hub-url>
+
+# Primary metric
+primary_metric:
+  name: <metric-name>
+  value: <value>
+  baseline_value: <baseline-value>
+  improvement: <percentage>
+
+# Secondary metrics
+secondary_metrics:
+  - name: <metric-name>
+    value: <value>
+  # Add more as needed
+
+# Success assessment
+success:
+  criteria_met: <true/false>
+  rationale: <explanation>
+
+# All training runs
+runs:
+  - run_id: <run-id>
+    status: <status>
+    primary_metric_value: <value>
+  # List all runs
+
+# Artifacts
+artifacts:
+  wandb_group: <url>
+  hub_repos:
+    - <repo/revision>
+
+# Caveats
+notes: |
+  <Any important caveats, limitations, or notes>

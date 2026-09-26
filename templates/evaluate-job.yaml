@@ -1,0 +1,36 @@
+# Evaluation Job Configuration
+
+job_id: eval-<experiment-id>
+type: evaluate
+
+# Execution
+entrypoint: src/evaluate.py
+config_style: argument  # Options: argument, hydra, json, yaml
+
+# Parameters
+parameters:
+  checkpoint: null  # Filled at runtime from best training run
+  dataset_name: <dataset-name>
+  dataset_split: test
+  batch_size: 16
+  
+  # Metrics to compute
+  metrics:
+    - accuracy
+    - f1
+    # Add others as needed
+
+# Resources (evaluation typically needs less than training)
+resources:
+  backend: slurm  # Options: local, slurm
+  gpus: 1
+  cpus: 4
+  memory_gb: 16
+  time: "02:00:00"  # HH:MM:SS format
+
+# Tracking
+wandb:
+  enabled: true
+  group: <experiment-id>
+  tags:
+    - evaluation

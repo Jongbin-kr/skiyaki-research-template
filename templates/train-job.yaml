@@ -1,0 +1,80 @@
+# Training Job Configuration
+# 
+# This file defines reproducible training settings.
+# It will be copied to runs/<run-id>/resolved-job.yaml before execution.
+
+# Job metadata
+job_id: train-<experiment-id>  # Unique identifier for this job
+type: train                     # Job type: train, evaluate, or custom
+
+# Execution configuration
+entrypoint: src/train.py        # Script to execute
+config_style: argument          # How to pass parameters: argument, hydra, json, yaml
+
+# Hyperparameter matrix for ablation studies
+# Uncomment and define parameters to run multiple training jobs with different values
+# Example: to ablate LoRA rank, use:
+#   lora_rank: [4, 8, 16, 32]
+# This will create 4 training runs, one for each value
+matrix:
+  {}
+
+# Training parameters
+# These will be passed to the entrypoint script
+parameters:
+  # Model configuration
+  model_name: <model-name>              # Base model (e.g., meta-llama/Llama-2-7b-hf)
+  
+  # Data configuration
+  dataset_name: <dataset-name>          # Dataset identifier (e.g., HuggingFace dataset)
+  dataset_split: train                  # Split to use for training
+  
+  # Core hyperparameters
+  learning_rate: 2.0e-4                 # Learning rate for optimizer
+  num_epochs: 3                         # Number of training epochs
+  batch_size: 8                         # Training batch size per device
+  gradient_accumulation_steps: 4        # Steps to accumulate before optimizer step
+  seed: 42                              # Random seed for reproducibility
+  
+  # Add model-specific parameters as needed
+  # LoRA example:
+  # lora_r: 16                          # LoRA rank
+  # lora_alpha: 32                      # LoRA alpha scaling parameter
+  # lora_dropout: 0.1                   # LoRA dropout rate
+  
+  # Optimizer settings:
+  # optimizer: adamw                    # Optimizer type
+  # weight_decay: 0.01                  # Weight decay coefficient
+  # warmup_steps: 100                   # Learning rate warmup steps
+  
+  # Checkpoint settings:
+  # save_strategy: epoch                # When to save checkpoints
+  # save_total_limit: 3                 # Max number of checkpoints to keep
+
+# Resource requirements
+resources:
+  backend: slurm      # Execution backend: local, slurm (Phase 1: local only)
+  gpus: 1             # Number of GPUs required
+  cpus: 8             # Number of CPU cores
+  memory_gb: 32       # RAM in gigabytes
+  time: "08:00:00"    # Maximum runtime in HH:MM:SS format (for Slurm)
+
+# Weights & Biases experiment tracking (Phase 7+)
+# Set enabled to true to track this training run in W&B
+wandb:
+  enabled: true                   # Enable W&B tracking
+  group: <experiment-id>          # Group name (typically the experiment ID)
+  tags:                           # Tags for organizing runs
+    - <experiment-tag>
+  # Optional W&B settings:
+  # name: <custom-run-name>       # Override default run name
+  # notes: <run-description>      # Description of this run
+
+# Hugging Face Hub integration (Phase 8+)
+# Controls automatic model checkpoint uploading to HuggingFace Hub
+huggingface:
+  push: milestone                 # Push policy: never, final_only, milestone, every_save
+  repo: null                      # Repository name (auto-determined from project-plan.md if null)
+  # Optional Hub settings:
+  # private: false                # Make uploaded checkpoints private
+  # commit_message: null          # Custom commit message for pushes

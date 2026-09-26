@@ -1,0 +1,38 @@
+# Experiment Artifacts
+# 
+# This file tracks all artifacts produced during the experiment.
+
+experiment_id: <experiment-id>
+
+artifacts:
+  # Model checkpoints
+  - type: model
+    local_path: outputs/<experiment-id>/<run-id>/checkpoint-final
+    hub_repo: null  # Phase 8+: <namespace>/<model-name>
+    hub_revision: null  # Phase 8+: commit SHA
+    upload_status: local  # Options: local, uploading, uploaded, failed
+    size_mb: <size>
+    created_at: <timestamp>
+  
+  # Figures and visualizations
+  - type: figure
+    local_path: experiments/<experiment-id>/figures/<figure-name>.png
+    description: <description>
+    created_at: <timestamp>
+  
+  # Evaluation results
+  - type: metrics
+    local_path: experiments/<experiment-id>/results.yaml
+    description: Final evaluation metrics
+    created_at: <timestamp>
+
+# W&B artifacts (Phase 7+)
+wandb:
+  group_url: null
+  run_urls: []
+
+# Git commit tracking
+git:
+  commit_sha: null
+  committed_at: null
+  commit_message: null

@@ -167,8 +167,8 @@ The implementation focuses on creating a complete, self-documenting template tha
   - Verify agent descriptions have all required sections
   - Ask user if questions arise
 
-- [ ] 7. Create experiment templates
-  - [ ] 7.1 Create experiment-plan.md template
+- [x] 7. Create experiment templates
+  - [x] 7.1 Create experiment-plan.md template
     - Design YAML frontmatter with experiment metadata
     - Include status field with all possible values
     - Include primary_metric with name and direction
@@ -177,7 +177,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Write markdown body template with sections for purpose, hypothesis, design, risks
     - _Requirements: 6.2, 6.3, 6.4_
   
-  - [ ] 7.2 Create train-job.yaml template
+  - [x] 7.2 Create train-job.yaml template
     - Include job metadata (job_id, type, entrypoint)
     - Include matrix section for ablations
     - Include parameters section with common hyperparameters
@@ -187,14 +187,14 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Add helpful comments explaining each section
     - _Requirements: 7.1, 7.3, 7.4, 7.5, 7.6, 7.7_
   
-  - [ ] 7.3 Create evaluate-job.yaml template
+  - [x] 7.3 Create evaluate-job.yaml template
     - Include evaluation-specific parameters
     - Include checkpoint reference (filled at runtime)
     - Include metrics list
     - Include resource configuration (typically less than training)
     - _Requirements: 7.2, 7.3, 7.5, 7.6_
   
-  - [ ] 7.4 Create run.yaml template
+  - [x] 7.4 Create run.yaml template
     - Include run identification fields (run_id, experiment_id, job_id)
     - Include status tracking with all possible values
     - Include timestamps (started_at, completed_at)
@@ -203,7 +203,7 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include resolved config reference
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
   
-  - [ ] 7.5 Create results.yaml template
+  - [x] 7.5 Create results.yaml template
     - Include experiment metadata
     - Include best run reference
     - Include primary metric with baseline comparison
@@ -213,20 +213,20 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include artifacts section
     - _Requirements: 9.1, 9.5_
   
-  - [ ] 7.6 Create history.md template
+  - [x] 7.6 Create history.md template
     - Write format guidelines (reverse chronological, factual)
     - Include example entries showing proper format
     - Cover all event types (plan, approval, execution, evaluation, finalization)
     - _Requirements: 9.2, 9.6_
   
-  - [ ] 7.7 Create journal.md template
+  - [x] 7.7 Create journal.md template
     - Write format guidelines (interpretation-focused)
     - Include sections for hypothesis assessment, findings, unexpected results
     - Include sections for limitations and next steps
     - Provide example entry showing proper style
     - _Requirements: 9.3, 9.7_
   
-  - [ ] 7.8 Create artifacts.yaml template
+  - [x] 7.8 Create artifacts.yaml template
     - Include artifact tracking structure
     - Support multiple artifact types (model, figure, metrics)
     - Include Hub tracking fields
@@ -234,8 +234,8 @@ The implementation focuses on creating a complete, self-documenting template tha
     - Include Git commit tracking
     - _Requirements: 9.4_
 
-- [ ] 8. Create data README
-  - [ ] 8.1 Write data/README.md
+- [x] 8. Create data README
+  - [x] 8.1 Write data/README.md
     - Explain data directory organization
     - Provide guidelines for dataset storage
     - Note that data/ is excluded from Git by default

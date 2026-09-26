@@ -1,0 +1,36 @@
+# Run Execution Record
+# 
+# This file tracks a single execution attempt of a job.
+
+run_id: <job-id>__<timestamp>
+experiment_id: <experiment-id>
+job_id: <job-id>
+job_file: jobs/<job>.yaml
+
+# Execution status
+status: created  # Options: created, submitted, pending, running, succeeded, failed, cancelled, timed_out, preempted
+started_at: null
+completed_at: null
+exit_code: null
+
+# Slurm tracking (Phase 6+)
+slurm:
+  job_id: null
+  array_task_id: null
+  partition: null
+  node: null
+
+# W&B tracking (Phase 7+)
+wandb:
+  run_id: null
+  url: null
+  sync_status: null  # Options: synced, failed, disabled
+
+# Resolved configuration
+resolved_config: resolved-job.yaml
+
+# Artifacts produced (Phase 8+)
+artifacts:
+  checkpoints: []
+  logs: []
+  figures: []
