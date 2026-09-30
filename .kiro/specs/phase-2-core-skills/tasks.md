@@ -90,7 +90,7 @@ All helper scripts will be implemented in Python 3.8+ with minimal dependencies 
     - Test from different working directories to ensure no cwd dependency
     - _Requirements: 4.17, 7.2, 7.3, 7.7_
   
-  - [ ]*  6.4 Write property tests for validate_job.py
+  - [x]*  6.4 Write property tests for validate_job.py
     - **Property 1: Job Validation Completeness**
     - **Validates: Requirements 4.14, 4.15, 4.16, 4.17**
 
@@ -115,7 +115,7 @@ All helper scripts will be implemented in Python 3.8+ with minimal dependencies 
     - Test from different working directories
     - _Requirements: 4.22, 7.2, 7.3, 7.4, 7.7_
   
-  - [ ]* 7.4 Write property tests for initialize_run.py
+  - [x]* 7.4 Write property tests for initialize_run.py
     - **Property 2: Run Initialization Consistency**
     - **Validates: Requirements 4.18, 4.19, 4.20, 4.21, 4.22**
 
@@ -154,14 +154,14 @@ All helper scripts will be implemented in Python 3.8+ with minimal dependencies 
   - Verify JSON output from all scripts
   - Ask user if questions arise
 
-- [ ]* 11. Write integration tests
-  - [ ]* 11.1 Test with example-lora-rank-ablation experiment
+- [x]* 11. Write integration tests
+  - [x]* 11.1 Test with example-lora-rank-ablation experiment
     - Validate existing train.yaml job file
     - Initialize a test run using existing experiment structure
     - Verify all generated files match schemas
     - _Requirements: 8.1, 8.2, 8.3, 10.1_
   
-  - [ ]* 11.2 Write property test for script interface compliance
+  - [x]* 11.2 Write property test for script interface compliance
     - **Property 3: Script Interface Compliance**
     - Test all scripts work from different working directories
     - Verify JSON output format
@@ -169,7 +169,7 @@ All helper scripts will be implemented in Python 3.8+ with minimal dependencies 
     - Test error handling for missing files
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 7.6, 7.7**
   
-  - [ ]* 11.3 Write property tests for template validity
+  - [x]* 11.3 Write property tests for template validity
     - **Property 4: Template YAML Validity**
     - Parse all .yaml templates and verify structure
     - **Validates: Requirements 3.3, 3.4, 10.3**

@@ -1,5 +1,22 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "7.4 Write property tests for initialize_run.py": {
+      "status": "passed",
+      "lastRunTimestamp": 1790734390672
+    },
+    "11.3 Write property tests for template validity": {
+      "status": "passed",
+      "lastRunTimestamp": 1790734402703
+    },
+    "11.2 Write property test for script interface compliance": {
+      "status": "passed",
+      "lastRunTimestamp": 1790734396914
+    },
+    "6.4 Write property tests for validate_job.py": {
+      "status": "passed",
+      "lastRunTimestamp": 1790734385014
+    }
+  },
   "executionHistory": {
     "1.1 Create grill-policy.md reference document": [
       {
@@ -385,6 +402,16 @@
         "executionId": "c40928db-69a4-4f2c-a960-8bcb8136597b",
         "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
         "timestamp": 1790558883856
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734297220
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734514828
       }
     ],
     "1. Create grill-me skill supporting materials": [
@@ -448,6 +475,113 @@
         "executionId": "c40928db-69a4-4f2c-a960-8bcb8136597b",
         "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
         "timestamp": 1790558825409
+      }
+    ],
+    "6.4 Write property tests for validate_job.py": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790730924337
+      },
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056807
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734004200
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734165238
+      }
+    ],
+    "7.4 Write property tests for initialize_run.py": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790730924356
+      },
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056759
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734004178
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734165493
+      }
+    ],
+    "11.1 Test with example-lora-rank-ablation experiment": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790730924392
+      },
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056785
+      }
+    ],
+    "11.3 Write property tests for template validity": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790730924512
+      },
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056919
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734178334
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734289141
+      }
+    ],
+    "11.2 Write property test for script interface compliance": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790730924532
+      },
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056902
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734004256
+      },
+      {
+        "executionId": "9bd7be2f-ff4b-41ca-aff0-f7549ce55851",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790734165454
+      }
+    ],
+    "11. Write integration tests": [
+      {
+        "executionId": "8d50a917-86ee-4e43-8721-15c550e438a5",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790732056836
       }
     ]
   }
