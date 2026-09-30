@@ -282,169 +282,36 @@ See [`.agents/skills/finalize-experiment/SKILL.md`](.agents/skills/finalize-expe
 
 ### Subagents
 
-For complex tasks, Codex can delegate to specialist subagents. Each subagent has focused expertise and clear boundaries.
+Codex delegates only bounded tasks that benefit from specialist expertise. It selects the narrowest matching specialist, loads only that specialist's description immediately before delegation, and keeps unmatched work in the Main Agent. Work requiring multiple specialists is split into separate delegations; descriptions are never bulk-loaded. Each delegation identifies one objective, permitted and excluded scope, relevant paths or evidence, expected output, and applicable approval and roadmap gates.
 
-#### Research Journal & Git Agent
-**Mission**: Find relevant prior work and consolidate verified evidence
+| Canonical routing name | Phase 3 local scope | Roadmap boundary |
+|---|---|---|
+| [Research Journal & Git](agent-descriptions/research-journal-git.md) | Synthesize local prior work or finalize research documentation and a Git proposal. | Commits still require explicit user approval. |
+| [W&B Analyst](agent-descriptions/wandb-analyst.md) | Compare repository metrics and local or user-provided run exports. | Live W&B API access and remote operations are unavailable until Phase 7. |
+| [Hugging Face Curator](agent-descriptions/huggingface-managing-specialist.md) | Draft local model cards and review local metadata. | Hugging Face Hub queries, repository operations, verification, and uploads are unavailable until Phase 8. |
+| [Visualization Specialist](agent-descriptions/visualization-specialist.md) | Create figures from local results and user-provided data. | Live W&B retrieval is unavailable until Phase 7; local exports remain usable. |
+| [Slurm Debugger](agent-descriptions/slurm-managing-specialist.md) | Diagnose failures offline from user-provided logs, copied status output, and job configuration. | SSH access, scheduler queries, execution, and live cluster diagnosis are unavailable until Phase 6. |
 
-**Modes**:
-- **Discovery Mode**: Search project history before planning experiments
-- **Finalize Mode**: Complete documentation and propose commits after experiments
-
-**Use when**:
-- You need comprehensive prior work search across multiple sources
-- You're ready to finalize and commit experiment results
-- You need help structuring research documentation
-
-**What it does**:
-- Searches project logs and experiment directories
-- Analyzes past findings and conclusions
-- Extracts reusable baselines
-- Verifies experiment completeness
-- Reviews Git changes for safety
-- Drafts commit messages
-
-**What it won't do**:
-- Submit or execute training jobs
-- Commit without explicit user approval
-- Push checkpoints or large artifacts
-
-See [`agent-descriptions/research-journal-git.md`](agent-descriptions/research-journal-git.md) for details.
-
-#### W&B Analyst
-**Mission**: Analyze training runs and compare experiments using Weights & Biases
-
-**Use when**:
-- You need detailed training curve analysis
-- You want to compare metrics across multiple runs
-- You need to identify training anomalies (divergence, plateaus)
-- You want statistical summaries of run groups
-
-**What it does**:
-- Queries W&B API for run metadata and metrics
-- Analyzes loss curves, learning rates, gradient norms
-- Compares runs within and across experiments
-- Identifies best checkpoints based on validation metrics
-- Generates analysis reports with recommendations
-
-**What it won't do**:
-- Submit or execute training jobs
-- Modify W&B run configurations
-- Delete or archive W&B runs
-
-**Availability**: Phase 7+ (W&B integration)
-
-See [`agent-descriptions/wandb-analyst.md`](agent-descriptions/wandb-analyst.md) for details.
-
-#### Hugging Face Managing Specialist
-**Mission**: Manage Hub operations and create model cards
-
-**Use when**:
-- You need to create or update model cards
-- You want to verify artifact upload status
-- You need help with Hub repository management
-- You want to ensure push policy compliance
-
-**What it does**:
-- Drafts comprehensive model cards with metadata
-- Documents architecture, training, and limitations
-- Verifies checkpoint uploads to Hub
-- Validates push policy compliance
-- Generates artifact tracking entries
-
-**What it won't do**:
-- Upload artifacts without explicit approval
-- Override push policies from job configurations
-- Upload private data when project requires privacy
-- Commit Hugging Face tokens
-
-**Availability**: Phase 8+ (Hugging Face Hub integration)
-
-See [`agent-descriptions/huggingface-managing-specialist.md`](agent-descriptions/huggingface-managing-specialist.md) for details.
-
-#### Visualization Specialist
-**Mission**: Create research presentation graphics and publication figures
-
-**Use when**:
-- You need publication-quality figures
-- You want training curves or metric comparisons
-- You need ablation study visualizations
-- You're preparing papers, presentations, or reports
-
-**What it does**:
-- Creates matplotlib/seaborn/plotly figures
-- Generates training curves and comparisons
-- Formats figures for publication (high DPI, multiple formats)
-- Applies consistent styling
-- Provides figure captions and interpretations
-
-**What it won't do**:
-- Manipulate or alter raw data values
-- Create misleading visualizations
-- Execute training or evaluation code
-- Commit figures without review
-
-**Common visualizations**:
-- Training curves (loss, metrics over time)
-- Ablation comparisons (bar charts, line plots, heatmaps)
-- Multi-experiment comparisons with error bars
-- Dataset statistics and distributions
-
-See [`agent-descriptions/visualization-specialist.md`](agent-descriptions/visualization-specialist.md) for details.
-
-#### Slurm Managing Specialist
-**Mission**: Diagnose Slurm job failures and troubleshoot cluster issues
-
-**Use when**:
-- Slurm jobs fail with unclear errors
-- Jobs are stuck in pending state
-- Out-of-memory (OOM) errors occur
-- Jobs are preempted or terminated unexpectedly
-- Environment or module loading issues arise
-
-**What it does**:
-- Reads and interprets Slurm logs (*.out, *.err)
-- Parses Slurm error messages
-- Queries job status (squeue, sacct, scontrol)
-- Diagnoses common issues (OOM, preemption, quotas, timeouts)
-- Suggests resource adjustments
-- Recommends configuration fixes
-
-**What it won't do**:
-- Modify configurations without approval
-- Submit or resubmit jobs automatically
-- Cancel running jobs without request
-- Make assumptions about cluster policies
-
-**Availability**: Phase 6+ (Slurm integration)
-
-See [`agent-descriptions/slurm-managing-specialist.md`](agent-descriptions/slurm-managing-specialist.md) for details.
+The linked descriptions define the full specialist contracts. Delegation does not bypass approval requirements or roadmap gates; blocked external work returns the relevant phase dependency and a non-executing next step.
 
 ### When to Use Skills vs. Subagents
 
-**Use skills** (automatic):
-- Skills are invoked automatically by Codex during standard workflows
-- You don't need to explicitly request them
-- Example: "Plan an experiment" → Codex uses discover-prior-research, grill-me, and plan-ml-experiment automatically
+**Use skills** for standard research workflows that Codex invokes automatically, such as prior-research discovery, clarification, and experiment planning.
 
-**Use subagents** (explicit delegation):
-- Request subagents when you need specialized expertise
-- Useful for complex analysis or multi-step processes
-- Example: "Analyze my W&B runs and identify the best configuration" → Codex delegates to W&B Analyst
+**Use subagents** when a bounded task matches one specialist's expertise. For example, analysis of supplied run exports can be delegated to the W&B Analyst now; retrieving runs directly from W&B remains a Phase 7 capability.
 
-## Phase 1 Status
+## Current Status and Roadmap
 
-✅ **Implemented**:
-- Complete directory structure
-- Agent definitions and skills
-- Experiment templates
-- Comprehensive documentation
+✅ **Available locally**:
+- Structured experiment directories, templates, skills, and documentation
+- Selective, bounded delegation to the five documented specialists
+- Local repository, metric-export, model-card, visualization, and supplied-log analysis within each specialist's contract
 
-🚧 **Future Phases**:
-- Phase 6: SSH and Slurm execution
-- Phase 7: W&B integration
-- Phase 8: Hugging Face Hub integration
-- Phase 9: Git automation
+🚧 **Roadmap-gated external operations**:
+- **Phase 6**: SSH access, Slurm execution, scheduler queries, and live cluster diagnosis
+- **Phase 7**: Live W&B API retrieval and remote W&B operations
+- **Phase 8**: Hugging Face Hub queries, repository operations, verification, and uploads
+- **Phase 9**: Git automation
 
 ## Contributing
 

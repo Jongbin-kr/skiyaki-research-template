@@ -27,8 +27,8 @@ This template provides a structured workflow for AI/ML research experiments with
 
 4. **Execution Requirements**:
    - Store reproducible settings in YAML (jobs/*.yaml)
-   - Require Slurm for GPU jobs in SSH environments
-   - Require Slurm for CPU-heavy jobs in SSH environments
+   - Record that GPU jobs in SSH environments require Slurm; SSH access and Slurm execution remain unavailable until Phase 6
+   - Record that CPU-heavy jobs in SSH environments require Slurm; SSH access and Slurm execution remain unavailable until Phase 6
    - Track every execution attempt as a Run
 
 5. **Approval Gates**:
@@ -47,8 +47,8 @@ This template provides a structured workflow for AI/ML research experiments with
    - Required training runs finish successfully
    - Evaluation completes with metric calculations
    - Success criteria are assessed
-   - W&B runs are compared and verified
-   - Required checkpoints are uploaded to Hugging Face Hub
+   - Required run comparisons are verified from local or user-provided evidence; live W&B verification remains unavailable until Phase 7
+   - Required checkpoint publication is documented from local or user-provided evidence; Hugging Face Hub verification and uploads remain unavailable until Phase 8
    - results.yaml is written
    - history.md is updated
    - journal.md contains final conclusions
@@ -70,12 +70,22 @@ See `.agents/skills/*/SKILL.md` for detailed workflow definitions.
 
 ## Subagents
 
-For complex tasks, delegate to specialist subagents:
+Delegate only a bounded task that benefits from specialist expertise. Use these canonical routing names and preserved descriptions:
 
-- Research Journal & Git: Discovery and finalization modes
-- W&B Analyst: Training analysis and run comparison
-- Hugging Face Curator: Model card and repository management
-- Visualization Specialist: Research presentation graphics
-- Slurm Debugger: Cluster-specific troubleshooting
+| Routing name | Trigger | Preserved description | Phase 3 boundary |
+|---|---|---|---|
+| Research Journal & Git | Prior-work synthesis or experiment finalization and Git proposal | [`agent-descriptions/research-journal-git.md`](agent-descriptions/research-journal-git.md) | Local repository evidence and documentation |
+| W&B Analyst | Specialist comparison of training runs | [`agent-descriptions/wandb-analyst.md`](agent-descriptions/wandb-analyst.md) | Local or user-provided metrics; live W&B is unavailable until Phase 7 |
+| Hugging Face Curator | Model-card or Hub artifact curation | [`agent-descriptions/huggingface-managing-specialist.md`](agent-descriptions/huggingface-managing-specialist.md) | Canonical alias for the preserved filename; local drafting only, with Hub operations unavailable until Phase 8 |
+| Visualization Specialist | Research figures from available results | [`agent-descriptions/visualization-specialist.md`](agent-descriptions/visualization-specialist.md) | Local results and exports; live W&B retrieval is unavailable until Phase 7 |
+| Slurm Debugger | Diagnosis of a Slurm failure | [`agent-descriptions/slurm-managing-specialist.md`](agent-descriptions/slurm-managing-specialist.md) | Canonical alias for the preserved filename; offline review only, with SSH, Slurm execution, and live diagnosis unavailable until Phase 6 |
 
-Load agent descriptions from `agent-descriptions/` only when delegating.
+Keep unmatched work in the Main Agent. For a match, select the narrowest specialist able to complete the task and load only its description immediately before delegation; never bulk-load all descriptions. If multiple specialists are needed, split the work into separate bounded delegations and repeat selection and selective loading for each.
+
+Each delegation packet must state:
+
+- **Objective:** one verifiable outcome.
+- **Scope:** permitted actions and excluded adjacent work.
+- **Inputs:** relevant paths and evidence.
+- **Expected output:** the required bounded result.
+- **Constraints:** applicable approval gates and roadmap gates. Delegation never bypasses explicit user approval for job execution, material configuration changes, Git commits, artifact uploads, or destructive remote actions; blocked external work must identify its Phase 6, 7, or 8 dependency and return a non-executing next step.
