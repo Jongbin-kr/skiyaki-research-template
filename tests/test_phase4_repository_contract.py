@@ -297,6 +297,8 @@ def test_phase4_delta_stays_in_allowed_paths_without_runtime_artifacts() -> None
         Path("templates"),
         Path("tests"),
         Path(".kiro/specs"),
+        Path("project-plan.md"),
+        Path("project-log.md"),
     )
     outside = sorted(
         str(path)

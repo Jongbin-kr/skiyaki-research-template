@@ -19,7 +19,7 @@ import yaml
 WORKSPACE = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = WORKSPACE / ".agents" / "skills" / "train-llm" / "scripts"
 SCRIPT_PATHS = tuple(sorted(SCRIPTS_DIR.glob("*.py")))
-EXPECTED_SCRIPTS = {"initialize_run.py", "validate_job.py", "run_local.py"}
+EXPECTED_SCRIPTS = {"initialize_run.py", "validate_job.py", "run_local.py", "submit_slurm.py"}
 RUN_TIMESTAMP = re.compile(r"(?<=__)\d{8}T\d{6}")
 
 

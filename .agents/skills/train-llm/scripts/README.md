@@ -408,6 +408,77 @@ python run_local.py --version
 - **Phase 7 (W&B):** no live API calls; a W&B URL is only parsed from log text.
 - **Phase 8 (Hugging Face Hub):** no uploads. No Git operations, no network calls.
 
+### 4. submit_slurm.py
+
+Submits an **approved** job to Slurm over SSH and records the linkage (Phase 6).
+Extends the Phase 5 Slurm deferral in `run_local.py` into a real submission path.
+Reads stable settings from `project-plan.md`, the job from `resolved-job.yaml`,
+and the approval status from the experiment `plan.md`.
+
+#### Design discipline
+
+- **Pure logic** functions (sbatch generation, GRES/resource mapping, log naming,
+  quota validation, job-id parsing, Slurm→Harness status mapping, approval
+  decision, commit-candidate filtering, secret redaction) take plain data and
+  perform no SSH, subprocess, network, or filesystem mutation.
+- **All SSH/Slurm I/O** passes through a single injected `CommandRunner`.
+  Production uses `SSHCommandRunner` (constructed only in `main()`); tests inject
+  a `FakeCommandRunner` with scripted results. No real SSH or network ever occurs
+  in tests.
+- **Mutating remote actions** (`sbatch`, `scancel`, remote transfer/clone, env
+  creation) require `approval.status == approved` in the experiment `plan.md`.
+  Read-only probes (`ssh echo`, `test -d`, `conda env list`, `sinfo`, `squeue`,
+  `sacct`, `scontrol show`) are non-mutating and still routed through the runner.
+
+#### Subcommands
+
+| Command | Description |
+|---------|-------------|
+| `verify` | Read-only probes: host reachability, remote-path existence, conda-env membership |
+| `submit` | Approval- and quota-gated `sbatch` submission; records `slurm_job_id` and `submitted` status |
+| `poll` | Query active jobs via `squeue`, completed via `sacct`; map state and capture node assignment |
+| `cancel` | Approval-gated `scancel`; sets `cancelled` status on success |
+| `retry` | Create a new run from a retryable prior (`failed`/`timed_out`/`cancelled`/`preempted`); prior run preserved |
+| `resume` | Poll a previously recorded `slurm_job_id` without resubmitting; declines when no id is recorded |
+
+#### Arguments (per subcommand)
+
+| Argument | Description |
+|----------|-------------|
+| `--plan-file PATH` | Path to `project-plan.md` (stable settings; defaults to `project-plan.md`) |
+| `--run-dir PATH` | Existing run directory created by `initialize_run.py` |
+| `--experiment-plan PATH` | Experiment `plan.md` with the approval gate (defaults to `<run-dir>/../../plan.md`) |
+| `--conda-env NAME` | Target conda environment name to verify and activate |
+
+#### Exit Codes
+
+- **0:** Action completed or recorded
+- **1:** Declined — approval, quota, verification, or resume-not-possible
+- **2:** Runtime error (missing/invalid `project-plan.md`, filesystem/parse error)
+
+#### run.yaml linkage fields
+
+On submit/poll, `submit_slurm.py` extends `run.yaml` with `slurm_job_id`,
+`slurm_state` (raw Slurm state; keeps OUT_OF_MEMORY distinct from plain failure),
+`status` (mapped Harness status), `submitted_at`, `node_list`, and
+`array_job_id` for array jobs. No secret, token, or credential value is written.
+
+#### CUDA / cluster note
+
+The generated sbatch script sources the conda profile under the plan's
+`remote_conda_root` and activates the target env **before** the run command. The
+CUDA toolkit comes from the conda environment and is pinned at or below the
+NVIDIA driver CUDA ceiling (12.4); there is no system `nvcc` and no lmod on the
+SKIML cluster. GPU and CPU-heavy jobs always route through `sbatch`, never the
+login node.
+
+#### Phase boundaries
+
+- **Phase 7 (W&B):** no live API calls.
+- **Phase 8 (Hugging Face Hub):** no uploads.
+- Real mutating remote actions require explicit user approval and are never
+  exercised by tests.
+
 ## Common Workflows
 
 ### 1. Validate before execution
