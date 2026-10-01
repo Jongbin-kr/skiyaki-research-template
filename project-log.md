@@ -6,6 +6,31 @@ template-build milestones and cross-cutting decisions.
 
 ## Phase Outcomes
 
+### Phase 7 — W&B experiment tracking (complete)
+
+- Added `.agents/skills/train-llm/scripts/track_wandb.py`: a deterministic helper
+  that creates/resumes W&B runs, assigns group/tags, records resolved config and
+  Git SHA, manages the local W&B directory, compares runs within a group, and
+  checks sync status.
+- **Design:** same pure-logic / single-injected-boundary split as Phase 6. All
+  W&B I/O routes through one `WandbClient` (`RealWandbClient` in `main()` only,
+  `wandb` imported lazily; `FakeWandbClient` in tests, raises on unscripted ops).
+- **Safety:** mutating actions (create/resume/config/finish/sync) gated on
+  `approval.status == approved`; read-only actions (run.yaml read, URL parse,
+  local dir inspection) ungated.
+- **Failure distinction:** `run.yaml` carries `wandb_status`
+  (`not_started|running|synced|sync_failed|offline`) separate from the training
+  `status`, so a failed sync never flips the run to failed.
+- **Placeholder tolerance:** `wandb.entity = TODO-set-before-phase-7` declines in
+  online mode (exit 1) and downgrades to offline otherwise; never crashes.
+- **Secret safety:** property test caught a real bug — the config key `_env_keys`
+  matched the credential pattern (contains "KEY") and was being dropped; renamed
+  to `_env_names`. No credential values reach run.yaml, config, or the envelope.
+- **Tests:** 23 design properties covered across property + integration suites
+  (32 Phase 7 tests). Full suite: 180 passed, no real W&B/network I/O.
+- `wandb.entity` remains the placeholder; real value to be set before online runs
+  (planned with the EMO clone).
+
 ### Phase 6 — SSH + Slurm integration (complete)
 
 - Added `.agents/skills/train-llm/scripts/submit_slurm.py`: a deterministic helper

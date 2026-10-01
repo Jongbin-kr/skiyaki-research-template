@@ -479,6 +479,77 @@ login node.
 - Real mutating remote actions require explicit user approval and are never
   exercised by tests.
 
+### 5. track_wandb.py
+
+Tracks a run with Weights & Biases and records the linkage back into `run.yaml`
+(Phase 7). Adds the W&B experiment-tracking layer on top of `run_local.py`
+(Phase 5) and `submit_slurm.py` (Phase 6). Reads stable settings from
+`project-plan.md` and the approval status from the experiment `plan.md`.
+
+#### Design discipline
+
+- **Pure logic** functions (settings/mode resolution, placeholder tolerance,
+  group/tag derivation, config redaction, local-dir path, URL parse/extract,
+  sync-state mapping, approval decision, git-sha mapping, commit-candidate
+  filtering) take plain data and perform no W&B API call, network, or filesystem
+  mutation.
+- **All W&B I/O** passes through a single injected `WandbClient`. Production uses
+  `RealWandbClient` (constructed only in `main()`, wraps the `wandb` SDK, imported
+  lazily); tests inject a `FakeWandbClient` with scripted results that raises on
+  unscripted operations. No real W&B API or network ever occurs in tests.
+- **Mutating actions** (create, resume, config update, finish, sync) require
+  `approval.status == approved` in the experiment `plan.md`. Reading `run.yaml`,
+  parsing a W&B URL from logs, and inspecting the local wandb dir are
+  non-mutating and ungated.
+
+#### Subcommands
+
+| Command | Description |
+|---------|-------------|
+| `create` | Approval-gated W&B run creation; records `wandb_run_id`/`wandb_url`, group, tags, `running` status, mode, and git SHA |
+| `resume` | Resume a previously recorded `wandb_run_id` without creating a new run; declines when none is recorded |
+| `config` | Record the redacted resolved config onto the run (approval-gated) |
+| `sync` | Check sync state and record `wandb_status`; never changes the training `status` |
+| `compare` | Fetch metrics for a single W&B group and report each run's id and metrics |
+
+#### Arguments (per subcommand)
+
+| Argument | Description |
+|----------|-------------|
+| `--plan-file PATH` | Path to `project-plan.md` (stable W&B settings; defaults to `project-plan.md`) |
+| `--run-dir PATH` | Existing run directory created by `initialize_run.py` |
+| `--experiment-plan PATH` | Experiment `plan.md` with the approval gate (defaults to `<run-dir>/../../plan.md`) |
+| `--experiment-id ID` | Experiment id used for the W&B group and local dir |
+| `--workspace PATH` | Workspace root used to resolve the current git SHA |
+| `--group NAME` | W&B group to compare (for the `compare` subcommand) |
+
+#### Exit Codes
+
+- **0:** Completed or recorded
+- **1:** Declined — missing approval, placeholder entity in online mode, invalid mode, or missing prerequisite
+- **2:** Runtime error (missing/invalid `project-plan.md`, filesystem/parse error)
+
+#### run.yaml linkage fields
+
+On create/sync, `track_wandb.py` extends `run.yaml` with `wandb_run_id`,
+`wandb_url`, `wandb_group`, `wandb_tags`, `wandb_status`
+(`not_started | running | synced | sync_failed | offline`), `wandb_mode`, and
+`git_sha` (or `unknown`). `wandb_status` is a field **separate** from the
+training `status`, so a failed sync never marks the training run as failed. No
+secret, token, or credential value is ever written.
+
+#### Placeholder entity / mode notes
+
+`wandb.entity` may be the placeholder `TODO-set-before-phase-7`. In `online`
+mode a placeholder entity declines the online mutating action (exit 1); in
+`offline`/`disabled` mode it downgrades gracefully and never crashes. An invalid
+`wandb.mode` is reported as a configuration error with no run created.
+
+#### Phase boundaries
+
+- **Phase 8 (Hugging Face Hub):** no checkpoint/artifact uploads.
+- No Git commits occur in Phase 7.
+
 ## Common Workflows
 
 ### 1. Validate before execution
