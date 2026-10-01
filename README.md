@@ -232,7 +232,7 @@ See [`.agents/skills/plan-ml-experiment/SKILL.md`](.agents/skills/plan-ml-experi
 - Records execution in `history.md`
 - Extracts W&B URLs from logs
 
-**Phase 1 limitation**: Local execution only (SSH and Slurm coming in Phase 6)
+**Execution targets**: Local CPU runs via `run_local.py`; GPU and CPU-heavy jobs submit to Slurm over SSH via `submit_slurm.py`. All mutating remote actions are approval-gated.
 
 See [`.agents/skills/train-llm/SKILL.md`](.agents/skills/train-llm/SKILL.md) for detailed workflow.
 
@@ -284,34 +284,42 @@ See [`.agents/skills/finalize-experiment/SKILL.md`](.agents/skills/finalize-expe
 
 Codex delegates only bounded tasks that benefit from specialist expertise. It selects the narrowest matching specialist, loads only that specialist's description immediately before delegation, and keeps unmatched work in the Main Agent. Work requiring multiple specialists is split into separate delegations; descriptions are never bulk-loaded. Each delegation identifies one objective, permitted and excluded scope, relevant paths or evidence, expected output, and applicable approval and roadmap gates.
 
-| Canonical routing name | Phase 3 local scope | Roadmap boundary |
+| Canonical routing name | Scope | Gate |
 |---|---|---|
-| [Research Journal & Git](agent-descriptions/research-journal-git.md) | Synthesize local prior work or finalize research documentation and a Git proposal. | Commits still require explicit user approval. |
-| [W&B Analyst](agent-descriptions/wandb-analyst.md) | Compare repository metrics and local or user-provided run exports. | Live W&B API access and remote operations are unavailable until Phase 7. |
-| [Hugging Face Curator](agent-descriptions/huggingface-managing-specialist.md) | Draft local model cards and review local metadata. | Hugging Face Hub queries, repository operations, verification, and uploads are unavailable until Phase 8. |
-| [Visualization Specialist](agent-descriptions/visualization-specialist.md) | Create figures from local results and user-provided data. | Live W&B retrieval is unavailable until Phase 7; local exports remain usable. |
-| [Slurm Debugger](agent-descriptions/slurm-managing-specialist.md) | Diagnose failures offline from user-provided logs, copied status output, and job configuration. | SSH access, scheduler queries, execution, and live cluster diagnosis are unavailable until Phase 6. |
+| [Research Journal & Git](agent-descriptions/research-journal-git.md) | Synthesize prior work or finalize research documentation and a Git proposal. | Commits require explicit user approval. |
+| [W&B Analyst](agent-descriptions/wandb-analyst.md) | Compare training-run metrics and local or user-provided run exports. | Reads tracking data; makes no config changes. |
+| [Hugging Face Curator](agent-descriptions/huggingface-managing-specialist.md) | Draft model cards and curate Hub artifacts and metadata. | Hub mutations (create/upload/visibility) require approval. |
+| [Visualization Specialist](agent-descriptions/visualization-specialist.md) | Create figures from results and user-provided data. | No data manipulation. |
+| [Slurm Debugger](agent-descriptions/slurm-managing-specialist.md) | Diagnose Slurm job failures from logs, status output, and job configuration. | Mutating remote actions require approval. |
 
-The linked descriptions define the full specialist contracts. Delegation does not bypass approval requirements or roadmap gates; blocked external work returns the relevant phase dependency and a non-executing next step.
+The linked descriptions define the full specialist contracts. Delegation does not bypass approval requirements; blocked work returns the relevant missing approval or configuration dependency and a non-executing next step.
 
 ### When to Use Skills vs. Subagents
 
 **Use skills** for standard research workflows that Codex invokes automatically, such as prior-research discovery, clarification, and experiment planning.
 
-**Use subagents** when a bounded task matches one specialist's expertise. For example, analysis of supplied run exports can be delegated to the W&B Analyst now; retrieving runs directly from W&B remains a Phase 7 capability.
+**Use subagents** when a bounded task matches one specialist's expertise. For example, comparison of training runs can be delegated to the W&B Analyst, and model-card curation to the Hugging Face Curator.
 
 ## Current Status and Roadmap
 
-✅ **Available locally**:
+✅ **Implemented (Phases 1-9)**:
 - Structured experiment directories, templates, skills, and documentation
 - Selective, bounded delegation to the five documented specialists
-- Local repository, metric-export, model-card, visualization, and supplied-log analysis within each specialist's contract
+- Planning golden path: prior-research discovery, grilling, plan/job generation
+- Local CPU execution (`run_local.py`) and SSH + Slurm submission (`submit_slurm.py`)
+- Weights & Biases tracking (`track_wandb.py`) and run comparison
+- Hugging Face Hub publication with upload verification (`publish_hf.py`)
+- Experiment finalization and Git commit proposal (`finalize_experiment.py`)
 
-🚧 **Roadmap-gated external operations**:
-- **Phase 6**: SSH access, Slurm execution, scheduler queries, and live cluster diagnosis
-- **Phase 7**: Live W&B API retrieval and remote W&B operations
-- **Phase 8**: Hugging Face Hub queries, repository operations, verification, and uploads
-- **Phase 9**: Git automation
+🔒 **Gated on your configuration and approval**:
+- Set `wandb.entity` and `huggingface.namespace` in `project-plan.md` before any
+  online W&B run or Hub upload — helper scripts tolerate the placeholders and
+  never call out until configured.
+- Every execution, upload, and commit requires explicit user approval.
+
+🗺️ **Roadmap**:
+- **Phase 10**: Harness evaluation scenarios for agent behavior
+- **1.0.0**: Stabilized release after real-world use
 
 ## Contributing
 
@@ -331,4 +339,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Version**: 0.1.0 (Phase 1)
+**Version**: 0.9.0 (Phases 1-9 implemented)
