@@ -6,6 +6,30 @@ template-build milestones and cross-cutting decisions.
 
 ## Phase Outcomes
 
+### Phase 9 — Finalize and Git (complete)
+
+- Added `.agents/skills/train-llm/scripts/finalize_experiment.py`: a
+  deterministic helper that verifies experiment completeness, finalizes
+  documentation (results.yaml / history.md / journal.md / project-log.md), and
+  proposes a Git commit — committing only after explicit approval.
+- **Design:** same pure-logic / single-injected-boundary split. All Git I/O
+  routes through one `GitClient` (`RealGitClient` in `main()` only, wraps git via
+  subprocess; `FakeGitClient` in tests, raises on unscripted ops). No real git
+  commit/push or network in tests.
+- **Verification:** conclusions reference only verified metrics/artifacts — no
+  success without a verified numeric primary metric AND a verified artifact ref.
+  Best-run reference must exist; metric must be numeric.
+- **Honesty:** a failed required run must be documented and success is not
+  reported met; an unverified required Hub upload (hf_status != verified) blocks
+  completion and finalizes the experiment as partial. The finalized marker is
+  written only to plan.md; no training run status is changed.
+- **Commit safety:** candidate excludes checkpoints/wandb/.out/.err; a security
+  review refuses credential-bearing files (.env/*.token/credentials.json/*.pem).
+  Commit/push are approval-gated and proposed-only until approved; no secrets in
+  the message or any artifact.
+- **Tests:** 26 design properties covered across property + integration suites
+  (28 Phase 9 tests). Full suite: 239 passed, no real git/network I/O.
+
 ### Phase 8 — Hugging Face Hub publication (complete)
 
 - Added `.agents/skills/train-llm/scripts/publish_hf.py`: a deterministic helper
@@ -89,11 +113,13 @@ template-build milestones and cross-cutting decisions.
 - Phase 5: `run_local.py` — approval-gated local CPU execution; GPU/CPU-heavy
   jobs hard-deferred to Slurm (Phase 6).
 
-## Pending (future phases)
+## Pending
 
-- **Phase 7:** W&B integration — set `wandb.entity` in `project-plan.md` first;
-  no live API calls until then.
-- **Phase 8:** Hugging Face Hub — set `huggingface.namespace` first; no uploads
-  until then.
-- First planned real use: clone and run https://github.com/allenai/EMO on SKIML
-  (requires explicit approval before any job submission).
+- **Config before live use:** set `wandb.entity` and `huggingface.namespace` in
+  `project-plan.md` (both still placeholders) before any online W&B run or Hub
+  upload. All Phase 7/8 helpers tolerate the placeholders and never call out.
+- **Phase 10 — Harness Evals:** evaluation scenarios for agent behavior (not a
+  helper script); deferred.
+- **First planned real use:** clone and run https://github.com/allenai/EMO on the
+  SKIML cluster. Requires explicit user approval before any job submission,
+  W&B online run, or Hub upload.

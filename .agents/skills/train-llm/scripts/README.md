@@ -633,6 +633,79 @@ read-only/local actions, and never crashes.
 - No Git commits occur in Phase 8; checkpoints are uploaded to the Hub and never
   added to Git.
 
+### 7. finalize_experiment.py
+
+Verifies experiment completeness, finalizes documentation, and proposes a Git
+commit (Phase 9). Aggregates the `run.yaml` linkage produced by `run_local.py`
+(Phase 5), `submit_slurm.py` (Phase 6), `track_wandb.py` (Phase 7), and
+`publish_hf.py` (Phase 8). Implements the `verify_completion.py` idea that the
+finalize-experiment skill checklist defers to a future script.
+
+#### Design discipline
+
+- **Pure logic** functions (completeness verification, results validation,
+  reference verification, honesty assessment, results assembly, history/journal/
+  project-log assembly, commit-candidate selection/filtering, credential-file
+  scan, commit-message assembly, approval decision, redaction) take plain data
+  and perform no Git operation, network, or Git-mutating action.
+- **All Git I/O** passes through a single injected `GitClient`. Production uses
+  `RealGitClient` (constructed only in `main()`, wraps `git` via subprocess);
+  tests inject a `FakeGitClient` that raises on unscripted operations. No real
+  git commit/push and no network ever occurs in tests. (Reading/writing local
+  experiment docs is done directly and is not a Git action.)
+- **Mutating Git actions** (stage, commit, push) require `approval.status ==
+  approved`. Reading docs, validating, drafting the message, and selecting the
+  candidate are non-mutating. The commit candidate is **proposed only** until
+  approved.
+
+#### Subcommands
+
+| Command | Description |
+|---------|-------------|
+| `verify` | Check completeness (required files + approval), results reference an existing run, numeric metric, and verified references |
+| `finalize` | Assemble `results.yaml`, append `history.md`, validate `journal.md`, update `project-log.md`, write the finalized marker to `plan.md` |
+| `propose` | Build and present the commit candidate (file list + message) without committing |
+| `commit` | Approval-gated: stage the filtered candidate and commit through the GitClient |
+
+#### Arguments (per subcommand)
+
+| Argument | Description |
+|----------|-------------|
+| `--experiment-dir PATH` | Experiment directory (`experiments/<id>/`) |
+| `--workspace PATH` | Workspace root (for `project-log.md` and git); defaults to the experiment's grandparent |
+
+#### Exit Codes
+
+- **0:** Verified / finalized / proposal-ready / committed after approval
+- **1:** Declined — verification failure, missing approval, incomplete experiment, blocked finalization, or a credential file in the candidate
+- **2:** Runtime error (filesystem/parse error)
+
+#### Verification and honesty guarantees
+
+- A conclusion claims success only with a verified numeric primary metric **and**
+  at least one verified artifact reference.
+- A failed required run must be documented; success criteria are not reported met.
+- A required Hub upload with `hf_status != verified` blocks completion — the
+  experiment is finalized as `partial` (plan.md `status: partial`), never
+  `completed`.
+- The finalized marker is written only to `plan.md`; no training run's `status`
+  is ever changed.
+
+#### Commit safety
+
+- The candidate excludes checkpoints (`*.pt`/`*.bin`/`*.safetensors`/`*.ckpt`),
+  the `wandb/` cache, and raw `.out`/`.err` logs.
+- The security review refuses credential-bearing files (`.env`, `*.token`,
+  `credentials.json`, `*.pem`, `*.key`) and declines the commit (exit 1).
+- No secret, token, or credential value is written to any artifact or the commit
+  message.
+
+#### Phase boundaries
+
+Phase 9 runs no training, submits no Slurm job, creates no W&B run, and uploads
+no checkpoint — it finalizes documentation and proposes/executes an approved
+commit only.
+
 ## Common Workflows
 
 ### 1. Validate before execution
