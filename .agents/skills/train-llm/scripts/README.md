@@ -335,6 +335,79 @@ python initialize_run.py \
 }
 ```
 
+### 3. run_local.py
+
+Runs an **approved** job locally and records the outcome (Phase 5). Composes with
+`initialize_run.py`: that script creates the run directory, `run.yaml`
+(`status: initialized`), and `resolved-job.yaml`; `run_local.py` consumes the
+existing run directory, executes a short local CPU job, captures output, tracks
+the run lifecycle, and appends a `history.md` entry.
+
+#### Purpose
+
+- Gate execution on `approval.status == approved` in the experiment `plan.md`
+- Hard-reject GPU and CPU-heavy jobs by deferring them to Slurm (Phase 6)
+- Detect the project environment (conda > uv > venv > system) and activate it
+- Build the command from the job `entrypoint`, `parameters`, and `config_style`
+  (`argument` default, `hydra`, `json`, `yaml`) without any framework assumption
+- Capture stdout/stderr to `runs/<run-id>/logs/`, enforce a timeout, and record
+  the run status lifecycle (`created → running → succeeded | failed | timed_out | cancelled`)
+- Record failed runs with the same rigor as successes; parse a W&B URL from logs
+  as plain text only (no live W&B call)
+
+#### Usage
+
+```bash
+# Run an approved job after initialize_run.py created the run directory
+python run_local.py \
+  --run-dir experiments/my-exp/runs/train-demo__20250115T142530 \
+  --workspace .
+
+# Override the default timeout (seconds)
+python run_local.py \
+  --run-dir experiments/my-exp/runs/<run-id> \
+  --workspace . \
+  --default-timeout 120
+
+# Explicit plan path (defaults to <run-dir>/../../plan.md)
+python run_local.py \
+  --run-dir experiments/my-exp/runs/<run-id> \
+  --workspace . \
+  --plan-file experiments/my-exp/plan.md
+
+python run_local.py --version
+```
+
+#### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--run-dir PATH` | Yes | Existing run directory created by `initialize_run.py` |
+| `--workspace PATH` | Yes | Workspace root used as the process working directory and entrypoint base |
+| `--plan-file PATH` | No | Experiment `plan.md`; defaults to `<run-dir>/../../plan.md` |
+| `--default-timeout SECONDS` | No | Timeout used when the job declares no `resources.time` (default 600) |
+| `--version` | No | Show version information and exit |
+
+#### Exit Codes
+
+- **0:** Local run executed and recorded (succeeded, or recorded failure/timeout)
+- **1:** Declined — approval required, deferred to Slurm, unsupported config style, or preparation failure (e.g. missing entrypoint)
+- **2:** Runtime error (missing run directory, PyYAML missing, filesystem/parse error)
+
+#### Composition note
+
+- `run_local.py` normalizes the on-disk status written by `initialize_run.py`:
+  `initialized → created` (and `completed → succeeded`) when reading, then writes
+  the roadmap lifecycle statuses on update.
+- It writes only within the run directory, plus an append to the experiment
+  `history.md`.
+
+#### Phase boundaries
+
+- **Phase 6 (SSH/Slurm):** GPU and CPU-heavy jobs are deferred, never run locally.
+- **Phase 7 (W&B):** no live API calls; a W&B URL is only parsed from log text.
+- **Phase 8 (Hugging Face Hub):** no uploads. No Git operations, no network calls.
+
 ## Common Workflows
 
 ### 1. Validate before execution

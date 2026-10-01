@@ -46,6 +46,34 @@ Before execution, set up the run tracking structure:
   - exit_code: null
   - resolved_config: "resolved-job.yaml"
 
+### Local Execution Helper (Phase 5)
+
+Local execution is implemented by the deterministic helper
+`scripts/run_local.py`, which composes with `scripts/initialize_run.py`:
+
+1. `initialize_run.py` creates `runs/<run-id>/` with `run.yaml`
+   (`status: initialized`) and `resolved-job.yaml`.
+2. `run_local.py --run-dir <run-dir> --workspace <root>` then:
+   - reads `approval.status` from the experiment `plan.md` and runs only when it
+     equals `approved`;
+   - **hard-rejects GPU and CPU-heavy jobs**, recording a `deferred` outcome that
+     points to Slurm (Phase 6) and never spawning a local process;
+   - detects the environment (conda > uv > venv > system) and builds the command
+     from `entrypoint`, `parameters`, and `config_style` without framework
+     assumptions;
+   - captures stdout/stderr under `runs/<run-id>/logs/`, enforces a timeout, and
+     records the lifecycle status (`created → running → succeeded | failed |
+     timed_out | cancelled`), including failed runs;
+   - appends a `history.md` entry and parses a W&B URL from logs as plain text.
+
+The on-disk `initialized` status is normalized to the lifecycle `created` when
+read. See `scripts/README.md` for arguments, exit codes, and the composition
+note.
+
+**Roadmap boundaries:** SSH and Slurm execution are Phase 6; live W&B API is
+Phase 7; Hugging Face Hub uploads are Phase 8. Phase 5 performs no network calls
+and no Git operations.
+
 ### 3. Execution (Phase 1: Local Only)
 
 Execute the training job locally:

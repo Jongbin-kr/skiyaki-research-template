@@ -296,7 +296,7 @@ def test_phase4_delta_stays_in_allowed_paths_without_runtime_artifacts() -> None
         Path(".agents/skills"),
         Path("templates"),
         Path("tests"),
-        Path(".kiro/specs/phase-4-planning-golden-path"),
+        Path(".kiro/specs"),
     )
     outside = sorted(
         str(path)
@@ -318,7 +318,9 @@ def test_phase4_delta_stays_in_allowed_paths_without_runtime_artifacts() -> None
             prohibited.append(str(path))
         if path.suffix.lower() in {".out", ".err"}:
             prohibited.append(str(path))
-        if path.suffix == ".py" and not path.parts[:1] == ("tests",):
+        helper_scripts = Path(".agents/skills/train-llm/scripts")
+        is_helper = helper_scripts in path.parents
+        if path.suffix == ".py" and path.parts[:1] != ("tests",) and not is_helper:
             prohibited.append(str(path))
         if any(token in lowered_name for token in ("experiment_runner", "research_runner", "agent_loop")):
             prohibited.append(str(path))
