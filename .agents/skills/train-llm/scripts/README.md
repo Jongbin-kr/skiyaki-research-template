@@ -468,8 +468,8 @@ On submit/poll, `submit_slurm.py` extends `run.yaml` with `slurm_job_id`,
 The generated sbatch script sources the conda profile under the plan's
 `remote_conda_root` and activates the target env **before** the run command. The
 CUDA toolkit comes from the conda environment and is pinned at or below the
-NVIDIA driver CUDA ceiling (12.4); there is no system `nvcc` and no lmod on the
-SKIML cluster. GPU and CPU-heavy jobs always route through `sbatch`, never the
+NVIDIA driver CUDA ceiling (e.g. 12.4) when the cluster has no system `nvcc`
+and no lmod. GPU and CPU-heavy jobs always route through `sbatch`, never the
 login node.
 
 #### Phase boundaries

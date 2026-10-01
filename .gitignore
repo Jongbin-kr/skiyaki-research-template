@@ -184,15 +184,14 @@ Desktop.ini
 # !data/README.md
 
 # ============================================================================
-# Local-only Development Notes (template maintainer; not for distribution)
+# Kiro Workspace / Template-Maintainer Notes (not for distribution)
 # ============================================================================
 
-# Instance-specific config snapshot and development log kept locally only.
-# These hold real infrastructure details (SSH host, IP, remote paths) and the
-# template's own build history, which must not ship in the distributed template.
-# The rest of .kiro/ (specs) stays tracked.
-.kiro/skiyaki-project-plan.md
-.kiro/skiyaki-DEVLOG.md
+# The entire .kiro/ folder is local-only. It holds the template's own build
+# specs, the development-history backup bundle, and instance-specific config
+# snapshots (real SSH host, IP, remote paths) that must not ship in the
+# distributed template.
+.kiro/
 
 # ============================================================================
 # Preserve Directory Structure

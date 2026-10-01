@@ -36,9 +36,9 @@ def _load_module() -> Any:
 SS = _load_module()
 
 SETTINGS = SS.PlanSettings(
-    ssh_host="SKIML",
+    ssh_host="research-cluster",
     remote_project_root="/home/u/data/proj",
-    remote_conda_root="/data6/u/miniconda3",
+    remote_conda_root="/data/u/miniconda3",
     partition="gpu",
     account="cluster",
     qos="normal",
@@ -314,8 +314,8 @@ def test_cli_submit_flow(tmp_path: Path) -> None:
     plan = tmp_path / "project-plan.md"
     plan.write_text(
         "---\n"
-        "environment:\n  remote_conda_root: /data6/u/miniconda3\n"
-        "execution:\n  ssh_host: SKIML\n  remote_project_root: /home/u/data/proj\n"
+        "environment:\n  remote_conda_root: /data/u/miniconda3\n"
+        "execution:\n  ssh_host: research-cluster\n  remote_project_root: /home/u/data/proj\n"
         "slurm:\n  partition: gpu\n  account: cluster\n  qos: normal\n"
         "  max_gpus_per_job: 4\n  max_cpus_per_job: 8\n  max_mem_gb_per_job: 80\n"
         "cuda:\n  driver_cuda_version: '12.4'\n"
@@ -359,7 +359,7 @@ def test_cli_submit_declined_without_approval(tmp_path: Path) -> None:
     plan = tmp_path / "project-plan.md"
     plan.write_text(
         "---\nenvironment:\n  remote_conda_root: /c\n"
-        "execution:\n  ssh_host: SKIML\n  remote_project_root: /p\n"
+        "execution:\n  ssh_host: research-cluster\n  remote_project_root: /p\n"
         "slurm:\n  partition: gpu\n  account: cluster\n  qos: normal\n---\n",
         encoding="utf-8",
     )

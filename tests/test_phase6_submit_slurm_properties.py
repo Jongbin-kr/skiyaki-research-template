@@ -39,9 +39,9 @@ def _load_module() -> Any:
 SS = _load_module()
 
 _SETTINGS = SS.PlanSettings(
-    ssh_host="SKIML",
+    ssh_host="research-cluster",
     remote_project_root="/home/u/data/proj",
-    remote_conda_root="/data6/u/miniconda3",
+    remote_conda_root="/data/u/miniconda3",
     partition="gpu",
     account="cluster",
     qos="normal",
