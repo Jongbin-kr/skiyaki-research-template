@@ -184,6 +184,15 @@ Desktop.ini
 # !data/README.md
 
 # ============================================================================
+# Local-only Development Notes (template maintainer; not for distribution)
+# ============================================================================
+
+# Instance-specific config snapshots and development logs kept locally only.
+# Contains real infrastructure details (SSH hosts, paths) that must not ship
+# in the distributable template.
+docs/
+
+# ============================================================================
 # Preserve Directory Structure
 # ============================================================================
 
