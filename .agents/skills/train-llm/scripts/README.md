@@ -550,6 +550,89 @@ mode a placeholder entity declines the online mutating action (exit 1); in
 - **Phase 8 (Hugging Face Hub):** no checkpoint/artifact uploads.
 - No Git commits occur in Phase 7.
 
+### 6. publish_hf.py
+
+Publishes a checkpoint to the Hugging Face Hub and records the linkage back into
+`run.yaml` (Phase 8). Adds the Hub publication layer on top of `run_local.py`
+(Phase 5), `submit_slurm.py` (Phase 6), and `track_wandb.py` (Phase 7). Reads
+stable settings from `project-plan.md` and the approval status from the
+experiment `plan.md`.
+
+#### Design discipline
+
+- **Pure logic** functions (settings loading, placeholder detection,
+  push-eligibility decision, repo-id/URL construction, visibility resolution and
+  the never-silently-public guard, model-card assembly, status mapping, approval
+  decision, config/secret redaction, commit-candidate filtering) take plain data
+  and perform no Hub API call, network, or filesystem mutation.
+- **All Hub I/O** passes through a single injected `HfClient`. Production uses
+  `RealHfClient` (constructed only in `main()`, wraps `huggingface_hub` imported
+  lazily); tests inject a `FakeHfClient` with scripted results that raises on
+  unscripted operations. No real Hub API or network ever occurs in tests.
+- **Mutating actions** (create/ensure repo, set visibility, upload, revision)
+  require `approval.status == approved` in the experiment `plan.md`. Checking a
+  local checkpoint path, drafting a model card, reading `run.yaml`, and locating
+  content by revision are non-mutating and ungated.
+
+#### Subcommands
+
+| Command | Description |
+|---------|-------------|
+| `verify` | Confirm the local checkpoint path exists (read-only) |
+| `ensure-repo` | Approval-gated repo existence check and create-if-missing with configured visibility |
+| `upload` | Approval- and policy-gated checkpoint upload; records revision and `uploaded` status |
+| `verify-upload` | Locate the checkpoint by its recorded revision; sets `verified` or `upload_failed` |
+| `card` | Draft a local model card (ungated) and record its path |
+| `publish` | Full sequence: verify → ensure-repo → upload → record revision → verify-upload → card |
+
+#### Arguments (per subcommand)
+
+| Argument | Description |
+|----------|-------------|
+| `--plan-file PATH` | Path to `project-plan.md` (stable Hub settings; defaults to `project-plan.md`) |
+| `--run-dir PATH` | Existing run directory created by `initialize_run.py` |
+| `--experiment-plan PATH` | Experiment `plan.md` with the approval gate (defaults to `<run-dir>/../../plan.md`) |
+| `--checkpoint PATH` | Local checkpoint path to upload |
+| `--repo-name NAME` | Hub repository name (without namespace; defaults to the experiment id) |
+| `--kind {final,milestone,intermediate}` | Checkpoint kind for push-policy eligibility |
+
+#### Push policy
+
+`huggingface.push_policy` governs which checkpoints are eligible:
+`never` (none), `final_only` (final), `final_and_milestone` (final + milestone),
+`milestone` (milestone + final), `every_save` (all, including intermediate). An
+ineligible checkpoint sets `hf_status = skipped_by_policy` and declines (exit 1)
+without any Hub call.
+
+#### Exit Codes
+
+- **0:** Completed, recorded, or verified
+- **1:** Declined — missing approval, placeholder namespace, policy skip, unverified upload, invalid policy, or missing prerequisite
+- **2:** Runtime error (missing/invalid `project-plan.md`, filesystem/parse error)
+
+#### run.yaml linkage fields
+
+`publish_hf.py` extends `run.yaml` with `hf_repo_id`, `hf_revision`, `hf_url`,
+`hf_status` (`not_started | skipped_by_policy | uploaded | verified | upload_failed`),
+`hf_private`, and `model_card_path`. `hf_status` is **separate** from the training
+`status`, so a failed or unverified upload never marks the training run as failed —
+but an unverified required upload signals that the experiment must not be marked
+complete (exit 1). No secret, token, or credential value is ever written.
+
+#### Visibility and placeholder notes
+
+Repositories are created according to `huggingface.private` (default private); a
+private repository is never silently made public — a public visibility change
+needs an explicit approved request. The `huggingface.namespace` placeholder
+`TODO-set-before-phase-8` declines mutating actions (exit 1) while allowing
+read-only/local actions, and never crashes.
+
+#### Phase boundaries
+
+- **Phase 7 (W&B):** no W&B run creation here.
+- No Git commits occur in Phase 8; checkpoints are uploaded to the Hub and never
+  added to Git.
+
 ## Common Workflows
 
 ### 1. Validate before execution

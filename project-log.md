@@ -6,6 +6,32 @@ template-build milestones and cross-cutting decisions.
 
 ## Phase Outcomes
 
+### Phase 8 — Hugging Face Hub publication (complete)
+
+- Added `.agents/skills/train-llm/scripts/publish_hf.py`: a deterministic helper
+  that verifies the Hub repo, decides push eligibility, uploads checkpoints,
+  records revisions, drafts a model card, verifies the upload by revision, and
+  applies the private/public policy.
+- **Design:** same pure-logic / single-injected-boundary split. All Hub I/O
+  routes through one `HfClient` (`RealHfClient` in `main()` only, `huggingface_hub`
+  imported lazily; `FakeHfClient` in tests, raises on unscripted ops).
+- **Push policy:** pure `decide_push(policy, kind)` over never/final_only/
+  milestone/final_and_milestone/every_save × final/milestone/intermediate;
+  intermediate only under every_save; ineligible => skipped_by_policy, exit 1.
+- **Safety:** mutating actions (create/ensure repo, set visibility, upload,
+  revision) gated on approval; visibility never silently turns a private repo
+  public. Placeholder namespace declines mutating actions (exit 1), never crashes.
+- **Verification:** after upload, the checkpoint is located by its recorded
+  revision; if not locatable, hf_status=upload_failed and the experiment is
+  signaled not-complete (exit 1). hf_status is separate from the training status,
+  so a Hub failure never flips the run to failed.
+- **Secret safety:** no HF_TOKEN/credential value reaches run.yaml, the model
+  card, or the envelope. Checkpoints upload to the Hub, never added to Git.
+- **Tests:** 21 design properties covered across property + integration suites
+  (31 Phase 8 tests). Full suite: 211 passed, no real Hub/network I/O.
+- `huggingface.namespace` remains the placeholder; real value to be set before
+  uploads (planned with the EMO work).
+
 ### Phase 7 — W&B experiment tracking (complete)
 
 - Added `.agents/skills/train-llm/scripts/track_wandb.py`: a deterministic helper
