@@ -187,10 +187,12 @@ Desktop.ini
 # Local-only Development Notes (template maintainer; not for distribution)
 # ============================================================================
 
-# Instance-specific config snapshots and development logs kept locally only.
-# Contains real infrastructure details (SSH hosts, paths) that must not ship
-# in the distributable template.
-docs/
+# Instance-specific config snapshot and development log kept locally only.
+# These hold real infrastructure details (SSH host, IP, remote paths) and the
+# template's own build history, which must not ship in the distributed template.
+# The rest of .kiro/ (specs) stays tracked.
+.kiro/skiyaki-project-plan.md
+.kiro/skiyaki-DEVLOG.md
 
 # ============================================================================
 # Preserve Directory Structure
