@@ -1,22 +1,30 @@
 ---
 schema_version: 1
 experiment_id: <experiment-id>
-status: draft  # Options: draft, grilling, planned, awaiting_approval, approved, running, evaluating, finalizing, completed, failed, cancelled, blocked
-
+status: awaiting_approval
 primary_metric:
   name: <metric-name>
-  direction: maximize  # Options: maximize, minimize
-
+  direction: <maximize-or-minimize>
 success_criteria:
-  minimum_improvement: 0.02  # Minimum improvement over baseline
-  # Add other criteria as needed
-
+  metric: <metric-name>
+  comparison: <comparison-to-baseline>
+  operator: <gte-or-lte>
+  threshold: <numeric-threshold>
+baseline:
+  name: <baseline-name>
+  metric:
+    name: <metric-name>
+    value: <numeric-value>
+    direction: <maximize-or-minimize>
+  evaluation:
+    dataset: <dataset-name>
+    split: <evaluation-split>
+  source: <repository-path-or-git-commit>
 jobs:
   - jobs/train.yaml
   - jobs/evaluate.yaml
-
 approval:
-  status: pending  # Options: pending, approved, rejected
+  status: pending
   approved_by: null
   approved_at: null
   approved_commit: null
@@ -24,58 +32,66 @@ approval:
 
 # <Experiment Title>
 
+## Agent-Determined Defaults
+
+List only values selected by the agent. Every entry must include its rationale and repository/Git evidence, or state that it is an explicit assumption.
+
+| Decision | Value | Rationale | Evidence or assumption |
+|---|---|---|---|
+| <decision> | <value> | <rationale> | <repository-path-or-commit-or-explicit-assumption> |
+
+## Decision Provenance
+
+Record each material decision exactly once using `user`, `project_setting`, `prior_evidence`, or `agent_default`.
+
+| Decision | Value | Origin | Source |
+|---|---|---|---|
+| research_objective | <value> | <origin> | <user-turn-project-setting-path-or-evidence-ref> |
+| baseline | <value> | <origin> | <source> |
+| primary_metric | <value> | <origin> | <source> |
+| success_criteria | <value> | <origin> | <source> |
+| ablation_scope | <value> | <origin> | <source> |
+| controlled_parameters | <value> | <origin> | <source> |
+
 ## Purpose
 
-[Describe the research question this experiment addresses]
+[State the resolved research objective.]
 
 ## Hypothesis
 
-[State your hypothesis about what you expect to find]
+[State a testable prediction tied to the primary metric and success threshold.]
 
-## Baseline
+## Evidence-Backed Baseline
 
-[Describe the baseline approach for comparison]
-
-- Model: [baseline model]
-- Dataset: [baseline dataset and split]
-- Metrics: [baseline metric values]
-- Source: [where baseline comes from - prior experiment, paper, etc.]
+- **Name/configuration**: [baseline name and configuration]
+- **Metric**: [name, numeric value, and maximize/minimize direction]
+- **Evaluation data**: [dataset and split]
+- **Source**: [repository path or Git commit]
 
 ## Design
 
-[Explain the experimental design]
-
 ### Variables
 
-[What you're changing/ablating]
+[Specify the ablation matrix or manipulated variables.]
 
 ### Controls
 
-[What you're keeping constant]
+[Specify the model, data, seed strategy, and hyperparameters held constant.]
 
 ### Rationale
 
-[Why this design will test your hypothesis]
-
-## Agent-Determined Defaults
-
-[List any parameters the agent chose and why]
-
-- [Parameter]: [value] - [rationale]
+[Explain why the design tests the hypothesis and provides a valid baseline comparison.]
 
 ## Risks and Limitations
 
-[What could go wrong or limit conclusions]
-
-- [Risk 1]
-- [Risk 2]
+- [Principal risk or limitation]
 
 ## Expected Outcomes
 
-[What results would support or refute your hypothesis]
-
 ### If Hypothesis Supported
-[What you'd conclude and do next]
+
+[Interpret results meeting the measurable criterion.]
 
 ### If Hypothesis Refuted
-[What you'd conclude and do next]
+
+[Interpret results not meeting the measurable criterion.]

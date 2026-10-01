@@ -1,0 +1,10 @@
+scenario_id: guard-unresolved-success-criteria
+base: ../golden
+mutation:
+  operation: replace
+  target: scenario.decisions.success_criteria.resolved
+  value: false
+expected_failure:
+  requirement: "4.5"
+  code: DECISION_APPROVAL_BLOCKED
+  location: decisions.success_criteria

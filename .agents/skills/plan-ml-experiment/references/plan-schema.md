@@ -6,6 +6,14 @@ This document defines the structure and validation rules for experiment plan fro
 
 Experiment plans use YAML frontmatter to capture structured metadata that guides workflow execution. The frontmatter appears at the top of `plan.md` between `---` delimiters.
 
+## Phase 4 Planning Contract
+
+Before an approval request, a plan must use `status: awaiting_approval` with `approval.status: pending` and null approval identity, timestamp, and commit fields. The baseline must include a numeric value, metric direction, evaluation dataset/split, and repository path or Git commit source. Success criteria must identify the metric, comparison, operator, and numeric threshold so validation is mechanical.
+
+The plan body must begin its review content with **Agent-Determined Defaults**, followed by a decision-provenance ledger. Origins use `user`, `project_setting`, `prior_evidence`, or `agent_default`. An Agent_Default requires a rationale and evidence reference or `explicit_assumption: true`; Project_Settings must not be relabeled as defaults.
+
+Local pre-approval validation rejects unresolved required placeholders, unsupported baseline claims, missing keys/job files, invalid YAML/frontmatter, secret-like content, cross-file mismatches, or non-measurable criteria. A failed plan remains in planning and cannot produce an Approval Summary.
+
 ## Frontmatter Structure
 
 ### Required Fields
@@ -62,19 +70,44 @@ These fields MUST be present in all experiment plans:
   ```
 
 #### `success_criteria` (object)
-- **Type**: Object with at least one criterion defined
-- **Description**: Quantitative or qualitative criteria that determine experiment success
-- **Validation**:
-  - Must contain at least one sub-field
-  - Common patterns:
-    - `minimum_improvement` (float): Minimum improvement over baseline (e.g., `0.02` for 2%)
-    - `target_value` (float): Absolute metric target (e.g., `perplexity < 25.0`)
-    - Custom criteria specific to research objective
+- **Type**: Object defining one mechanically testable criterion
+- **Description**: Quantitative rule used to determine experiment success
+- **Required sub-fields**:
+  - `metric` (string): Must match the primary metric
+  - `comparison` (string): What the threshold compares, such as absolute improvement over baseline
+  - `operator` (enum): `gte` or `lte`
+  - `threshold` (number): Numeric pass/fail boundary
 - **Example**:
   ```yaml
   success_criteria:
-    minimum_improvement: 0.02  # 2% improvement over baseline
-    maximum_perplexity: 25.0
+    metric: accuracy
+    comparison: absolute_improvement_over_baseline
+    operator: gte
+    threshold: 0.02
+  ```
+
+#### `baseline` (object)
+- **Type**: Object with evidence-backed comparison information
+- **Required sub-fields**:
+  - `name` (string): Baseline identifier
+  - `metric.name` (string): Must match the primary metric
+  - `metric.value` (number): Repository-supported baseline value
+  - `metric.direction` (enum): `maximize` or `minimize`
+  - `evaluation.dataset` and `evaluation.split` (strings): Exact comparison data
+  - `source` (string): Repository path or Git commit identifier
+- **Validation**: Unsupported or unresolved baseline values block approval-summary generation.
+- **Example**:
+  ```yaml
+  baseline:
+    name: prior-lora-result
+    metric:
+      name: accuracy
+      value: 0.874
+      direction: maximize
+    evaluation:
+      dataset: glue/sst2
+      split: validation
+    source: experiments/example-lora-rank-ablation/results.yaml
   ```
 
 #### `jobs` (array of strings)
@@ -122,25 +155,6 @@ These fields MAY be present to provide additional context:
 - **Description**: Testable prediction about experiment outcome
 - **Usage**: Helps frame experiment in scientific terms
 - **Example**: `hypothesis: "Increasing LoRA rank improves model performance but with diminishing returns after rank 16"`
-
-#### `baseline` (object)
-- **Type**: Object with baseline comparison information
-- **Description**: Reference point for assessing experiment results
-- **Common sub-fields**:
-  - `name` (string): Identifier for baseline (e.g., `prior-experiment-001`, `published-paper`)
-  - `model` (string): Baseline model identifier
-  - `dataset` (string): Baseline dataset identifier
-  - `metrics` (object): Baseline metric values
-  - `source` (string): Where baseline comes from
-- **Example**:
-  ```yaml
-  baseline:
-    name: full-finetuning-baseline
-    model: meta-llama/Llama-2-7b-hf
-    metrics:
-      perplexity: 28.3
-    source: experiments/prior-full-finetune
-  ```
 
 #### `risks` (array of strings)
 - **Type**: Array of strings

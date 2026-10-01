@@ -1,0 +1,84 @@
+schema_version: 1
+job_id: evaluate-lora-rank-ablation
+type: evaluate
+entrypoint: src/evaluate.py
+config_style: argument
+parameters:
+  checkpoint: null
+  checkpoint_resolution: all_rank_seed_matrix_checkpoints
+  aggregation: by_lora_rank_across_seeds
+  dataset_name: glue
+  dataset_config: sst2
+  dataset_split: validation
+  batch_size: 16
+  primary_metric: accuracy
+  primary_metric_direction: maximize
+  secondary_metrics: [f1, training_time_hours, peak_memory_gb]
+resources:
+  backend: slurm
+  status: planned_unverified
+  available_phase: 6
+  execution_target: ssh
+  partition: gpu-a100
+  account: nlp-research
+  qos: normal
+  gpus: 1
+  cpus: 4
+  memory_gb: 16
+  time: "02:00:00"
+wandb:
+  enabled: true
+  status: planned_unverified
+  available_phase: 7
+  entity: fixture-nlp-lab
+  project: sentiment-lora
+  mode: online
+  group: lora-rank-ablation
+  tags: [evaluation, multi-seed]
+huggingface:
+  push: never
+  status: planned_unverified
+  available_phase: 8
+  namespace: fixture-nlp-lab
+  repo: fixture-nlp-lab/lora-rank-ablation
+  private: true
+planning:
+  planned_job_invocations: 1
+  checkpoints_to_evaluate: 9
+  requested_gpu_hours_upper_bound: 2
+  execution_performed: false
+  run_artifacts_created: false
+provenance:
+  parameters.checkpoint_resolution:
+    origin: agent_default
+    rationale: The cross-seed objective requires evaluation of every planned matrix checkpoint.
+    assumption: true
+  parameters.dataset_name:
+    origin: user
+    source: transcript turn 13; experiments/prior-lora-rank-ablation/jobs/evaluate.yaml
+  parameters.dataset_split:
+    origin: user
+    source: transcript turn 7; experiments/prior-lora-rank-ablation/results.yaml
+  parameters.primary_metric:
+    origin: user
+    source: transcript turn 7
+  secondary_metrics:
+    origin: user
+    source: transcript turn 13; project-plan.md
+  entrypoint:
+    origin: agent_default
+    rationale: Reuse the prior evaluation interface for the same dataset and metrics.
+    evidence: experiments/prior-lora-rank-ablation/jobs/evaluate.yaml
+  resources:
+    origin: agent_default
+    rationale: Reuse the prior conservative evaluation resource envelope within inherited project limits.
+    evidence: experiments/prior-lora-rank-ablation/jobs/evaluate.yaml
+  resources.backend:
+    origin: project_setting
+    source: project-plan.md
+  wandb:
+    origin: project_setting
+    source: project-plan.md
+  huggingface:
+    origin: project_setting
+    source: project-plan.md

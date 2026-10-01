@@ -1,0 +1,12 @@
+scenario_id: guard-run-creation
+base: ../golden
+mutation:
+  operation: append
+  target: action_manifest.actions
+  value:
+    kind: run_create
+    target: experiments/lora-rank-ablation/runs/train-r16/run.yaml
+expected_failure:
+  requirement: "8.1"
+  code: BOUNDARY_RUN_CREATED
+  location: action-manifest.actions[13]

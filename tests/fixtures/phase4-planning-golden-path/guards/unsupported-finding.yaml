@@ -1,0 +1,10 @@
+scenario_id: guard-unsupported-finding
+base: ../golden
+mutation:
+  operation: replace
+  target: expected.discovery_report.findings[0].evidence_ids
+  value: []
+expected_failure:
+  requirement: "2.2"
+  code: EVIDENCE_UNSUPPORTED_CLAIM
+  location: discovery_report.findings[0]

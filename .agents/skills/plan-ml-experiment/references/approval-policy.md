@@ -6,6 +6,24 @@ This document defines the approval workflow for experiment plans, specifying whe
 
 The approval workflow ensures users maintain control over resource allocation, research direction, and experimental rigor. Agents propose experiment plans and job configurations, but execution begins only after explicit user approval.
 
+## Phase 4 Planning Boundary
+
+Phase 4 ends at a locally validated approval request. Before presenting it, parse the plan and both job YAML files locally; verify required fields and paths, provenance, evidence-backed baseline details, measurable criteria, resource arithmetic, matching metrics/groups/datasets, absence of secrets/placeholders, and zero Run or execution artifacts. Keep `status: awaiting_approval`, `approval.status: pending`, and approval identity/time/commit fields null.
+
+The concise terminal Approval Summary must order content as follows:
+
+1. Recommended plan.
+2. Agent-Determined Defaults with rationale and evidence or explicit-assumption labels.
+3. Objective and testable hypothesis.
+4. Evidence-backed baseline, primary metric/direction, and measurable success criterion.
+5. Ablation matrix, estimated run count, aggregate resources, and principal risks.
+6. Slurm execution as planned/unverified and unavailable until Phase 6 when applicable.
+7. W&B destination as planned/unverified until Phase 7 and Hugging Face destination/policy as planned/unverified until Phase 8.
+8. Plan and job artifact paths.
+9. An approve-or-modify request plus an explicit statement that no execution or Run creation has occurred.
+
+Stop after the summary and wait for explicit approval. Do not execute, initialize a Run, contact an external integration, or create a Git commit.
+
 ## Approval Workflow States
 
 ### 1. Initial Plan Creation

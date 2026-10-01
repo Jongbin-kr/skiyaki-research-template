@@ -1,293 +1,220 @@
 # Research Clarification Policy
 
-## Purpose
+## Purpose and Scope
 
-This document defines the strategy for systematically clarifying research objectives through targeted questioning. Use this policy to guide the grill-me skill workflow.
+This policy is the normative protocol for the `grill-me` skill. It makes each clarification turn reviewable, prevents stable project configuration from being re-asked, and records enough provenance for later planning. It governs local clarification and synthesis only; it never authorizes artifact creation, experiment execution, Run creation, Git commits, or external-system access.
 
----
+## Structured Material Decision Protocol
 
-## Question Priority Order
+A `Material_Decision` is a choice that changes experimental meaning, including the research objective, baseline, primary metric, success criterion, ablation scope, or a key controlled parameter.
 
-Ask questions in this order to efficiently resolve critical experimental decisions:
+While the `Research_Grill` is active, **each assistant turn MUST target exactly one structured `Material_Decision` and ask exactly one semantic question**. Use this logical envelope in transcripts or fixtures:
 
-### 1. Metric Definition (HIGHEST PRIORITY)
+```yaml
+kind: question
+decision_key: primary_metric
+prompt: "Which single primary metric should determine the winning rank?"
+```
 
-**Why First:** Without clear metrics, no experiment can be evaluated objectively.
+Rules:
 
-**Key Questions:**
-- "What metric(s) will you use to evaluate success?"
-- "Is this measured on validation set, test set, or both?"
-- "Are there secondary metrics to track alongside the primary metric?"
+1. `kind` is `question`.
+2. `decision_key` names exactly one unresolved ledger entry.
+3. `prompt` contains one focused question about that entry.
+4. Explanatory context and a short list of answer options are allowed only when they support the same decision.
+5. Do not bundle multiple prompts, add a second question, or ask for a stable setting in the same turn.
+6. A follow-up retains the same `decision_key` until that decision is resolved or a labeled default is accepted.
+7. The completion handoff occurs after the `Research_Grill` terminates and is not another grill question.
 
-**Common Vague Answers & Follow-ups:**
-- "Make it better" → "Better according to which metric? Accuracy, F1, perplexity, BLEU?"
-- "Good performance" → "What threshold or improvement would indicate good performance?"
-- "Industry standard" → "Which specific metric is standard for this task?"
+## Decision Priority
 
----
+Select the highest-priority unresolved decision that is material to the request:
 
-### 2. Baseline Identification (SECOND PRIORITY)
+1. **Primary metric**: name, direction, and evaluation split needed for a measurable comparison.
+2. **Baseline**: specific comparison reference, value when supported, split, and repository evidence or explicit user choice.
+3. **Success criteria**: measurable threshold, relative improvement, non-inferiority margin, statistical criterion, or explicitly exploratory outcome.
+4. **Research objective and hypothesis**: only when the request does not already establish them.
+5. **Ablation scope**: variables or values that define the scientific comparison.
+6. **Controlled parameters**: only controls whose choice could alter interpretation.
 
-**Why Second:** Comparisons require a reference point. Without a baseline, improvements cannot be measured.
+Do not ask implementation questions such as dtype, logging cadence, directory layout, or routine optimization settings. Those belong to planning.
 
-**Key Questions:**
-- "What baseline will you compare against?"
-- "Is the baseline a prior experiment, a known model, or a simple heuristic?"
-- "Do you have baseline metric values, or do we need to establish them?"
+## Canonical Stable Project Settings
 
-**Common Vague Answers & Follow-ups:**
-- "The current model" → "Which specific experiment or checkpoint should I use as baseline?"
-- "Standard approach" → "Can you name the specific model or configuration?"
-- "Previous work" → "Do you have run IDs or results I should reference?"
+This section is the **single canonical stable-key registry for the grill workflow**. Do not duplicate a competing list in `SKILL.md`. For every populated value in `project-plan.md`, consume it as inherited configuration and never ask the user to restate it.
 
-**Baseline Discovery:**
-- Check `experiments/*/results.yaml` for comparable past experiments
-- Check `project-log.md` for documented baselines
-- If no baseline exists, suggest: "Should we first run a baseline experiment?"
+### Environment and execution
 
----
+- `environment.manager`
+- `environment.manifest`
+- `execution.default_target`
+- `execution.ssh_host`
+- `execution.remote_project_root`
+- `execution.direct_cpu_max_minutes`
+- `execution.require_slurm_for_gpu`
+- `execution.require_slurm_for_cpu_heavy`
 
-### 3. Success Criteria (THIRD PRIORITY)
+### Slurm and quota
 
-**Why Third:** Defines when to stop iterating and when an experiment achieves its goal.
+- `slurm.partition`
+- `slurm.account`
+- `slurm.qos`
+- `slurm.max_gpus_per_job`
+- `slurm.max_concurrent_jobs`
 
-**Key Questions:**
-- "What would make this experiment successful?"
-- "Are you looking for statistical significance, absolute improvement, or qualitative insight?"
-- "Is there a minimum improvement threshold?"
+### W&B
 
-**Common Vague Answers & Follow-ups:**
-- "Better than baseline" → "By how much? Any improvement, or a specific percentage?"
-- "See what happens" → "Are you exploring broadly, or testing a specific hypothesis?"
-- "Competitive results" → "Competitive with what? A leaderboard benchmark or internal model?"
+- `wandb.entity`
+- `wandb.project`
+- `wandb.mode`
+- `wandb.keep_local_data`
 
-**Success Criteria Types:**
-- **Absolute threshold:** "Accuracy > 85%"
-- **Relative improvement:** "5% better than baseline"
-- **Statistical significance:** "p < 0.05 on paired t-test"
-- **Exploratory:** "Understand which LoRA ranks work best" (no numeric threshold)
+### Hugging Face and artifact policy
 
----
+- `huggingface.namespace`
+- `huggingface.private`
+- `huggingface.push_policy`
+- `artifact_policy.checkpoint_management`
+- `artifact_policy.data_privacy`
+- `artifact_policy.model_release`
 
-### 4. Experimental Parameters (LOWEST PRIORITY)
+The `artifact_policy.*` decision keys represent populated values in the `project-plan.md` **Artifact Policy** body when those policies are not encoded in YAML frontmatter. Treat `huggingface.private`, `huggingface.push_policy`, and `wandb.keep_local_data` as machine-readable artifact-policy settings where applicable.
 
-**Why Last:** Parameters can often use reasonable defaults. Only ask if critical to design.
+A missing key is not automatically a grill question. Ask about it only if the missing value changes experimental meaning; otherwise defer it to planning. Never treat `templates/project-plan.md` as populated project configuration.
 
-**Key Questions:**
-- "Which hyperparameters are you interested in varying?"
-- "Do you have preferred ranges or values?"
-- "Are there hardware constraints (GPU memory, time limits)?"
+## Decision Ledger
 
-**When to Ask:**
-- Ablation studies (which factors to vary?)
-- Architecture choices (model size, number of layers)
-- Training regimes (learning rate ranges, batch sizes)
+Initialize one ledger entry for every required decision:
 
-**When to Defer:**
-- Implementation details ("How should I structure the code?")
-- Optimization tricks ("Should I use gradient accumulation?")
-- Logging preferences ("How often to log?")
+- `research_objective`
+- `baseline`
+- `primary_metric`
+- `success_criteria`
+- `ablation_scope`
+- `controlled_parameters`
 
----
+Each entry uses this schema:
 
-## Stable Project Configuration
+```yaml
+key: baseline
+value: "example-lora-rank-ablation rank 16"
+origin: prior_evidence
+rationale: "Existing result is comparable on model, dataset, and metric."
+evidence_ids:
+  - example-results
+assumption: false
+resolved: true
+```
 
-These settings are defined in `project-plan.md` and **MUST NEVER be re-asked** during grill-me sessions:
+Allowed `origin` values are:
 
-### Infrastructure Settings
-- **W&B entity** (`wandb.entity`) - Organization or user account
-- **W&B project** (`wandb.project`) - Project name for experiment tracking
-- **Hugging Face namespace** (`huggingface.namespace`) - Organization/user for model uploads
-- **SSH host** (`execution.ssh_host`) - Remote server alias
-- **Remote project root** (`execution.remote_project_root`) - Remote working directory
-- **Slurm partition** (`slurm.partition`) - Default cluster partition
-- **Slurm account** (`slurm.account`) - Compute allocation account
-- **Slurm QoS** (`slurm.qos`) - Quality of service tier
+- `user`: explicitly selected or confirmed by the user.
+- `project_setting`: inherited from populated `Project_Settings`.
+- `prior_evidence`: resolved directly from cited repository evidence.
+- `agent_default`: selected by the assistant rather than supplied by the user or inherited.
 
-### Policy Settings
-- **Environment manager** (`environment.manager`) - miniconda, uv, or venv
-- **Execution target** (`execution.default_target`) - local or ssh
-- **GPU requirements** (`execution.require_slurm_for_gpu`) - Slurm enforcement
-- **CPU requirements** (`execution.require_slurm_for_cpu_heavy`) - Slurm enforcement
-- **W&B mode** (`wandb.mode`) - online or offline
-- **HF visibility** (`huggingface.private`) - Default model privacy
-- **Checkpoint policy** (`huggingface.push_policy`) - When to upload models
+Ledger invariants:
 
-### How to Use Stable Settings
+1. Update or refine the answered entry **before** asking about another `decision_key`.
+2. A resolved entry has a concrete value and origin.
+3. A prior-evidence entry cites repository evidence identifiers or references.
+4. An `agent_default` includes a rationale and either evidence references or `assumption: true`.
+5. A `project_setting` remains distinguishable from an `agent_default`.
+6. Record an intentional departure from prior evidence in the rationale and retain the conflicting evidence reference.
+7. Never mark an unsupported baseline value resolved merely because a likely value exists.
 
-**DO:**
-- Read `project-plan.md` at the start of grill-me
-- Reference these settings when planning experiments
-- Assume they are correct and current
+## Handling Answers
 
-**DON'T:**
-- Ask "What's your W&B entity?" if it's in project-plan.md
-- Ask "Should I use Slurm?" if policies are already defined
-- Ask "Where should I upload models?" if namespace is configured
+### Sufficient answer
 
-**Exception:** If project-plan.md is missing or incomplete, asking about infrastructure is appropriate.
+Update the matching ledger entry, including origin and provenance, then select the next unresolved decision. Ask no second question in the same assistant turn.
 
----
+### Vague or insufficient answer
 
-## Termination Criteria
+An answer is insufficient when it cannot establish a measurable or unambiguous value, such as “better,” “the usual model,” or “whatever makes sense.” Choose exactly one response:
 
-Stop questioning when all critical experimental decisions are resolved:
+1. **Focused follow-up**: ask one narrower question on the same `decision_key`, preferably with concise options; or
+2. **Labeled Agent_Default**: propose one value labeled `Agent_Default`, state its rationale and evidence or explicit assumption, and ask one confirmation question about that same decision.
 
-### Minimum Requirements for Completion
+Examples:
 
-You **MUST** have clear answers to:
-1. ✅ **Metric**: Primary evaluation metric is defined
-2. ✅ **Baseline**: Comparison reference is identified
-3. ✅ **Success Criteria**: Definition of successful outcome exists
+```yaml
+kind: question
+decision_key: success_criteria
+prompt: "For the Agent_Default, may I use non-inferiority within 2 accuracy points of the baseline?"
+```
 
-You **SHOULD** have clear answers to (ask if relevant):
-4. ✅ **Experimental Scope**: What is being varied/tested
-5. ✅ **Parameters**: Key hyperparameters or ranges (if applicable)
+```yaml
+kind: question
+decision_key: baseline
+prompt: "By 'current model,' do you mean the rank-16 run recorded in experiments/example-lora-rank-ablation/results.yaml?"
+```
 
-### Signs You Should Stop
+Do not accept a vague answer as resolved, silently choose a default, or move to a different decision before updating the ledger.
 
-- All three minimum requirements are satisfied
-- User says "that's enough" or "let's move forward"
-- Follow-up questions would be about implementation details
-- Further questions require experimentation to answer
+### “I don't know”
 
-### Signs You Should Continue
+Apply the same one-decision rule. Offer one evidence-backed default when available. If no evidence supports a default, label it as an explicit assumption. If the baseline value itself lacks evidence, keep it unresolved rather than inventing a number.
 
-- User answers "I don't know" to metric or baseline questions
-- Success criteria are still vague ("better results")
-- Experimental scope is ambiguous ("try different settings")
-- Critical information conflicts with project history
+## Evidence-Conflict Clarification
 
----
+When a user answer conflicts with `Prior_Research_Evidence`:
 
-## Handling Vague Answers
+1. Keep the current decision unresolved or refined-but-unconfirmed.
+2. Cite the conflicting repository evidence in concise context.
+3. Ask exactly one question with the same `decision_key` that distinguishes intentional deviation from misunderstanding.
+4. If the user confirms intentional deviation, record origin `user`, preserve the evidence reference, and explain the deviation in `rationale`.
+5. If the user corrects the answer, record the corrected value and its appropriate origin.
 
-### Strategy 1: Request Specificity
+Example:
 
-**Vague:** "I want to improve the model"  
-**Follow-up:** "Improve according to which metric? Accuracy, F1 score, perplexity?"
+```yaml
+kind: question
+decision_key: baseline
+prompt: "The structured result records rank 16 at 0.874 accuracy; do you intentionally want 0.875 as a new baseline, or should the ledger retain 0.874?"
+```
 
-**Vague:** "Make it faster"  
-**Follow-up:** "Faster training time, faster inference, or both? By how much?"
+This is one disambiguation question, not an invitation to revisit metric, scope, or infrastructure.
 
-**Vague:** "Try some different values"  
-**Follow-up:** "Which parameters should I vary? Learning rate, batch size, model size?"
+## Termination and Readiness
 
-### Strategy 2: Offer Concrete Options
+The critical readiness gate consists of:
 
-**Vague:** "Standard baseline"  
-**Follow-up:** "I see three options: (1) your prior experiment X, (2) the unmodified base model, (3) the published benchmark. Which should I use?"
+- `baseline`
+- `primary_metric`
+- `success_criteria`
 
-**Vague:** "Good performance"  
-**Follow-up:** "Should I aim for: (1) 90%+ accuracy, (2) 5% improvement over baseline, or (3) state-of-the-art results?"
+Continue the `Research_Grill` while any critical entry is unresolved. Approval-summary generation is blocked during that time.
 
-### Strategy 3: Propose Reasonable Defaults
+Terminate the grill when all three critical entries are resolved and the ledger can record the research objective, ablation scope, and key controlled parameters from the request, evidence, user answers, inherited settings, or labeled defaults. On termination:
 
-**Vague:** "Whatever makes sense"  
-**Response:** "I'll use accuracy on the validation set as the primary metric, with loss as a secondary metric. Does that work?"
+1. Do not ask about implementation details.
+2. Do not ask about populated stable `Project_Settings`.
+3. Return the ledger and intentional deviations to `plan-ml-experiment`.
+4. If a noncritical value still needs implementation-level selection, leave it for planning as a documented default rather than prolonging the grill.
 
-**Vague:** "I'm not sure about the threshold"  
-**Response:** "Typical improvements in this domain are 2-5%. Should I aim for at least 3% improvement over baseline?"
+A user's request to move forward does not bypass unresolved critical decisions. Conversely, once the critical gate is resolved, do not continue questioning merely to optimize implementation choices.
 
-### Strategy 4: Check Project History
+## Anti-Patterns
 
-**Vague:** "Like we did before"  
-**Action:** Check `experiments/*/plan.md` and `project-log.md` for prior decisions
+- **Multiple decisions in one turn**: “What metric, baseline, and threshold should we use?”
+- **Multiple questions disguised as one sentence**: “Which metric should we use, and should it be measured on validation or test?”
+- **Stable-setting re-ask**: asking for `wandb.entity`, SSH host, Slurm partition, quota, or artifact destination when populated in `project-plan.md`.
+- **Silent default**: selecting a value without the `agent_default` origin, rationale, and evidence or assumption.
+- **Unsupported baseline**: inventing a baseline metric absent from repository evidence.
+- **Unresolved handoff**: generating an approval request while baseline, primary metric, or success criteria is unresolved.
+- **Scope leakage**: writing plans/jobs, creating Runs, executing entrypoints, contacting SSH/Slurm/W&B/Hugging Face, or committing Git changes during grilling.
 
-**Vague:** "The usual setup"  
-**Action:** Reference project-plan.md for established evaluation principles
+## No-Execution Boundary
 
-### Strategy 5: Escalate Unknowns
+Permitted actions are local repository reads, focused user clarification, and in-memory or local decision synthesis for handoff. The grill MUST NOT:
 
-If the user genuinely doesn't know critical information:
+- Create or modify `plan.md` or job YAML.
+- Create a Run directory, `run.yaml`, or resolved job record.
+- Invoke training or evaluation.
+- Access SSH or Slurm (unavailable until Phase 6).
+- Query live W&B (unavailable until Phase 7).
+- Access or upload to Hugging Face Hub (unavailable until Phase 8).
+- Create a Git commit.
 
-**For Metrics:**
-- Suggest domain-standard metrics
-- Offer to research appropriate evaluation approaches
-- Propose exploratory experiment to determine suitable metrics
-
-**For Baselines:**
-- Suggest running a baseline establishment experiment first
-- Propose using the simplest reasonable model as reference
-- Offer to check literature for standard comparisons
-
-**For Success Criteria:**
-- Suggest treating the experiment as exploratory
-- Propose documenting observations rather than pass/fail criteria
-- Offer iterative refinement after initial results
-
----
-
-## Anti-Patterns to Avoid
-
-### ❌ Don't: Re-ask Stable Configuration
-**Wrong:** "What's your W&B entity for this experiment?"  
-**Right:** Read project-plan.md and use the configured entity
-
-### ❌ Don't: Ask Implementation Questions During Grill
-**Wrong:** "Should I use bfloat16 or float16 for training?"  
-**Right:** Defer to planning phase: "I'll determine the optimal dtype during plan creation"
-
-### ❌ Don't: Over-specify Before Experimentation
-**Wrong:** "What should the optimal learning rate be?"  
-**Right:** "Are you searching for learning rate, or using a known good value?"
-
-### ❌ Don't: Ask Multiple Questions at Once
-**Wrong:** "What's your metric, baseline, and success criteria?"  
-**Right:** Ask for metric first, then baseline after answer is clear
-
-### ❌ Don't: Accept Contradictions Without Clarification
-**Wrong:** User says "compare to experiment X" but also "this is a brand new approach"  
-**Right:** "You mentioned comparing to X, but also that this is new. Should I compare to X's metrics, or establish a new baseline?"
-
----
-
-## Example Grill Session
-
-**Context:** User says "I want to train a smaller model"
-
-### Round 1: Metric
-**Agent:** "What metric will you use to evaluate the smaller model?"  
-**User:** "Performance"  
-**Agent:** "Performance measured by which metric? Accuracy, F1, perplexity, or something else?"  
-**User:** "Accuracy on the test set"  
-✅ Metric resolved: Test accuracy
-
-### Round 2: Baseline
-**Agent:** "What baseline will you compare the smaller model against?"  
-**User:** "The current model"  
-**Agent:** "Which specific experiment should I use? I see experiment-A (rank-16) and experiment-B (rank-32) in the history."  
-**User:** "Use experiment-B"  
-✅ Baseline resolved: experiment-B (rank-32)
-
-### Round 3: Success Criteria
-**Agent:** "What would make this smaller model experiment successful?"  
-**User:** "If it's not much worse"  
-**Agent:** "How much accuracy drop would be acceptable? Within 1%, 2%, or 5% of the baseline?"  
-**User:** "Within 2% is fine"  
-✅ Success criteria resolved: ≥ (baseline - 2%) accuracy
-
-### Round 4: Parameters
-**Agent:** "How much smaller should the model be? Reduced LoRA rank, fewer layers, or smaller base model?"  
-**User:** "Try LoRA ranks 4 and 8"  
-✅ Parameters resolved: Ablation over ranks [4, 8] vs baseline rank 32
-
-**Result:** All critical decisions resolved. Ready to create experiment plan.
-
----
-
-## Summary
-
-**Question Priority:**
-1. Metric (what to measure)
-2. Baseline (what to compare against)
-3. Success criteria (when to consider it successful)
-4. Parameters (what to vary)
-
-**Stable Settings:** Never re-ask for infrastructure configuration in project-plan.md
-
-**Termination:** Stop when metric, baseline, and success criteria are clear
-
-**Vague Answers:** Request specificity, offer options, propose defaults, check history, escalate unknowns
-
-**Goal:** Efficient clarification with minimal user frustration, enabling confident experiment planning
+The only successful endpoint is a planning-ready decision ledger handed to `plan-ml-experiment`; execution remains outside Phase 4.

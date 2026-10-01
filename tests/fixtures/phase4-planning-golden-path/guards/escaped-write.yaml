@@ -1,0 +1,12 @@
+scenario_id: guard-escaped-write
+base: ../golden
+mutation:
+  operation: append
+  target: action_manifest.actions
+  value:
+    kind: local_write
+    target: ../project-log.md
+expected_failure:
+  requirement: "9.4"
+  code: FIXTURE_WRITE_ESCAPED
+  location: action-manifest.actions[13]

@@ -1,0 +1,12 @@
+scenario_id: guard-slurm-attempt
+base: ../golden
+mutation:
+  operation: append
+  target: action_manifest.actions
+  value:
+    kind: sbatch
+    target: jobs/train.yaml
+expected_failure:
+  requirement: "8.2"
+  code: BOUNDARY_EXTERNAL_OPERATION
+  location: action-manifest.actions[13]

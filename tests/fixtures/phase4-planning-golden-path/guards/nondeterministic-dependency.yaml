@@ -1,0 +1,10 @@
+scenario_id: guard-nondeterministic-dependency
+base: ../golden
+mutation:
+  operation: add
+  target: scenario.dependencies
+  value: [wall_clock]
+expected_failure:
+  requirement: "9.7"
+  code: FIXTURE_NONDETERMINISTIC_DEPENDENCY
+  location: scenario.dependencies

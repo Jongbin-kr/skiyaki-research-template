@@ -1,0 +1,211 @@
+schema_version: 1
+request:
+  text: Run a LoRA rank ablation.
+  search_scope:
+    model: roberta-base
+    dataset: glue/sst2
+    technique: LoRA
+    objective: rank efficiency and cross-seed stability
+    parameter_range: LoRA rank
+    metrics: [accuracy, f1, training_time_hours, peak_memory_gb]
+    evaluation: validation split with seed coverage
+inspected:
+  - source_type: project_plan
+    status: inspected
+    source_ref: project-plan.md
+    relevance: Defines project scope, baseline guidance, evaluation principles, and stable settings.
+  - source_type: project_log
+    status: inspected
+    source_ref: project-log.md
+    relevance: Records the prior conclusion, recommended follow-up, and duplication guidance.
+  - source_type: experiment_plan
+    status: inspected
+    source_ref: experiments/prior-lora-rank-ablation/plan.md
+    relevance: Defines the prior objective, variables, controls, selection rule, and single-seed limitation.
+  - source_type: experiment_journal
+    status: inspected
+    source_ref: experiments/prior-lora-rank-ablation/journal.md
+    relevance: Interprets rank 16 as the efficiency selection and recommends a multi-seed follow-up.
+  - source_type: structured_results
+    status: inspected
+    source_ref: experiments/prior-lora-rank-ablation/results.yaml
+    relevance: Supplies authoritative baseline, per-rank metrics, resource measurements, and evaluation context.
+  - source_type: train_job
+    status: inspected
+    source_ref: experiments/prior-lora-rank-ablation/jobs/train.yaml
+    relevance: Supplies reusable model, data, LoRA controls, seed, and resource settings.
+  - source_type: evaluate_job
+    status: inspected
+    source_ref: experiments/prior-lora-rank-ablation/jobs/evaluate.yaml
+    relevance: Supplies reusable validation split, metrics, and evaluation resources.
+  - source_type: git_history
+    status: inspected
+    source_ref: git-evidence.yaml#cb4d3df
+    relevance: Establishes the repository history for LoRA example conventions without supplying metric values.
+  - source_type: git_history
+    status: inspected
+    source_ref: git-evidence.yaml#f6f1aae
+    relevance: Establishes the planning-guidance history without supplying metric values.
+missing_sources: []
+evidence:
+  - evidence_id: project-plan-objective
+    source_type: project_plan
+    source_ref: project-plan.md
+    claims:
+      - The project studies LoRA efficiency for RoBERTa-base on GLUE SST-2.
+  - evidence_id: project-plan-evaluation
+    source_type: project_plan
+    source_ref: project-plan.md
+    claims:
+      - Validation accuracy is the primary metric and multi-seed studies report per-seed values and an aggregate mean.
+  - evidence_id: project-log-next-step
+    source_type: project_log
+    source_ref: project-log.md
+    claims:
+      - The recommended follow-up repeats ranks 8, 16, and 32 across multiple seeds.
+  - evidence_id: prior-plan
+    source_type: experiment_plan
+    source_ref: experiments/prior-lora-rank-ablation/plan.md
+    claims:
+      - The prior study varied ranks 4, 8, 16, and 32 while holding model, data, learning rate, epochs, effective batch size, dropout, target modules, and seed constant.
+  - evidence_id: prior-journal
+    source_type: experiment_journal
+    source_ref: experiments/prior-lora-rank-ablation/journal.md
+    claims:
+      - Rank 16 was within 0.001 accuracy of rank 32 and was selected for efficiency.
+      - Added seed coverage makes a narrowed follow-up a near duplicate rather than an exact duplicate.
+  - evidence_id: prior-results
+    source_type: structured_results
+    source_ref: experiments/prior-lora-rank-ablation/results.yaml
+    claims:
+      - Rank 16 at seed 17 achieved 0.874 validation accuracy.
+      - Rank 32 at seed 17 achieved 0.875 validation accuracy.
+      - The unfine-tuned project reference was 0.853 validation accuracy.
+  - evidence_id: prior-train-job
+    source_type: train_job
+    source_ref: experiments/prior-lora-rank-ablation/jobs/train.yaml
+    claims:
+      - The prior controlled training settings used RoBERTa-base, GLUE SST-2, learning rate 0.0002, three epochs, effective batch size 32, dropout 0.1, query/value targets, and alpha twice rank.
+  - evidence_id: prior-evaluate-job
+    source_type: evaluate_job
+    source_ref: experiments/prior-lora-rank-ablation/jobs/evaluate.yaml
+    claims:
+      - Prior evaluation used the GLUE SST-2 validation split with accuracy and F1.
+  - evidence_id: git-example-lora-added
+    source_type: git_history
+    source_ref: git-evidence.yaml#cb4d3df
+    claims:
+      - Commit cb4d3df introduced the repository LoRA rank-ablation example conventions.
+  - evidence_id: git-planning-guidance-aligned
+    source_type: git_history
+    source_ref: git-evidence.yaml#f6f1aae
+    claims:
+      - Commit f6f1aae revised local planning guidance.
+findings:
+  - finding_id: prior-efficiency-selection
+    statement: Rank 16 is the prior efficiency-selected configuration at 0.874 validation accuracy, while rank 32 is the absolute maximum at 0.875.
+    support: direct
+    evidence_ids: [prior-results, prior-journal]
+  - finding_id: prior-study-limitation
+    statement: The prior rank comparison used only seed 17, so the ordering lacks cross-seed evidence.
+    support: direct
+    evidence_ids: [prior-plan, prior-results, prior-journal]
+  - finding_id: follow-up-design
+    statement: A ranks 8, 16, and 32 multi-seed follow-up directly addresses the documented limitation.
+    support: interpretation
+    evidence_ids: [project-log-next-step, prior-journal]
+baselines:
+  - baseline_id: prior-rank16-efficiency-selection
+    status: supported
+    model: roberta-base with LoRA rank 16
+    dataset: glue/sst2
+    split: validation
+    metric:
+      name: accuracy
+      value: 0.874
+      direction: maximize
+    evaluation_context:
+      seed: 17
+      aggregation: single_seed
+    source_ref: experiments/prior-lora-rank-ablation/results.yaml
+    evidence_ids: [prior-results, prior-journal]
+conflicts: []
+reusable_settings:
+  - setting: training_controls
+    value:
+      learning_rate: 2.0e-4
+      num_epochs: 3
+      effective_batch_size: 32
+      lora_alpha_rule: twice_rank
+      lora_dropout: 0.1
+      lora_target_modules: [query, value]
+    origin: prior_evidence
+    evidence_ids: [prior-plan, prior-train-job]
+  - setting: execution_and_destinations
+    value:
+      execution_target: ssh
+      slurm_partition: gpu-a100
+      slurm_account: nlp-research
+      slurm_qos: normal
+      wandb_entity: fixture-nlp-lab
+      wandb_project: sentiment-lora
+      huggingface_namespace: fixture-nlp-lab
+      huggingface_private: true
+      huggingface_push_policy: final_only
+    origin: project_setting
+    evidence_ids: [project-plan-objective]
+git_history_notes:
+  - statement: Commit cb4d3df supplies historical context for repository conventions, not the fixture's metric values.
+    evidence_ids: [git-example-lora-added]
+  - statement: Commit f6f1aae supplies historical context for planning guidance, not scientific results.
+    evidence_ids: [git-planning-guidance-aligned]
+duplication:
+  level: near_duplicate
+  overlap_facts:
+    objective: exact
+    model: exact
+    dataset: exact
+    technique: exact
+    parameter_range: partial
+    metrics: partial
+    controls: exact
+  matched_dimensions:
+    - objective: LoRA rank efficiency
+    - model: roberta-base
+    - dataset: glue/sst2
+    - technique: LoRA
+    - overlapping_ranks: [8, 16, 32]
+    - evaluation_split: validation
+  differences:
+    - The new study adds seeds 42 and 73 to prior seed 17.
+    - The new study narrows the matrix by excluding rank 4.
+    - The new primary comparison uses mean accuracy across seeds rather than a single seed.
+  evidence_ids: [project-log-next-step, prior-plan, prior-journal, prior-results]
+  recommendation: extend_existing
+gaps_and_handoff:
+  unresolved_material_decisions:
+    - research_objective
+    - baseline
+    - primary_metric
+    - success_criteria
+    - ablation_scope
+    - controlled_parameters
+  inherited_without_questions:
+    - environment.manager
+    - execution.default_target
+    - execution.ssh_host
+    - execution.remote_project_root
+    - execution.require_slurm_for_gpu
+    - execution.require_slurm_for_cpu_heavy
+    - slurm.partition
+    - slurm.account
+    - slurm.qos
+    - slurm.max_gpus_per_job
+    - slurm.max_concurrent_jobs
+    - wandb.entity
+    - wandb.project
+    - wandb.mode
+    - huggingface.namespace
+    - huggingface.private
+    - huggingface.push_policy
+  recommendation: Resolve the six material scientific decisions one at a time, then create planning artifacts only.

@@ -1,0 +1,93 @@
+schema_version: 1
+job_id: train-lora-rank-ablation
+type: train
+entrypoint: src/train_lora.py
+config_style: argument
+matrix:
+  lora_rank: [8, 16, 32]
+  seed: [17, 42, 73]
+parameters:
+  model_name: roberta-base
+  dataset_name: glue
+  dataset_config: sst2
+  dataset_split: train
+  evaluation_split: validation
+  learning_rate: 2.0e-4
+  num_epochs: 3
+  batch_size: 8
+  gradient_accumulation_steps: 4
+  effective_batch_size: 32
+  lora_alpha_rule: twice_rank
+  lora_dropout: 0.1
+  lora_target_modules: [query, value]
+resources:
+  backend: slurm
+  status: planned_unverified
+  available_phase: 6
+  execution_target: ssh
+  partition: gpu-a100
+  account: nlp-research
+  qos: normal
+  gpus: 1
+  cpus: 8
+  memory_gb: 32
+  time: "08:00:00"
+  max_concurrent_jobs: 4
+wandb:
+  enabled: true
+  status: planned_unverified
+  available_phase: 7
+  entity: fixture-nlp-lab
+  project: sentiment-lora
+  mode: online
+  group: lora-rank-ablation
+  tags: [lora-rank-ablation, multi-seed]
+huggingface:
+  push: final_only
+  status: planned_unverified
+  available_phase: 8
+  namespace: fixture-nlp-lab
+  repo: fixture-nlp-lab/lora-rank-ablation
+  private: true
+artifact_policy:
+  intermediate_checkpoints: local_untracked
+  publish: final_approved_checkpoint_only
+  upload_available_phase: 8
+planning:
+  configuration_count: 9
+  requested_gpu_hours_upper_bound: 72
+  execution_performed: false
+  run_artifacts_created: false
+provenance:
+  matrix.lora_rank:
+    origin: user
+    source: transcript turn 11; project-log.md
+  matrix.seed:
+    origin: user
+    source: transcript turn 11; experiments/prior-lora-rank-ablation/journal.md
+  parameters.model_name:
+    origin: user
+    source: transcript turn 13; experiments/prior-lora-rank-ablation/jobs/train.yaml
+  parameters.dataset_name:
+    origin: user
+    source: transcript turn 13; experiments/prior-lora-rank-ablation/jobs/train.yaml
+  controlled_parameters:
+    origin: user
+    source: transcript turn 13; experiments/prior-lora-rank-ablation/jobs/train.yaml
+  entrypoint:
+    origin: agent_default
+    rationale: Reuse the comparable prior training interface.
+    evidence: experiments/prior-lora-rank-ablation/jobs/train.yaml
+  resources:
+    origin: agent_default
+    rationale: Reuse the prior conservative per-configuration resource envelope within inherited project limits.
+    evidence: experiments/prior-lora-rank-ablation/jobs/train.yaml
+  resources.backend:
+    origin: project_setting
+    source: project-plan.md
+  wandb:
+    origin: project_setting
+    source: project-plan.md
+  huggingface:
+    origin: project_setting
+    source: project-plan.md

@@ -1,0 +1,14 @@
+schema_version: 1
+entries:
+  - evidence_id: git-example-lora-added
+    commit: cb4d3df
+    path: experiments/example-lora-rank-ablation
+    finding: The repository introduced a complete LoRA rank-ablation example with plan, job, journal, and structured-result conventions.
+  - evidence_id: git-planning-guidance-aligned
+    commit: f6f1aae
+    path: .agents/skills/plan-ml-experiment
+    finding: Planning guidance was revised after the initial template release; commit evidence is contextual and does not supply fixture metric values.
+validation_policy:
+  fixture_metadata_only: true
+  invoke_git_during_fixture_validation: false
+  metric_claims_source: experiments/prior-lora-rank-ablation/results.yaml

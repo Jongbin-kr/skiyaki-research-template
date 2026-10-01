@@ -2,234 +2,230 @@
 
 ## Purpose
 
-Search project history to find related experiments, baselines, and past findings before creating new experiment plans.
+Inspect and synthesize local repository evidence before a new experiment is planned. Produce a traceable discovery report covering prior findings, supported baselines, reusable settings, duplication, conflicts, and evidence gaps.
+
+This skill is read/synthesis-only. It does not choose a final experimental design, write planning artifacts, create a Run, execute jobs, contact external systems, or commit changes.
 
 ## When to Use
 
-Before creating any new experiment plan. This skill should be invoked to:
-- Identify related past work
-- Extract reusable baseline configurations
-- Find comparable metrics for benchmarking
-- Detect potential duplication of prior experiments
-- Surface relevant conclusions from project history
+Use before creating any new experiment plan to:
+
+- Identify related past work and negative results
+- Extract repository-supported baseline configurations and metrics
+- Find reusable local job settings
+- Detect exact, near, or partial duplication
+- Surface conflicts and unresolved scientific decisions for the Research Grill
 
 ## When NOT to Use
 
-- During experiment execution (information already in plan)
-- For routine status checks (use project log directly)
-- When user explicitly requests ignoring past work
+- During experiment execution
+- For routine status checks when the caller only needs one known project record
+- To query SSH, Slurm, W&B, Hugging Face Hub, or any other external system
+- To generate or approve an experiment plan
+- When the user explicitly requests ignoring past work
+
+## Operating Boundary
+
+Allowed work is limited to local repository reads, local Git-history inspection, and synthesis in the response. Treat W&B IDs, Hugging Face locations, remote paths, and Slurm metadata as unverified references only; do not follow or verify them through external services. Do not modify project or experiment files while performing discovery.
 
 ## Procedure
 
-### 1. Read Project Configuration
+### 1. Build the Source Inventory
 
-**Objective**: Understand project scope and constraints
+**Objective**: Account for every applicable evidence class before drawing conclusions.
 
-**Actions**:
-- Load `project-plan.md` from repository root
-- Extract research objectives and scope from frontmatter and body
-- Note project-level constraints (resource limits, infrastructure, policies)
-- Identify stable configuration parameters (W&B entity, HF namespace, etc.)
+Inspect and record each available source in these classes:
 
-**Output**: Project context for interpreting experimental relevance
+1. Root `project-plan.md`
+2. Root `project-log.md`
+3. Each relevant `experiments/<experiment-id>/plan.md`
+4. Each relevant `experiments/<experiment-id>/journal.md`
+5. Each relevant `experiments/<experiment-id>/results.yaml`
+6. Each relevant `experiments/<experiment-id>/jobs/*.yaml`
+7. Each relevant local Git-history entry
 
-### 2. Search Project Log
+First inventory `experiments/` and use the request's model, dataset, technique, objective, metric, and parameter range to determine relevance. A source is relevant when it can establish overlap, a baseline, a reusable setting, a prior conclusion, or historical context. Do not silently omit a relevant source because another file summarizes it.
 
-**Objective**: Find high-level conclusions related to current request
+For every source class, record either:
 
-**Actions**:
-- Read `project-log.md` from repository root
-- Extract keywords from user's request (model names, techniques, datasets, metrics)
-- Search for entries containing matching keywords
-- Identify:
-  - Related conclusions
-  - Links to past experiment directories
-  - Key metric values achieved
-  - Recommended next steps that relate to current request
+- `inspected`: the exact repository-relative path, or a Git commit identifier plus path when applicable; or
+- `missing`: the expected path or search scope and a concise reason, such as absent, unpopulated, or no relevant Git entry found.
 
-**Output**: List of potentially relevant experiments with context
+The inventory is part of the final report, including inspected sources that produced no finding. Search terms alone are not provenance.
 
-### 3. Search Experiment Directories
+### 2. Read Project Context
 
-**Objective**: Deep dive into related experiments for detailed information
+If root `project-plan.md` exists and is populated, extract project scope, constraints, and stable settings needed to interpret prior work. If it is absent or unpopulated, add it to `missing_sources`.
 
-**Actions**:
-- List all subdirectories in `experiments/`
-- For each experiment directory:
-  - Read `plan.md` to understand research objective and design
-  - Check similarity to current request (models, datasets, techniques, hypotheses)
-  - If relevant:
-    - Read `results.yaml` for final metrics and outcomes
-    - Read `journal.md` for conclusions, insights, and recommendations
-    - Note the experiment status (completed, failed, cancelled)
-    - Extract reusable job configurations from `jobs/*.yaml`
+If root `project-log.md` exists and is populated, inspect it for cross-experiment conclusions, experiment links, metric summaries, and recommended next steps. If it is absent or unpopulated, add it to `missing_sources`.
 
-**Relevance Criteria**:
-- Uses same or similar models
-- Uses same or similar datasets
-- Tests related hypotheses
-- Involves comparable techniques or methods
-- Addresses similar research questions
+Files under `templates/`, including `templates/project-plan.md` and `templates/project-log.md`, are examples only. They never satisfy the root-source check and must not be cited as current project evidence. The existence of a template does not change an absent root record into an inspected source.
 
-**Output**: 
-- List of related experiments with directories
-- Comparable baseline metrics
-- Reusable job configurations
-- Relevant findings and insights
+### 3. Inspect Relevant Experiments
 
-### 4. Search Git History
+For every relevant experiment:
 
-**Objective**: Identify if similar work was attempted but removed or reverted
+- Read `plan.md` for the objective, hypothesis, model, dataset, technique, variables, controls, intended baseline, and status.
+- Read `journal.md` for narrative observations, conclusions, caveats, failures, and recommendations.
+- Read `results.yaml` for structured metrics, configurations, run summaries, and outcome assessments.
+- Read relevant `jobs/*.yaml` for reproducible settings; do not execute the entrypoints.
+- Record absent expected files explicitly rather than inferring their contents.
 
-**Actions**:
-- Run `git log --all --oneline --grep="<keywords>"` with relevant keywords
-- Check recent commits (last 50-100) for experiment-related changes
-- Look for:
-  - Experiments that were committed then removed
-  - Reverted changes related to current request
-  - Branch names indicating similar work
-- If relevant commits found:
-  - Use `git show <commit>` to inspect what was done
-  - Check commit messages for rationale or conclusions
-  - Determine why work was removed (failed, superseded, incorrect approach)
+A plan's intended or externally attributed baseline is not automatically a locally validated baseline. Preserve its stated source and support status.
 
-**Output**: Historical context about attempted similar work
+### 4. Inspect Relevant Local Git History
 
-### 5. Extract Baselines
+Use read-only local Git commands to identify relevant commits, removed experiments, reversions, and changes in interpretation. Record the full commit identifier when available and the affected repository path. A commit message alone supports only what it states; inspect the relevant diff before using it as evidence for a substantive finding.
 
-**Objective**: Collect baseline configurations and metrics for comparison
+Git provenance has one of these forms:
 
-**Actions**:
-- From relevant experiments identified above:
-  - Extract baseline model names and configurations
-  - Extract baseline metric values (especially primary metrics)
-  - Extract successful job configurations (hyperparameters, resources)
-  - Identify best-performing runs and their settings
-- Organize baselines by:
-  - Model type
-  - Dataset
-  - Task type
-  - Technique/method
+- `commit: <full-commit-id>`
+- `commit: <full-commit-id>, path: <repository-relative-path>`
 
-**Output**: 
-- Reusable baseline configurations with metric values
-- Best-known results for comparison
-- Validated hyperparameter settings
+Do not fetch remotes, inspect hosted services, create branches, or create commits.
 
-### 6. Duplication Detection
+### 5. Extract Findings and Provenance
 
-**Objective**: Determine if current request duplicates past work
+Every reported finding must cite at least one inspected evidence reference:
 
-**Actions**:
-- Compare current request against related experiments:
-  - Same research objective/hypothesis?
-  - Same model, dataset, and technique combination?
-  - Same experimental parameters?
-- If exact match found:
-  - Check experiment status (completed, failed, cancelled)
-  - Check if user is aware of existing work
-  - Assess whether repetition is intentional (validation, reproduction)
-- If near match found:
-  - Identify key differences
-  - Determine if differences warrant new experiment
-  - Assess if existing experiment could be extended
+- Repository evidence: `path: experiments/<id>/results.yaml`
+- Git evidence: `commit: <full-commit-id>, path: experiments/<id>/...`
 
-**Duplication Assessment Levels**:
-- **Exact Duplicate**: Same objective, design, and parameters
-- **Near Duplicate**: Same objective, minor parameter differences
-- **Related Work**: Similar objective, different approach
-- **Novel Work**: No significant overlap with past experiments
+Include line numbers when useful, but a line number never replaces the path or commit. Separate evidence from inference:
 
-**Output**: 
-- Duplication assessment with level
-- Recommendation (proceed, review existing, extend existing, clarify intent)
-- Justification for recommendation
+- **Supported finding**: directly stated or derivable from cited local evidence
+- **Interpretation**: a synthesis based on cited evidence
+- **Unresolved**: not supported well enough to report as fact
 
-### 7. Synthesize Findings
+Do not cite W&B run IDs, Hugging Face repositories, papers named in a plan, or other external references as verified evidence unless their supporting content exists locally in an inspected repository source.
 
-**Objective**: Present organized summary for planning phase
+### 6. Reconcile Structured and Narrative Evidence
 
-**Actions**:
-- Group findings by relevance (highly relevant, somewhat relevant, tangentially related)
-- For each related experiment:
-  - Provide experiment ID and directory path
-  - Summarize research objective and key findings
-  - List relevant metric values
-  - Note any conclusions or recommendations
-  - Highlight reusable configurations
-- Summarize duplication assessment
-- Provide overall recommendation for proceeding
+When `results.yaml` and narrative sources (`journal.md`, `project-log.md`, or plan prose) describe the same metric or quantitative outcome:
 
-**Output Format**:
+1. Compare metric name, value, direction, dataset/configuration, split, seed or aggregation, and evaluation context.
+2. If they agree, record the corroborating references.
+3. If they differ, add an explicit conflict record containing:
+   - the metric and comparison context;
+   - the structured value and exact source path;
+   - the narrative value or claim and exact source path;
+   - whether the mismatch is explainable from local evidence; and
+   - the effect on baseline or conclusion usability.
+4. Use structured results as the quantitative value for comparison when contexts match, but never hide or silently overwrite the narrative mismatch.
+5. If contexts do not match or cannot be established, keep the values separate and mark the comparison unresolved.
+
+Narrative conclusions remain useful for interpretation and caveats; structured precedence applies only to matching quantitative comparisons.
+
+### 7. Extract Supported Baselines and Reusable Settings
+
+A baseline entry must include:
+
+- model and configuration;
+- dataset and split;
+- metric name, value, and direction;
+- relevant evaluation context such as seed or aggregation when available; and
+- at least one inspected repository path or Git commit identifier supporting the value.
+
+Reusable job settings must cite the relevant `jobs/*.yaml` path and remain descriptive. Do not label settings validated merely because a job file exists.
+
+If local evidence does not support a requested baseline value, report it as `unresolved`; do not estimate, copy an uncited value, or invent one. State what evidence is missing and hand the unresolved baseline decision to the Research Grill. Discovery may identify the question, but it must not choose the value or create a plan.
+
+### 8. Classify Duplication
+
+Compare the request with prior experiments across:
+
+- model;
+- dataset and split;
+- technique;
+- research objective or hypothesis;
+- parameter or ablation range;
+- metrics and evaluation method; and
+- important controlled settings.
+
+Assign exactly one classification:
+
+- **Exact Duplicate**: same objective and materially same model, dataset, technique, design, parameter range, and evaluation.
+- **Near Duplicate**: same core objective with limited material differences, such as added seeds or a modest range extension.
+- **Related Work**: meaningful overlap in model, dataset, technique, objective, or range, but a different question or design.
+- **Novel Work**: no significant overlap in the inspected repository evidence.
+
+Report matched dimensions, differing dimensions, cited evidence, and a recommendation: review existing, extend existing, clarify intent, or proceed. `Novel Work` means no overlap was found in the inspected local scope, not that no related work exists elsewhere.
+
+### 9. Synthesize the Discovery Report
+
+Use this structure:
+
 ```markdown
 ## Prior Research Discovery
 
-### Project Context
-- [Project objectives relevant to request]
-- [Key constraints from project-plan.md]
+### Request and Search Scope
+- Request: <request>
+- Relevance dimensions: <model, dataset, technique, objective, range, metrics>
+- Local scope only: yes
 
-### Related Experiments
+### Inspected-Source Inventory
+| Source type | Status | Repository path or Git provenance | Relevance/result |
+|---|---|---|---|
+| project plan | inspected/missing | `project-plan.md` | <context or reason> |
+| project log | inspected/missing | `project-log.md` | <findings or reason> |
+| experiment plan | inspected/missing | `experiments/<id>/plan.md` | <result> |
+| experiment journal | inspected/missing | `experiments/<id>/journal.md` | <result> |
+| structured results | inspected/missing | `experiments/<id>/results.yaml` | <result> |
+| job configuration | inspected/missing | `experiments/<id>/jobs/<file>.yaml` | <result> |
+| Git history | inspected/missing | commit `<full-id>`, path `<path>` | <result> |
 
-#### Highly Relevant
-1. **experiment-id-1** (`experiments/experiment-id-1/`)
-   - Objective: [brief description]
-   - Status: [completed/failed/cancelled]
-   - Key Findings: [1-2 sentence summary]
-   - Metrics: [relevant values]
-   - Reusable: [job configs, baselines]
-   - Link: [path to journal.md or results.yaml]
+### Missing Sources
+- `<expected path or scope>`: <absent, unpopulated, or no relevant entry>
 
-[Repeat for each highly relevant experiment]
+### Findings
+- **<finding>**
+  - Evidence: `<repository path>` and/or commit `<full-id>`
+  - Support: direct | derived | interpretation
 
-#### Somewhat Relevant
-[Similar format for less relevant experiments]
+### Comparable Baselines
+- **<baseline name>**: <metric>=<value> (<direction>) on <dataset/split>
+  - Evidence: `<repository path>` or commit `<full-id>`
+  - Support status: supported
+- **Requested baseline**: unresolved
+  - Missing support: <what evidence is required>
+  - Research Grill decision: <focused unresolved decision>
 
-### Baseline Information
+### Structured-vs-Narrative Conflicts
+- Metric/context: <metric and evaluation context>
+- Structured: <value>, source `<results path>`
+- Narrative: <value/claim>, source `<journal/log/plan path>`
+- Resolution/status: <explained or unresolved>
+- Impact: <effect on baseline or conclusion>
 
-**Available Baselines for Comparison**:
-- Model: [name], Dataset: [name], Metric: [value]
-- Source: [experiment or paper]
-- Configuration: [link to job YAML]
-
-### Git History Notes
-[Any relevant information from commit history]
+### Reusable Local Settings
+- <setting>: <value>, source `<job YAML path>`
 
 ### Duplication Assessment
+- Classification: Exact Duplicate | Near Duplicate | Related Work | Novel Work
+- Matched dimensions: <list>
+- Different dimensions: <list>
+- Evidence: `<path>` and/or commit `<full-id>`
+- Recommendation: review existing | extend existing | clarify intent | proceed
+- Justification: <evidence-backed rationale>
 
-**Level**: [Exact Duplicate | Near Duplicate | Related Work | Novel Work]
-
-**Analysis**: [Explanation of overlap with past work]
-
-**Recommendation**: 
-- [ ] Proceed with new experiment (novel work)
-- [ ] Review existing experiment results (duplicate)
-- [ ] Extend existing experiment (near duplicate)
-- [ ] Clarify intent with user (ambiguous overlap)
-
-**Justification**: [Why this recommendation]
+### Gaps and Handoff
+- <missing evidence, unresolved baseline, or material uncertainty for Research Grill>
 ```
+
+Use `None identified` for an empty conflicts or gaps section. Never omit `Inspected-Source Inventory`, `Missing Sources`, `Structured-vs-Narrative Conflicts`, or `Duplication Assessment`.
 
 ## Success Criteria
 
-The discovery is successful when:
-1. All relevant past experiments are identified and summarized
-2. Baseline configurations and metrics are extracted for comparison
-3. Duplication assessment is clear and justified
-4. Recommendation is actionable for next phase
-5. User can make informed decision about proceeding
+Discovery is complete when:
+
+1. Every applicable source class is represented as inspected or explicitly missing.
+2. Every finding and supported baseline has repository-path or Git-commit provenance.
+3. Matching structured and narrative metrics were compared and conflicts were recorded.
+4. Duplication is classified with evidence and dimensional differences.
+5. Root templates were not treated as populated project evidence.
+6. Unsupported baseline values remain unresolved for the Research Grill.
+7. The work remained local, read/synthesis-only, and produced no planning or execution side effects.
 
 ## Output
 
-Return synthesized findings to Main Agent in the format specified above, including:
-- List of related experiments with context
-- Baseline information for comparison
-- Git history insights (if any)
-- Duplication assessment with recommendation
-- All relevant paths and links for further review
-
-## Notes
-
-- **Thoroughness vs. Speed**: Balance comprehensive search with timely response. If project has many experiments, prioritize recent ones and those matching key terms.
-- **False Positives**: Better to surface potentially relevant experiments than miss important ones. Let planning phase filter further.
-- **Insufficient History**: If project is new with no experiments, state this clearly and note that current request will establish baseline.
-- **Ambiguous Matches**: When relevance is uncertain, include experiment with note about ambiguity rather than excluding.
+Return the Discovery Report to the Main Agent. Include the complete source inventory, missing sources, findings with provenance, supported or unresolved baselines, conflict records, reusable local settings, Git context, duplication classification, and focused gaps for the Research Grill.

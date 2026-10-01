@@ -2,274 +2,338 @@
 
 ## Overview
 
-This document defines the systematic approach for discovering and consolidating prior experiment findings in the AI/ML research workspace. Use this strategy when the `discover-prior-research` skill is invoked to ensure comprehensive coverage and accurate reporting.
+This reference defines a deterministic, local, read-only search strategy for the `discover-prior-research` skill. The result is a complete evidence inventory and synthesis, not an experiment plan or execution action.
 
-## Search Locations
+## Scope and Safety
 
-### 1. Project-Level Documentation
+Permitted operations:
 
-**File**: `project-log.md` (workspace root)
+- Read local repository files
+- List local directories
+- Search local file contents
+- Inspect local Git logs and diffs without changing history
+- Synthesize evidence in the response
 
-**Purpose**: Contains project-level conclusions, cross-experiment insights, and high-level findings
+Prohibited operations:
 
-**Search Strategy**:
-- Read entire file if present
-- Look for:
-  - Overall project conclusions
-  - Comparative statements across experiments
-  - Lessons learned that apply broadly
-  - References to specific experiments
-  - Decisions about future research directions
+- Writing project, experiment, Run, or planning artifacts
+- Running training or evaluation entrypoints
+- Contacting SSH, Slurm, W&B, Hugging Face Hub, or other external systems
+- Fetching Git remotes or creating commits
+- Treating remote IDs or destinations as live-verified evidence
 
-**Tools**: `read_file`
+## Search Dimensions
 
-### 2. Experiment Journals
+Derive search terms and relevance from the request across these dimensions:
 
-**Files**: `experiments/*/journal.md`
-
-**Purpose**: Contains narrative documentation of experiment execution, observations, and conclusions
-
-**Search Strategy**:
-- Use `grep_search` to find experiments mentioning relevant terms
-- For each matching experiment, read the complete journal
-- Look for:
-  - Experiment objectives and motivation
-  - Implementation decisions and rationale
-  - Observations during training/evaluation
-  - Unexpected findings or anomalies
-  - Final conclusions and recommendations
-  - References to baseline comparisons
-
-**Tools**: `grep_search` with pattern `includePattern="experiments/*/journal.md"`, then `read_file`
-
-### 3. Structured Results
-
-**Files**: `experiments/*/results.yaml`
-
-**Purpose**: Contains structured metrics, hyperparameters, and quantitative outcomes
-
-**Search Strategy**:
-- List all experiment directories
-- Read results.yaml from each experiment
-- Extract:
-  - Final metrics (accuracy, loss, perplexity, etc.)
-  - Hyperparameters used
-  - Model configuration
-  - Dataset information
-  - W&B run IDs for verification
-  - Hugging Face Hub locations
-
-**Tools**: `list_directory` on `experiments/`, then `read_file` for each results.yaml
-
-### 4. Git History
-
-**Files**: Git commit logs and diffs
-
-**Purpose**: Tracks changes to experiments over time, reveals iteration patterns
-
-**Search Strategy**:
-- Use `git log --all --grep="<search-term>"` to find relevant commits
-- Use `git log --oneline --all -- experiments/` to see experiment-related changes
-- For specific experiments, use `git log -- experiments/<experiment-name>/`
-- Look for:
-  - When experiments were created/modified
-  - Configuration changes between runs
-  - Abandoned approaches
-  - Iteration patterns
-
-**Tools**: `execute_bash` with git commands
-
-## Evidence Consolidation Approach
-
-### Combining Findings from Multiple Sources
-
-When multiple sources provide information about the same topic:
-
-1. **Prioritize by Specificity**:
-   - Structured data (results.yaml) > Narrative conclusions (journal.md) > High-level summaries (project-log.md)
-   - More recent findings > older findings (check Git timestamps if needed)
-
-2. **Cross-Reference for Validation**:
-   - Verify quantitative claims in journals against results.yaml
-   - Confirm project-log statements against actual experiment outcomes
-   - Check W&B run IDs when metrics are mentioned
-
-3. **Resolve Conflicts**:
-   - If metrics differ between journal and results.yaml, prefer results.yaml (structured source)
-   - If conclusions differ, note both and flag the discrepancy
-   - Check Git history to understand evolution of understanding
-
-4. **Synthesize Narrative + Quantitative**:
-   - Combine "model achieved 92% accuracy" (results.yaml) with "accuracy plateaued due to overfitting on validation set" (journal.md)
-   - Link quantitative outcomes to qualitative observations
-
-## Duplicate Experiment Detection
-
-### Similarity Criteria
-
-Two experiments are considered **similar** (potential duplicates) if they share:
-
-1. **Same Core Objective**:
-   - Testing the same hypothesis
-   - Exploring the same hyperparameter
-   - Using the same evaluation methodology
-
-2. **Overlapping Hyperparameter Space**:
-   - Same model architecture
-   - Same dataset
-   - Hyperparameter values within ±10% (for continuous values)
-   - Same categorical hyperparameters (optimizer, activation functions, etc.)
-
-3. **Comparable Metrics**:
-   - Measuring the same evaluation metrics
-   - Using the same test/validation splits
-
-### Detection Process
-
-1. **Extract Key Identifiers** from each experiment:
-   ```yaml
-   objective: "<what is being tested>"
-   model: "<architecture name>"
-   dataset: "<dataset identifier>"
-   key_hyperparams:
-     learning_rate: <value>
-     batch_size: <value>
-     lora_rank: <value>  # example
-   metrics: ["<metric1>", "<metric2>"]
-   ```
-
-2. **Compare Pairwise**:
-   - Check if objectives are semantically similar
-   - Compare model and dataset for exact match
-   - Check if key_hyperparams are within similarity threshold
-   - Verify metrics overlap
-
-3. **Report Duplicates with Evidence**:
-   - List similar experiments together
-   - Show which criteria matched
-   - Include outcome comparison if both completed
-   - Note any differences that make them non-duplicates
-
-### Example Duplicate Detection
-
-```
-POTENTIAL DUPLICATES FOUND:
-- Experiment: lora-rank-ablation-r16
-- Experiment: lora-rank-sweep-r16
-- Similarity: Both test LoRA rank=16 on same base model
-- Difference: First is part of ablation study, second is part of sweep
-- Recommendation: Reuse results from lora-rank-ablation-r16
+```yaml
+model: <model family or identifier>
+dataset: <dataset and configuration>
+technique: <method such as LoRA>
+objective: <research question or hypothesis>
+parameter_range: <ablation or sweep range>
+metrics: [<primary and comparison metrics>]
+evaluation: <split, protocol, seeds, aggregation>
 ```
 
-## Reporting Format for Findings
+Use these dimensions both to select relevant experiments and to classify duplication. Record the dimensions searched so a `Novel Work` result is bounded to the inspected local scope.
 
-### Structure for Main Agent Report
+## Required Source Inventory
 
-Present findings in the following structured format:
+The report must account for every applicable source class. Use exact repository-relative paths; for Git evidence use a commit identifier and, when possible, an affected path.
 
-```markdown
-## Prior Research Discovery Results
+| Source class | Required search | Inventory record |
+|---|---|---|
+| Project settings | Root `project-plan.md` | Exact path as inspected, or missing/unpopulated |
+| Project conclusions | Root `project-log.md` | Exact path as inspected, or missing/unpopulated |
+| Experiment plans | Relevant `experiments/*/plan.md` | One record per relevant path; explicit missing record where expected |
+| Experiment journals | Relevant `experiments/*/journal.md` | One record per relevant path; explicit missing record where expected |
+| Structured results | Relevant `experiments/*/results.yaml` | One record per relevant path; explicit missing record where expected |
+| Job configurations | Relevant `experiments/*/jobs/*.yaml` | One record per relevant path; explicit missing record where expected |
+| Git history | Relevant local commits and diffs | Commit ID plus path/finding, or no relevant entry found |
 
-### Search Query
-- **User Request**: <original user question or task>
-- **Search Terms**: <keywords/patterns used>
-- **Date**: <search date>
+An inspected source stays in the inventory even when it yields no finding. A source discovered through a summary must still be inspected directly when available and relevant.
 
-### Experiments Found
+## Root Records and Templates
 
-#### Experiment 1: <experiment-name>
-- **Location**: `experiments/<experiment-name>/`
-- **Objective**: <from journal.md or plan.md>
-- **Status**: <completed | in-progress | abandoned>
-- **Key Findings**:
-  - <finding 1 with source: journal.md line X or results.yaml>
-  - <finding 2>
-- **Metrics**: <key metrics from results.yaml>
-  - accuracy: X.XX
-  - loss: X.XX
-- **W&B Run**: <run-id if available>
-- **HF Hub**: <model location if uploaded>
+Only populated files at the repository root count as current project records:
 
-#### Experiment 2: <experiment-name>
-...
+- `project-plan.md`
+- `project-log.md`
 
-### Project-Level Conclusions
-<From project-log.md if relevant>
+Files such as `templates/project-plan.md`, `templates/project-log.md`, `templates/journal.md`, and `templates/results.yaml` define examples or schemas. They are not project evidence, do not satisfy a missing root-source check, and must not support a current finding or baseline. When only a template exists, record the corresponding root source as missing or unpopulated.
 
-### Duplicate Detection Results
-<List of similar experiments with recommendations>
+## Search Procedure
 
-### Recommended Baseline
-**Experiment**: <name>
-**Reason**: <why this is the best baseline for comparison>
-**Metrics to Beat**:
-- accuracy: X.XX
-- loss: X.XX
+### 1. Inventory Root Project Records
 
-### Evidence Links
-- [Experiment 1 Journal](experiments/<name>/journal.md)
-- [Experiment 1 Results](experiments/<name>/results.yaml)
-- [Project Log](project-log.md)
-- Git: `git log --oneline -- experiments/<name>/`
+Check exact root paths rather than searching by basename alone.
 
-### Gaps Identified
-<Areas not covered by prior research that may need new experiments>
-```
+For a populated `project-plan.md`, extract only context needed for discovery: project scope, constraints, stable settings, intended datasets/models, and evidence policies.
 
-### Reporting Guidelines
+For a populated `project-log.md`, extract project-level conclusions, cross-experiment comparisons, experiment links, and future directions. Follow referenced local experiment paths and inventory them separately.
 
-1. **Be Comprehensive but Concise**:
-   - Include all relevant experiments
-   - Summarize key findings, don't reproduce entire journals
-   - Link to sources for details
+If either root file is absent, empty, or only placeholder content, create a `missing_sources` entry with the exact expected path and reason.
 
-2. **Prioritize Actionable Information**:
-   - Highlight baseline metrics to beat
-   - Note successful approaches to replicate
-   - Warn about failed approaches to avoid
+### 2. Inventory Experiments Before Filtering
 
-3. **Provide Evidence Trails**:
-   - Always cite sources (file paths, line numbers, git commits)
-   - Include W&B run IDs for metric verification
-   - Link to Hugging Face Hub for model inspection
+List `experiments/` and identify candidate directories using the search dimensions. Inspect each candidate's `plan.md` to determine relevance. Include experiments that may establish:
 
-4. **Flag Uncertainties**:
-   - Note when information is incomplete
-   - Highlight conflicts between sources
-   - Suggest verification steps if needed
+- direct model/dataset/technique overlap;
+- the same research objective or parameter range;
+- a comparable metric or baseline;
+- a failed or abandoned approach;
+- reusable job settings; or
+- evidence that the request duplicates earlier work.
 
-5. **Format for Agent Consumption**:
-   - Use structured markdown (headers, lists, code blocks)
-   - Include exact file paths for Main Agent to read
-   - Provide actionable next steps
+Record why an experiment is relevant or excluded. Do not infer that a missing journal or results file has no relevant information; record it as missing.
 
-## Example Search Workflow
+### 3. Inspect Every Relevant Experiment Source
+
+For each relevant experiment, inspect:
+
+- `plan.md`: intended objective, hypothesis, baseline, variables, controls, and status
+- `journal.md`: narrative observations, interpretations, caveats, conclusions, and recommendations
+- `results.yaml`: structured metrics, run summaries, outcome assessments, and configuration facts
+- `jobs/*.yaml`: local reproducible settings and resource declarations
+
+Never run a job configuration. A configured W&B run, Hugging Face repository, SSH host, or Slurm backend is descriptive metadata only.
+
+### 4. Inspect Local Git Provenance
+
+Use bounded, read-only local Git inspection, for example:
 
 ```bash
-# 1. Search for experiments matching topic
-grep_search query="learning rate" includePattern="experiments/*/journal.md"
-
-# 2. List all experiment directories
-list_directory path="experiments/" depth=1
-
-# 3. Read results from relevant experiments
-read_file path="experiments/lr-sweep-001/results.yaml"
-read_file path="experiments/lr-sweep-001/journal.md"
-
-# 4. Check project-level conclusions
-read_file path="project-log.md"
-
-# 5. Review git history for context
-execute_bash command="git log --oneline --all -- experiments/lr-sweep-001/"
-
-# 6. Consolidate and report findings
-# (Generate report following format above)
+git log --oneline --all -- experiments/
+git log --oneline --all -- experiments/<experiment-id>/
+git log --oneline --all --grep="<relevant-term>"
+git show --stat <commit>
+git show <commit> -- <relevant-path>
 ```
 
-## Notes
+Use `git show` on a relevant path before claiming that a commit supports a substantive finding. Record full commit IDs in the report when available. Do not fetch, pull, query hosting APIs, change branches, or modify history.
 
-- **Always verify W&B runs** if run IDs are provided in results.yaml
-- **Cross-check metrics** between journal claims and results.yaml
-- **Consider temporal order** - later experiments may invalidate earlier conclusions
-- **Look for abandoned experiments** - these often contain valuable negative results
-- **Check for plan.md** in experiment directories if journal.md is missing
+### 5. Close the Inventory
+
+Before synthesis, verify that every required source class is represented by at least one `inspected` or `missing` record as applicable. Also verify that every relevant experiment has records for its plan, journal, structured results, and relevant job YAML.
+
+A minimal inventory record is:
+
+```yaml
+- source_type: structured_results
+  status: inspected
+  source_ref: experiments/example/results.yaml
+  relevance: supports accuracy comparison
+```
+
+A missing-source record is:
+
+```yaml
+- source_type: project_log
+  status: missing
+  source_ref: project-log.md
+  reason: no populated root project log exists; template files are not project evidence
+```
+
+## Provenance Rules
+
+### Repository-Path Evidence
+
+Every file-backed finding must cite an exact repository-relative path, for example:
+
+```yaml
+statement: rank 16 achieved accuracy 0.874
+support: direct
+sources:
+  - experiments/example-lora-rank-ablation/results.yaml
+```
+
+Line numbers are optional precision, not a substitute for the path.
+
+### Git Evidence
+
+Every history-backed finding must cite a commit identifier. Include a path when the finding depends on file content:
+
+```yaml
+statement: the example experiment entered the repository in this change
+support: direct
+sources:
+  - commit: <full-commit-id>
+    path: experiments/example-lora-rank-ablation/
+```
+
+A commit message supports only the historical statement expressed by that message. Quantitative or scientific claims require inspection of the relevant committed file.
+
+### Evidence versus Interpretation
+
+Label each item:
+
+- `direct`: explicitly present in a cited source
+- `derived`: calculated or compared from cited local values
+- `interpretation`: qualitative synthesis of cited evidence
+- `unresolved`: insufficient or incompatible evidence
+
+Search terms, directory names, external URLs, W&B run IDs, and Hugging Face repository names are not standalone proof of a scientific finding.
+
+## Structured-versus-Narrative Comparison
+
+Structured results are authoritative for matching quantitative comparisons, but they do not erase narrative discrepancies.
+
+For every metric mentioned in both `results.yaml` and a narrative source:
+
+1. Normalize the metric name without changing meaning.
+2. Establish whether model/configuration, dataset, split, seed/aggregation, checkpoint, and evaluation protocol match.
+3. Compare exact values and units.
+4. Record agreement as corroboration.
+5. Record any mismatch in `conflicts`, even if structured results will be used for the numeric comparison.
+6. If contexts differ or are incomplete, do not choose between values; mark the comparison unresolved.
+
+Conflict record:
+
+```yaml
+- metric: accuracy
+  context: <model, dataset, split, aggregation>
+  structured:
+    value: <value>
+    source_ref: experiments/<id>/results.yaml
+  narrative:
+    value_or_claim: <value or text>
+    source_ref: experiments/<id>/journal.md
+  status: explained | unresolved
+  explanation: <local evidence only>
+  impact: <baseline/conclusion usability>
+```
+
+When contexts match and values conflict, use the structured value for quantitative comparison while explicitly retaining the conflict. Narrative sources remain authoritative for their own observations, caveats, and interpretations.
+
+## Baseline Support Rules
+
+A supported baseline requires all of:
+
+```yaml
+model: <identifier and relevant configuration>
+dataset: <identifier/configuration>
+split: <evaluation split>
+metric:
+  name: <name>
+  value: <numeric value>
+  direction: maximize | minimize
+evaluation_context: <seed/aggregation/protocol when available>
+source_ref: <repository path or Git commit>
+```
+
+Before recommending a baseline, confirm that:
+
+- the cited source actually contains or directly supports the value;
+- its evaluation context is comparable to the requested experiment;
+- any structured/narrative conflict is recorded; and
+- the baseline is not merely an uncited assertion in a template or plan.
+
+If any material support is unavailable, report:
+
+```yaml
+baseline:
+  status: unresolved
+  missing_support: <value, split, context, or provenance>
+  research_grill_decision: <one focused decision to resolve later>
+```
+
+Do not interpolate, estimate, select a convenient prior value, or convert an unsupported external citation into repository evidence. The Research Grill resolves unsupported baseline decisions; discovery only identifies the gap.
+
+## Duplication Classification
+
+### Comparison Matrix
+
+Compare the request and each relevant experiment on:
+
+| Dimension | Requested | Prior experiment | Match status |
+|---|---|---|---|
+| Objective/hypothesis | | | exact/partial/different/unknown |
+| Model/configuration | | | exact/similar/different/unknown |
+| Dataset/configuration/split | | | exact/similar/different/unknown |
+| Technique | | | exact/similar/different/unknown |
+| Parameter range | | | exact/overlap/disjoint/unknown |
+| Metrics/protocol | | | exact/comparable/different/unknown |
+| Controlled settings | | | exact/partial/different/unknown |
+
+### Classification Rules
+
+Assign exactly one overall level:
+
+- **Exact Duplicate**: objective and all material design/evaluation dimensions are the same.
+- **Near Duplicate**: the core objective is the same and most material dimensions match, with bounded differences such as additional seeds, a small range extension, or one added metric.
+- **Related Work**: one or more meaningful dimensions overlap, but the objective or material design differs enough to answer a different question.
+- **Novel Work**: no significant overlap appears in the complete inspected local evidence.
+
+Unknown dimensions cannot establish an exact duplicate. Report them as gaps. For every classification include matched dimensions, different or unknown dimensions, evidence paths/commits, and one recommendation:
+
+- `review existing`
+- `extend existing`
+- `clarify intent`
+- `proceed`
+
+Do not collapse all overlap into “potential duplicate”; the report must select and justify one of the four levels.
+
+## Discovery Report Contract
+
+The report must contain these sections even when empty:
+
+1. `Request and Search Scope`
+2. `Inspected-Source Inventory`
+3. `Missing Sources`
+4. `Findings`
+5. `Comparable Baselines`
+6. `Structured-vs-Narrative Conflicts`
+7. `Reusable Local Settings`
+8. `Git History Notes`
+9. `Duplication Assessment`
+10. `Gaps and Handoff`
+
+Use `None identified` rather than omitting an empty conflicts, findings, settings, or gaps section.
+
+Example inventory:
+
+```markdown
+### Inspected-Source Inventory
+| Source type | Status | Repository path or Git provenance | Relevance/result |
+|---|---|---|---|
+| project log | missing | `project-log.md` | No populated root record; template excluded |
+| experiment plan | inspected | `experiments/example/plan.md` | Model and technique overlap |
+| structured results | inspected | `experiments/example/results.yaml` | Supports metric comparison |
+| Git history | inspected | commit `<full-id>`, path `experiments/example/` | Establishes change provenance |
+```
+
+Example finding:
+
+```markdown
+- **Rank 16 achieved 0.874 accuracy.**
+  - Evidence: `experiments/example/results.yaml`
+  - Support: direct
+```
+
+Example unresolved baseline:
+
+```markdown
+- **Requested baseline**: unresolved
+  - Missing support: no comparable value with a cited local evaluation split
+  - Research Grill decision: choose or supply an evidence-backed baseline
+```
+
+## Completion Checklist
+
+Before returning discovery results, confirm:
+
+- [ ] Root `project-plan.md` is inspected or explicitly missing/unpopulated.
+- [ ] Root `project-log.md` is inspected or explicitly missing/unpopulated.
+- [ ] Every relevant experiment plan is inventoried.
+- [ ] Every relevant experiment journal is inventoried or explicitly missing.
+- [ ] Every relevant structured result is inventoried or explicitly missing.
+- [ ] Every relevant job configuration is inventoried or explicitly missing.
+- [ ] Relevant local Git entries are inventoried, or absence is explicit.
+- [ ] Every finding cites a repository path or commit identifier.
+- [ ] Matching structured and narrative metrics were compared.
+- [ ] Every mismatch has an explicit conflict record.
+- [ ] Every baseline value is supported or marked unresolved.
+- [ ] Duplication is classified as exact, near, related, or novel with evidence.
+- [ ] Templates are not treated as populated project evidence.
+- [ ] No file was modified, no job or Run was created, and no external system was contacted.

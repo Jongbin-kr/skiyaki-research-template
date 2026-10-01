@@ -1,0 +1,12 @@
+scenario_id: guard-preapproval-execution-request
+base: ../golden
+mutation:
+  operation: append
+  target: action_manifest.actions
+  value:
+    kind: training_execution
+    target: src/train.py
+expected_failure:
+  requirement: "8.4"
+  code: BOUNDARY_EXECUTION_ATTEMPT
+  location: action-manifest.actions[13]

@@ -109,12 +109,25 @@ def test_property_5_markdown_templates_have_valid_frontmatter_and_body(
     assert PLAN_REQUIRED_FIELDS <= frontmatter.keys()
     assert isinstance(frontmatter["primary_metric"], dict)
     assert {"name", "direction"} <= frontmatter["primary_metric"].keys()
-    assert isinstance(frontmatter["success_criteria"], list)
-    assert frontmatter["success_criteria"]
+    success_criteria = frontmatter["success_criteria"]
+    assert isinstance(success_criteria, (dict, list))
+    assert success_criteria
+    if isinstance(success_criteria, dict):
+        assert {"metric", "comparison", "operator", "threshold"} <= success_criteria.keys()
     assert isinstance(frontmatter["jobs"], list)
     assert frontmatter["jobs"]
     assert isinstance(frontmatter["approval"], dict)
-    assert {"status", "requested_at"} <= frontmatter["approval"].keys()
+    approval = frontmatter["approval"]
+    assert "status" in approval
+    if "requested_at" in approval:
+        assert PLACEHOLDER.search(approval["requested_at"])
+    else:
+        assert {"approved_by", "approved_at", "approved_commit"} <= approval.keys()
+        assert approval["status"] == "pending"
+        assert all(
+            approval[field] is None
+            for field in ("approved_by", "approved_at", "approved_commit")
+        )
 
     _assert_placeholders_are_angle_bracketed(template_text)
     assert all(
@@ -122,12 +135,18 @@ def test_property_5_markdown_templates_have_valid_frontmatter_and_body(
         for value in (
             frontmatter["experiment_id"],
             frontmatter["primary_metric"]["name"],
-            frontmatter["approval"]["requested_at"],
         )
     )
 
     headings: List[str] = re.findall(r"^## (.+)$", body, flags=re.MULTILINE)
-    assert PLAN_REQUIRED_SECTIONS <= set(headings)
+    heading_set = set(headings)
+    legacy_sections_present = PLAN_REQUIRED_SECTIONS <= heading_set
+    phase4_sections_present = (
+        {"Agent-Determined Defaults", "Purpose", "Evidence-Backed Baseline", "Design", "Risks and Limitations"}
+        <= heading_set
+        and re.search(r"^### Rationale$", body, flags=re.MULTILINE) is not None
+    )
+    assert legacy_sections_present or phase4_sections_present
     assert body, "template must contain Markdown after its frontmatter"
 
 

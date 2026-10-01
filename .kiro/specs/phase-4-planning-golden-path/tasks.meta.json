@@ -1,0 +1,374 @@
+{
+  "pbtResults": {
+    "5.3 Write property tests for evidence closure and plan validity": {
+      "status": "passed",
+      "lastRunTimestamp": 1790816686270
+    },
+    "5.2 Write property tests for ordered and focused planning behavior": {
+      "status": "passed",
+      "lastRunTimestamp": 1790816679965
+    },
+    "5.4 Write property tests for jobs and approval-summary consistency": {
+      "status": "passed",
+      "lastRunTimestamp": 1790816692029
+    },
+    "5.5 Write property tests for safety, isolation, determinism, and diagnostics": {
+      "status": "passed",
+      "lastRunTimestamp": 1790816697919
+    }
+  },
+  "executionHistory": {
+    "1.1 Strengthen prior-research discovery guidance": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538432
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771551153
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772810000
+      }
+    ],
+    "1.2 Strengthen one-question-at-a-time grill guidance": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538456
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771551346
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772810094
+      }
+    ],
+    "1.3 Align planning guidance and duplicate artifact templates": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538489
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771551396
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772810015
+      }
+    ],
+    "2.1 Implement immutable scenario, evidence, decision, action, and diagnostic models": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538505
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771551441
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772810150
+      }
+    ],
+    "2.2 Implement traversal-safe fixture loading and isolated materialization": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538521
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772830069
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773120175
+      }
+    ],
+    "3.1 Implement workflow, grill, and decision-ledger validation": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538540
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773145519
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774066007
+      }
+    ],
+    "3.2 Implement evidence and discovery-report validation": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538562
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773145503
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774065996
+      }
+    ],
+    "3.3 Implement plan, job, and approval-summary validation": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538582
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773145604
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774066085
+      }
+    ],
+    "3.4 Implement boundary, command, and preservation validation": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538615
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773145710
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774066140
+      }
+    ],
+    "4.1 Create synthetic project and prior-research evidence fixtures": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538633
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790772830119
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773120356
+      }
+    ],
+    "4.2 Create the complete Golden Path transcript and expected artifacts": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538652
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773145730
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774066250
+      }
+    ],
+    "4.3 Create compact negative guard descriptors": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538674
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774087067
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774341094
+      }
+    ],
+    "7. Final checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790771538701
+      },
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816847939
+      }
+    ],
+    "2. Create test-only scenario models and safe fixture loading": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790773120208
+      }
+    ],
+    "4. Add the successful transcript fixture and focused guard fixtures": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774341137
+      }
+    ],
+    "5.2 Write property tests for ordered and focused planning behavior": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774362578
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776370114
+      }
+    ],
+    "5.3 Write property tests for evidence closure and plan validity": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774362634
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776370141
+      }
+    ],
+    "5.1 Write the successful scenario integration and preservation tests": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774362712
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776369949
+      }
+    ],
+    "5.5 Write property tests for safety, isolation, determinism, and diagnostics": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774362786
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776370306
+      }
+    ],
+    "5.4 Write property tests for jobs and approval-summary consistency": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790774362822
+      },
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776370216
+      },
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790815599484
+      },
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790815909737
+      }
+    ],
+    "5. Add automated Golden Path and property validation": [
+      {
+        "executionId": "21c8cb50-1175-4f9f-bffc-77cff3bf145a",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790776369982
+      }
+    ],
+    "6.1 Add static skill, template, fixture-inventory, and task-traceability tests": [
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790815927102
+      },
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816168943
+      }
+    ],
+    "6. Integrate repository contract checks and regression validation": [
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816168998
+      }
+    ],
+    "6.2 Run targeted and full automated regression suites and fix local validation defects": [
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816187513
+      },
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816832769
+      }
+    ],
+    "1. Align the three planning skills and templates with the Phase 4 contract": [
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816832790
+      }
+    ],
+    "3. Implement pure Phase 4 validators": [
+      {
+        "executionId": "86c9573b-2096-4bfa-88c5-c6dce3b02e9c",
+        "chatSessionId": "sess_7ef19cde-b5f1-45e1-9c37-7b59f7895a2f",
+        "timestamp": 1790816832848
+      }
+    ]
+  }
+}

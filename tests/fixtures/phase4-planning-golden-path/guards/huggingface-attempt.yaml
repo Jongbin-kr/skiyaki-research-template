@@ -1,0 +1,12 @@
+scenario_id: guard-huggingface-attempt
+base: ../golden
+mutation:
+  operation: append
+  target: action_manifest.actions
+  value:
+    kind: huggingface_hub
+    target: fixture-nlp-lab/roberta-sst2-lora
+expected_failure:
+  requirement: "8.2"
+  code: BOUNDARY_EXTERNAL_OPERATION
+  location: action-manifest.actions[13]

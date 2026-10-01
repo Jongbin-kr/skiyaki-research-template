@@ -283,6 +283,8 @@ matrix:
 
 ## Slurm Requirements
 
+During Phase 4, Slurm fields are reproducible planning metadata only. For GPU work in an SSH-targeted project, set `resources.backend: slurm`, `resources.status: planned_unverified`, and `resources.available_phase: 6`; do not submit, query, or claim availability. W&B and Hugging Face destinations follow the same `planned_unverified` convention with `available_phase: 7` and `available_phase: 8`, respectively.
+
 ### When Slurm is Required
 
 Per AGENTS.md rules:

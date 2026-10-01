@@ -1,36 +1,72 @@
-# Evaluation Job Configuration
-
+# Reproducible evaluation plan. Replace every required placeholder before approval.
 job_id: eval-<experiment-id>
 type: evaluate
-
-# Execution
 entrypoint: src/evaluate.py
-config_style: argument  # Options: argument, hydra, json, yaml
+config_style: argument
 
-# Parameters
 parameters:
-  checkpoint: null  # Filled at runtime from best training run
+  checkpoint: null
+  checkpoint_resolution: best_primary_metric_training_run
   dataset_name: <dataset-name>
-  dataset_split: test
+  dataset_split: <evaluation-split>
   batch_size: 16
-  
-  # Metrics to compute
-  metrics:
-    - accuracy
-    - f1
-    # Add others as needed
+  primary_metric: <metric-name>
+  secondary_metrics:
+    - <secondary-metric>
 
-# Resources (evaluation typically needs less than training)
+# For GPU work in an SSH-targeted project, Slurm is planned metadata only in Phase 4.
 resources:
-  backend: slurm  # Options: local, slurm
+  backend: slurm
+  status: planned_unverified
+  available_phase: 6
   gpus: 1
   cpus: 4
   memory_gb: 16
-  time: "02:00:00"  # HH:MM:SS format
+  time: "02:00:00"
 
-# Tracking
+# Must match the training experiment group; no live verification occurs before Phase 7.
 wandb:
   enabled: true
+  status: planned_unverified
+  available_phase: 7
+  entity: <wandb-entity>
+  project: <wandb-project>
   group: <experiment-id>
   tags:
     - evaluation
+
+# Destination metadata only; evaluation does not upload before Phase 8.
+huggingface:
+  push: never
+  status: planned_unverified
+  available_phase: 8
+  namespace: <huggingface-namespace>
+  repo: <huggingface-repository>
+  private: <true-or-false>
+
+# Origins: user, project_setting, prior_evidence, or agent_default.
+provenance:
+  parameters.checkpoint_resolution:
+    origin: agent_default
+    source: <evidence-ref-or-explicit-assumption>
+  parameters.dataset_name:
+    origin: <origin>
+    source: <user-turn-project-setting-or-evidence-ref>
+  parameters.dataset_split:
+    origin: <origin>
+    source: <user-turn-project-setting-or-evidence-ref>
+  parameters.primary_metric:
+    origin: <origin>
+    source: <user-turn-or-evidence-ref>
+  secondary_metrics:
+    origin: <origin>
+    source: <user-turn-evidence-ref-or-assumption>
+  resources:
+    origin: project_setting
+    source: project-plan.md
+  wandb:
+    origin: project_setting
+    source: project-plan.md
+  huggingface:
+    origin: project_setting
+    source: project-plan.md

@@ -1,0 +1,10 @@
+scenario_id: guard-unresolved-baseline
+base: ../golden
+mutation:
+  operation: replace
+  target: scenario.decisions.baseline.resolved
+  value: false
+expected_failure:
+  requirement: "4.5"
+  code: DECISION_APPROVAL_BLOCKED
+  location: decisions.baseline
