@@ -78,15 +78,16 @@ your-project/
 ├── project-plan.md           # Your infrastructure and policies
 ├── project-log.md            # Project-level research progress
 │
-├── .agents/skills/           # Reusable research workflows
-│   ├── grill-me/            # Ask clarifying questions
-│   ├── discover-prior-research/  # Find related work
-│   ├── plan-ml-experiment/  # Create experiment plans
-│   ├── train-llm/           # Execute training
-│   ├── evaluate-llm/        # Run evaluation
-│   └── finalize-experiment/ # Complete documentation
+├── .agents/
+│   ├── skills/               # Reusable research workflows
+│   │   ├── grill-me/            # Ask clarifying questions
+│   │   ├── explore-project-history/  # Inspect this repo's past work
+│   │   ├── plan-ml-experiment/  # Create experiment plans
+│   │   ├── train-llm/           # Execute training
+│   │   ├── evaluate-llm/        # Run evaluation
+│   │   └── finalize-experiment/ # Complete documentation
+│   └── agents/               # Subagent role descriptions
 │
-├── agent-descriptions/       # Subagent role definitions
 ├── templates/               # File templates for experiments
 ├── experiments/             # All experimental work
 │   ├── example-lora-rank-ablation/  # Example experiment (see below)
@@ -176,8 +177,8 @@ Skills are reusable research workflows that Codex uses automatically. Each skill
 
 See [`.agents/skills/grill-me/SKILL.md`](.agents/skills/grill-me/SKILL.md) for detailed workflow.
 
-#### discover-prior-research
-**Purpose**: Search project history to find related experiments and baselines
+#### explore-project-history
+**Purpose**: Inspect this repository's past experiments, results, project log, and Git history to find related work and baselines
 
 **When to use**:
 - Before creating any new experiment plan
@@ -194,7 +195,7 @@ See [`.agents/skills/grill-me/SKILL.md`](.agents/skills/grill-me/SKILL.md) for d
 
 **Example**: Before starting a new LoRA experiment, this skill finds your previous LoRA work and suggests reusing successful configurations.
 
-See [`.agents/skills/discover-prior-research/SKILL.md`](.agents/skills/discover-prior-research/SKILL.md) for detailed workflow.
+See [`.agents/skills/explore-project-history/SKILL.md`](.agents/skills/explore-project-history/SKILL.md) for detailed workflow.
 
 #### plan-ml-experiment
 **Purpose**: Create detailed experiment plans and job configurations
@@ -286,11 +287,11 @@ Codex delegates only bounded tasks that benefit from specialist expertise. It se
 
 | Canonical routing name | Scope | Gate |
 |---|---|---|
-| [Research Journal & Git](agent-descriptions/research-journal-git.md) | Synthesize prior work or finalize research documentation and a Git proposal. | Commits require explicit user approval. |
-| [W&B Analyst](agent-descriptions/wandb-analyst.md) | Compare training-run metrics and local or user-provided run exports. | Reads tracking data; makes no config changes. |
-| [Hugging Face Curator](agent-descriptions/huggingface-managing-specialist.md) | Draft model cards and curate Hub artifacts and metadata. | Hub mutations (create/upload/visibility) require approval. |
-| [Visualization Specialist](agent-descriptions/visualization-specialist.md) | Create figures from results and user-provided data. | No data manipulation. |
-| [Slurm Debugger](agent-descriptions/slurm-managing-specialist.md) | Diagnose Slurm job failures from logs, status output, and job configuration. | Mutating remote actions require approval. |
+| [Research Journal & Git](.agents/agents/research-journal-git.md) | Synthesize prior work or finalize research documentation and a Git proposal. | Commits require explicit user approval. |
+| [W&B Analyst](.agents/agents/wandb-analyst.md) | Compare training-run metrics and local or user-provided run exports. | Reads tracking data; makes no config changes. |
+| [Hugging Face Curator](.agents/agents/huggingface-curator.md) | Draft model cards and curate Hub artifacts and metadata. | Hub mutations (create/upload/visibility) require approval. |
+| [Visualization Specialist](.agents/agents/visualization-specialist.md) | Create figures from results and user-provided data. | No data manipulation. |
+| [Slurm Debugger](.agents/agents/slurm-debugger.md) | Diagnose Slurm job failures from logs, status output, and job configuration. | Mutating remote actions require approval. |
 
 The linked descriptions define the full specialist contracts. Delegation does not bypass approval requirements; blocked work returns the relevant missing approval or configuration dependency and a non-executing next step.
 

@@ -120,7 +120,7 @@ Before starting a new experiment:
 
 1. Search `project-log.md` for related conclusions
 2. Browse experiments in this directory for similar work
-3. Ask Codex to use the `discover-prior-research` skill
+3. Ask Codex to use the `explore-project-history` skill
 
 This prevents duplicating past work and helps identify reusable configurations.
 

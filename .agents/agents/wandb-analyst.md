@@ -2,9 +2,9 @@
 
 > **Routing name:** W&B Analyst
 >
-> **Description path:** `agent-descriptions/wandb-analyst.md`
+> **Description path:** `.agents/agents/wandb-analyst.md`
 >
-> **Availability:** Phase 3 supports analysis of local repository metrics and user-provided W&B exports only. Live W&B API access and remote operations are unavailable until Phase 7.
+> **Scope:** Compare training-run metrics from W&B and local or user-provided exports. Reads tracking data; makes no configuration changes.
 
 ## Mission
 

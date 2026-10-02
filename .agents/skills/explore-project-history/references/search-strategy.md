@@ -2,7 +2,7 @@
 
 ## Overview
 
-This reference defines a deterministic, local, read-only search strategy for the `discover-prior-research` skill. The result is a complete evidence inventory and synthesis, not an experiment plan or execution action.
+This reference defines a deterministic, local, read-only search strategy for the `explore-project-history` skill. The result is a complete evidence inventory and synthesis, not an experiment plan or execution action.
 
 ## Scope and Safety
 

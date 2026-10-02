@@ -6,7 +6,7 @@ This template provides a structured workflow for AI/ML research experiments with
 
 ## Workflow Rules
 
-1. **Prior Research Discovery**: Before planning experiments, inspect:
+1. **Project History Review**: Before planning experiments, inspect:
    - project-log.md for project-level conclusions
    - experiments/*/journal.md for past findings
    - experiments/*/results.yaml for comparable baselines
@@ -40,7 +40,10 @@ This template provides a structured workflow for AI/ML research experiments with
    - Do not commit secrets, tokens, or credentials
    - Do not commit model checkpoints
    - Do not commit W&B cache directories
-   - Do not commit raw Slurm logs (*.out, *.err)
+   - Do not commit raw or unbounded Slurm logs (*.out, *.err) by default
+   - Never commit logs (or excerpts) from failed or errored runs; instead record the exit status and a concise error summary in the Run record and history.md
+   - A small, curated excerpt from a successful run may be committed when it is genuine research or debugging evidence
+   - Always record job ID, log paths, exit status, and timestamps in the Run record
    - Commit experiment plans, configurations, and results
 
 7. **Completion Criteria**: An experiment is complete when:
@@ -60,7 +63,7 @@ This template provides a structured workflow for AI/ML research experiments with
 The following skills implement standard research procedures:
 
 - `grill-me`: Clarify experimental decisions through targeted questions
-- `discover-prior-research`: Search past experiments and project history
+- `explore-project-history`: Inspect this repository's past experiments, results, project log, and Git history before planning new work
 - `plan-ml-experiment`: Create experiment plans and job configurations
 - `train-llm`: Execute training jobs with proper tracking
 - `evaluate-llm`: Run evaluation and compare results
@@ -74,11 +77,11 @@ Delegate only a bounded task that benefits from specialist expertise. Use these 
 
 | Routing name | Trigger | Preserved description | Scope |
 |---|---|---|---|
-| Research Journal & Git | Prior-work synthesis or experiment finalization and Git proposal | [`agent-descriptions/research-journal-git.md`](agent-descriptions/research-journal-git.md) | Local repository evidence and documentation; commits remain approval-gated |
-| W&B Analyst | Specialist comparison of training runs | [`agent-descriptions/wandb-analyst.md`](agent-descriptions/wandb-analyst.md) | W&B run metrics and local or user-provided exports |
-| Hugging Face Curator | Model-card or Hub artifact curation | [`agent-descriptions/huggingface-managing-specialist.md`](agent-descriptions/huggingface-managing-specialist.md) | Canonical alias for the preserved filename; Hub mutations remain approval-gated |
-| Visualization Specialist | Research figures from available results | [`agent-descriptions/visualization-specialist.md`](agent-descriptions/visualization-specialist.md) | Local results and exports |
-| Slurm Debugger | Diagnosis of a Slurm failure | [`agent-descriptions/slurm-managing-specialist.md`](agent-descriptions/slurm-managing-specialist.md) | Canonical alias for the preserved filename; diagnosis of job failures, with mutating remote actions approval-gated |
+| Research Journal & Git | Prior-work synthesis or experiment finalization and Git proposal | [`.agents/agents/research-journal-git.md`](.agents/agents/research-journal-git.md) | Local repository evidence and documentation; commits remain approval-gated |
+| W&B Analyst | Specialist comparison of training runs | [`.agents/agents/wandb-analyst.md`](.agents/agents/wandb-analyst.md) | W&B run metrics and local or user-provided exports |
+| Hugging Face Curator | Model-card or Hub artifact curation | [`.agents/agents/huggingface-curator.md`](.agents/agents/huggingface-curator.md) | Hub mutations remain approval-gated |
+| Visualization Specialist | Research figures from available results | [`.agents/agents/visualization-specialist.md`](.agents/agents/visualization-specialist.md) | Local results and exports |
+| Slurm Debugger | Diagnosis of a Slurm failure | [`.agents/agents/slurm-debugger.md`](.agents/agents/slurm-debugger.md) | Diagnosis of job failures, with mutating remote actions approval-gated |
 
 Keep unmatched work in the Main Agent. For a match, select the narrowest specialist able to complete the task and load only its description immediately before delegation; never bulk-load all descriptions. If multiple specialists are needed, split the work into separate bounded delegations and repeat selection and selective loading for each.
 

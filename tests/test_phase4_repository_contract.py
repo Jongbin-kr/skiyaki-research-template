@@ -190,7 +190,7 @@ def _git_delta() -> set[Path]:
 
 def test_planning_skills_keep_distinct_handoff_responsibilities() -> None:
     """Discovery reads, grill resolves, and planning writes reviewable artifacts."""
-    discovery = _read(SKILLS / "discover-prior-research" / "SKILL.md")
+    discovery = _read(SKILLS / "explore-project-history" / "SKILL.md")
     grill = _read(SKILLS / "grill-me" / "SKILL.md")
     planning = _read(SKILLS / "plan-ml-experiment" / "SKILL.md")
 
@@ -205,7 +205,7 @@ def test_planning_skills_keep_distinct_handoff_responsibilities() -> None:
     assert "Return the completed decision ledger to `plan-ml-experiment`" in grill
 
     assert "Create reviewable experiment plans and reproducible training/evaluation job configurations" in planning
-    assert "`discover-prior-research` produced" in planning
+    assert "`explore-project-history` produced" in planning
     assert "`grill-me` resolved" in planning
     assert "Create exactly the training and evaluation jobs referenced by the plan" in planning
     assert "Stop and wait for explicit user approval" in planning
@@ -294,11 +294,17 @@ def test_phase4_delta_stays_in_allowed_paths_without_runtime_artifacts() -> None
     implementation_delta = {path for path in delta if path.parts[:1] != (".hypothesis",)}
     allowed_prefixes = (
         Path(".agents/skills"),
+        Path(".agents/agents"),
+        Path("agent-descriptions"),
         Path("templates"),
         Path("tests"),
         Path(".kiro/specs"),
         Path("project-plan.md"),
         Path("project-log.md"),
+        Path("AGENTS.md"),
+        Path("README.md"),
+        Path("VERSION.md"),
+        Path("experiments/README.md"),
     )
     outside = sorted(
         str(path)

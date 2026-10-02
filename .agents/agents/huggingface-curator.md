@@ -2,9 +2,9 @@
 
 > **Canonical routing name:** Hugging Face Curator
 >
-> **Description path:** `agent-descriptions/huggingface-managing-specialist.md`
+> **Description path:** `.agents/agents/huggingface-curator.md`
 >
-> **Availability:** Phase 3 supports local model-card drafting and local metadata review only. Hugging Face Hub queries, repository operations, verification, and uploads are unavailable until Phase 8.
+> **Scope:** Draft model cards and curate Hub artifacts and metadata. Hub mutations (repo creation, uploads, visibility changes) require explicit user approval.
 
 ## Mission
 

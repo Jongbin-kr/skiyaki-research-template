@@ -144,7 +144,8 @@ experiments/{experiment-id}/runs/{run-id}/
   - `train.log`: Merged stdout/stderr from job entrypoint
   - `stderr.log`: Isolated stderr for error analysis
   - `slurm-{job-id}.out`: Slurm job output (Phase 6+)
-- **Retention**: Preserved indefinitely for failed runs, may be compressed for completed runs
+- **Retention**: Preserved locally — kept indefinitely for failed runs, may be compressed for completed runs
+- **Version control**: These logs stay local and are excluded from Git by default. Never commit logs from failed/errored runs; record the exit status and a concise error summary in `run.yaml` and `history.md` instead. A small curated excerpt from a successful run may be committed as evidence after a secret/path check.
 - **Required**: Yes, directory created during initialization
 
 #### checkpoints/

@@ -6,7 +6,7 @@ Create reviewable experiment plans and reproducible training/evaluation job conf
 
 ## Prerequisites
 
-- `discover-prior-research` produced repository-path or Git-commit evidence and identified unsupported values.
+- `explore-project-history` produced repository-path or Git-commit evidence and identified unsupported values.
 - `grill-me` resolved the objective, evidence-backed baseline, primary metric, measurable success criterion, ablation scope, and controlled parameters.
 - `project-plan.md` supplied available stable Project_Settings; missing settings are recorded rather than invented.
 - The decision ledger identifies each material value's origin as `user`, `project_setting`, `prior_evidence`, or `agent_default`.

@@ -38,7 +38,7 @@ them.
 ### Implemented Features
 - Complete directory structure for AI/ML research projects
 - AGENTS.md with core research workflow rules
-- Six research workflow skills (grill-me, discover-prior-research, plan-ml-experiment, train-llm, evaluate-llm, finalize-experiment)
+- Six research workflow skills (grill-me, explore-project-history, plan-ml-experiment, train-llm, evaluate-llm, finalize-experiment)
 - Five specialist agent descriptions
 - Comprehensive templates for experiments, jobs, runs, and results
 - Conda environment configuration

@@ -1,8 +1,8 @@
 # Slurm Managing Specialist
 
 > **Canonical routing name:** Slurm Debugger
-> **Description path:** `agent-descriptions/slurm-managing-specialist.md`
-> **Availability:** Phase 3 supports offline diagnosis from user-supplied artifacts only. Live SSH and Slurm access begins in Phase 6.
+> **Description path:** `.agents/agents/slurm-debugger.md`
+> **Scope:** Diagnose Slurm job failures from logs, status output, and job configuration. Mutating remote actions (resubmission, cancellation) require explicit user approval.
 
 ## Mission
 

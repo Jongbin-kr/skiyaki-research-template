@@ -1,8 +1,8 @@
 # Research Journal & Git Agent
 
 > Routing name: Research Journal & Git
-> Description path: `agent-descriptions/research-journal-git.md`
-> Availability: Local repository discovery, research-record finalization, and Git commit proposals are available in Phase 3. Commit creation remains approval-gated.
+> Description path: `.agents/agents/research-journal-git.md`
+> Scope: Local repository discovery, research-record finalization, and Git commit proposals. Commit creation remains approval-gated.
 
 ## Mission
 

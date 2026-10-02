@@ -70,23 +70,26 @@ Cache directories contain temporary data that is either regenerated automaticall
 
 ### Raw Slurm Logs
 
-Raw Slurm output files are typically large and contain redundant information already captured in processed logs.
+Raw Slurm output files are typically large and contain redundant information already captured in processed logs. They are excluded by default.
 
-**File Patterns to Block**:
+**File Patterns to Block by default**:
 - `*.out` - Slurm stdout files (in run logs directories)
 - `*.err` - Slurm stderr files (in run logs directories)
 - `slurm-*.out` - Slurm job output files
 
-**Specific Paths to Block**:
+**Specific Paths to Block by default**:
 - `experiments/*/runs/*/logs/*.out`
 - `experiments/*/runs/*/logs/*.err`
 
-**Exception - Processed Logs to Commit**:
+**Failed or errored runs**: Never commit logs — or excerpts of them — from a run that failed or errored. Such logs are the most likely to carry stack traces, absolute paths, hostnames, environment variables, and partial credentials. Instead, record the exit status and a concise error summary in `run.yaml` and `history.md` so the failure stays reproducible without shipping the raw output.
+
+**Successful runs - small curated excerpts may be committed**:
 - `experiments/*/runs/*/logs/stdout.log` - Processed/structured stdout
 - `experiments/*/runs/*/logs/stderr.log` - Processed/structured stderr
 - `experiments/*/runs/*/logs/execution.log` - Agent execution notes
+- A short, hand-picked excerpt is acceptable only when it is genuine research or debugging evidence and has been checked for secrets and absolute paths.
 
-**Rationale**: Raw Slurm logs can be multiple MB per job. We preserve the information by extracting relevant content into structured log files during run tracking.
+**Rationale**: Raw Slurm logs can be multiple MB per job. We preserve the information by extracting relevant content into structured records during run tracking, and we keep failure noise out of version control while still documenting why a run failed.
 
 ### Operating System Files
 

@@ -1,8 +1,8 @@
 # Visualization Specialist
 
 > Routing name: Visualization Specialist
-> Description path: `agent-descriptions/visualization-specialist.md`
-> Availability: Phase 3 supports figures from local repository results, local W&B exports, and user-provided data. Live W&B retrieval is unavailable until Phase 7.
+> Description path: `.agents/agents/visualization-specialist.md`
+> Scope: Create figures from repository results, W&B exports, and user-provided data. No data manipulation.
 
 ## Mission
 

@@ -1,4 +1,6 @@
-# Discover Prior Research Skill
+# Explore Project History Skill
+
+Inspect this repository's past experiments, results, project log, and Git history before planning new work.
 
 ## Purpose
 
@@ -156,7 +158,7 @@ Report matched dimensions, differing dimensions, cited evidence, and a recommend
 Use this structure:
 
 ```markdown
-## Prior Research Discovery
+## Project History Review
 
 ### Request and Search Scope
 - Request: <request>

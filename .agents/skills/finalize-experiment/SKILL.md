@@ -206,11 +206,13 @@ Verify NO sensitive information is included:
 
 #### 4.3 Artifact Review
 
-Verify NO large artifacts are included:
+Verify NO large or unsafe artifacts are included:
 - ❌ No model checkpoints (*.pt, *.bin, *.safetensors files)
 - ❌ No W&B cache directories (wandb/)
-- ❌ No raw Slurm logs (*.out, *.err files in runs/*/logs/)
+- ❌ No raw or unbounded Slurm logs (*.out, *.err files in runs/*/logs/) by default
+- ❌ No logs or log excerpts from failed or errored runs (record exit status and an error summary in run.yaml/history.md instead)
 - ❌ No large datasets or outputs
+- ✅ A small curated log excerpt from a successful run is acceptable when it is genuine evidence and free of secrets and absolute paths
 
 #### 4.4 Content Review
 
@@ -453,7 +455,7 @@ Do NOT proceed with commit until evaluation completes.
 ## Related Skills
 
 - **evaluate-llm**: Should be completed before finalize-experiment
-- **discover-prior-research**: Can reference when suggesting next experiments
+- **explore-project-history**: Can reference when suggesting next experiments
 - **plan-ml-experiment**: May be invoked for recommended follow-up work
 
 ## Related Documentation
