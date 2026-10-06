@@ -52,8 +52,5 @@ jobs or run anything.
 - `experiments/<experiment-id>/run-config.yaml`
 - A short approval summary for the user.
 
-## References
-
-- [common-experiment-patterns.md](references/common-experiment-patterns.md)
-- [example-lora-ablation.md](references/example-lora-ablation.md)
-- [example-learning-rate-search.md](references/example-learning-rate-search.md)
+See the worked example at `experiments/example-lora-rank-ablation/` for a
+complete plan.md + run-config.yaml.

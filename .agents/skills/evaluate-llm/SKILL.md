@@ -39,5 +39,3 @@ or gated automatically.
 - Compare only what the evidence supports; if it can't support a conclusion, say so.
 - For many runs or surprising patterns, consider producing figures under
   `figures/` to make the comparison clear.
-
-See [references/comparison-guidelines.md](references/comparison-guidelines.md).

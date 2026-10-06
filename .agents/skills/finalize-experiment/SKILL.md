@@ -34,9 +34,7 @@ commit — you prepare and the user decides.
    - W&B caches,
    - raw Slurm logs (`experiments/*/logs/*.out`, `*.err`).
 
-   Commit plans, configs, results, and documentation. See
-   [references/git-safety.md](references/git-safety.md) for the full exclusion
-   list.
+   Commit plans, configs, results, and documentation only.
 
 6. **Propose the commit.** Present the file list and a clear commit message to the
    user. Do not commit until the user approves. Push only if asked.

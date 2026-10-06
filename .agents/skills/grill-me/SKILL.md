@@ -46,6 +46,3 @@ When a material decision is unclear or unsupported, such as:
 ## Output
 
 A short summary of the resolved decisions, ready to hand to `plan-ml-experiment`.
-
-See [references/grill-policy.md](references/grill-policy.md) for the detailed
-questioning policy and examples.

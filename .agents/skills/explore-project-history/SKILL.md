@@ -40,5 +40,3 @@ Before planning any new experiment, to:
 - Read-only: this skill inspects and summarizes; it does not write plans or run
   anything.
 - Cite evidence (file path or commit) for each finding so the user can verify.
-- See [references/search-strategy.md](references/search-strategy.md) for a
-  thorough search approach.
