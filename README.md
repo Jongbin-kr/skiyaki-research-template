@@ -24,23 +24,59 @@ human-supervised.
 
 ## Quick Start
 
-1. Click **Use this template** on GitHub.
-2. Edit `environment.yaml` (an example conda env) for your project, and create it.
-3. Fill in `project-plan.md` with your stable settings (cluster, W&B entity,
-   Hugging Face namespace, quotas).
-4. Open the project in your agent and describe an experiment, e.g.
-   *"Compare LoRA ranks 8, 16, 32 for fine-tuning RoBERTa on SST-2."*
+### 1. Create your project
 
-The agent will review prior work, ask clarifying questions, write the plan and
-run config, and — with your go-ahead — run and document the experiment.
+Click **Use this template** on GitHub to make a new repository, then clone it.
+(To wrap an existing research repo, copy this template's convention files —
+`AGENTS.md`, `.agents/`, `templates/`, `experiments/`, `project-plan.md`,
+`project-log.md` — into it.)
+
+### 2. Let the agent set you up *(one-time)*
+
+Open the project in your agent and say: **"Help me set up this project."** The
+agent runs the **Setup** stage and asks you one thing at a time to configure:
+
+- **Environment** — if the project already has an `environment.yaml` /
+  `pyproject.toml`, it's used; otherwise the agent helps create a conda env.
+- **`project-plan.md`** — your stable settings, with hints on where to find each:
+  - SSH host — an alias in your `~/.ssh/config`
+  - Slurm partition / account / QoS — from `sinfo` and `sacctmgr show user $USER`
+  - CUDA ceiling — from `nvidia-smi`
+  - W&B entity — your wandb.ai profile; Hugging Face namespace — your HF user/org
+
+Tokens stay in your environment, never in the repo. Prefer this to editing
+`project-plan.md` by hand, though you can do that too.
+
+### 3. Create the environment
+
+```bash
+conda env create -f environment.yaml && conda activate <env-name>
+```
+
+### 4. Run your first experiment
+
+Describe it to the agent, e.g. *"Compare LoRA ranks 8, 16, 32 for fine-tuning
+RoBERTa on SST-2."* The agent then works through:
+
+- **Plan** — reviews prior work, asks clarifying questions, writes `plan.md` +
+  `run-config.yaml`, and asks for your approval.
+- **Run** — (after approval) runs training/evaluation and records it in `history.md`.
+- **Finalize** — interprets results in `journal.md`, updates `project-log.md`,
+  and proposes a commit.
+
+### 5. What you get
+
+Each experiment leaves a self-contained folder under `experiments/<id>/` with
+its plan, run config, factual history, and interpretation.
 
 ## How It Works: Stages
 
-Research moves through three stages; each groups the skills used in it. See
+**Setup** runs once; **Plan → Run → Finalize** repeats per experiment. See
 [AGENTS.md](AGENTS.md) for the full workflow and conventions.
 
 | Stage | Goal | Skills |
 |---|---|---|
+| **Setup** *(one-time)* | Configure environment and `project-plan.md` | `setup-project` |
 | **Plan** | Decide what to run | `explore-project-history`, `grill-me`, `plan-ml-experiment` |
 | **Run** | Execute and record | `train-llm`, `evaluate-llm` |
 | **Finalize** | Interpret and commit | `finalize-experiment` |
@@ -56,6 +92,7 @@ your-project/
 ├── project-log.md            # Project-level conclusions over time
 │
 ├── .agents/skills/           # Skills (markdown procedures), grouped by stage
+│   ├── setup-project/
 │   ├── explore-project-history/
 │   ├── grill-me/
 │   ├── plan-ml-experiment/

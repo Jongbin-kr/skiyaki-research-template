@@ -8,11 +8,14 @@ gates or scores your work.
 
 ## How It Works: Stages and Skills
 
-Research progresses through three stages. Each stage groups the skills the agent
-uses in it. The agent moves through them with you, not autonomously.
+Research progresses through stages. Each stage groups the skills the agent uses
+in it. The agent moves through them with you, not autonomously. **Setup** runs
+once when a project is first created; **Plan → Run → Finalize** repeats per
+experiment.
 
 | Stage | Goal | Skills |
 |---|---|---|
+| **Setup** *(one-time)* | Configure the environment and `project-plan.md` for a new project, then hand off to Plan | [`setup-project`](.agents/skills/setup-project/SKILL.md) |
 | **Plan** | Decide what to run: review prior work, resolve open questions, write the plan and run config | [`explore-project-history`](.agents/skills/explore-project-history/SKILL.md), [`grill-me`](.agents/skills/grill-me/SKILL.md), [`plan-ml-experiment`](.agents/skills/plan-ml-experiment/SKILL.md) |
 | **Run** | Execute training and evaluation, record what happened | [`train-llm`](.agents/skills/train-llm/SKILL.md), [`evaluate-llm`](.agents/skills/evaluate-llm/SKILL.md) |
 | **Finalize** | Interpret results, update records, propose a commit | [`finalize-experiment`](.agents/skills/finalize-experiment/SKILL.md) |
