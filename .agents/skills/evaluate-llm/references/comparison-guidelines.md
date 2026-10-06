@@ -17,9 +17,9 @@ This document defines the systematic approach for comparing training runs, asses
    - Direction values: `maximize` (higher is better) or `minimize` (lower is better)
 
 2. **Collect Run Metrics**:
-   - For each run in `runs/` directory, read `runs/<run-id>/run.yaml`
-   - Extract the primary metric value from the `metrics` field
-   - If metric is missing, mark run as incomplete and exclude from comparison
+   - Gather each run's metrics from `history.md` entries, evaluation logs under
+     `logs/`, or the W&B run if tracking is enabled.
+   - If a run's metric is missing, mark it incomplete and exclude it from comparison.
 
 3. **Rank Runs**:
    - Sort runs by primary metric value according to direction
@@ -266,9 +266,9 @@ In Phase 2, W&B Analyst delegation is documented but not executable. Include pla
 
 **Standard Evaluation Flow**:
 
-1. **Read plan.md** → Extract primary_metric, success_criteria, baseline
-2. **Scan runs/ directory** → Collect all run.yaml files
-3. **Extract metrics** → Parse primary metric values from each run
+1. **Read plan.md** → Extract the metric, success criterion (if any), and baseline
+2. **Collect run metrics** → from history.md entries, logs/, or W&B
+3. **Extract metrics** → the primary metric value for each run
 4. **Rank runs** → Sort by primary metric according to direction
 5. **Identify best run** → Record run_id, checkpoint, metrics
 6. **Calculate baseline comparison** → Compute absolute and percentage improvement
@@ -285,28 +285,13 @@ In Phase 2, W&B Analyst delegation is documented but not executable. Include pla
 - Ensure success criteria assessment is evidence-based, not subjective
 - Review for consistency between best_run selection and success assessment
 
-## Phase 2 Limitations
-
-**Current Phase (Local Execution)**:
-- Comparison relies on metrics recorded in local run.yaml files
-- No automated W&B API queries
-- W&B Analyst delegation is documented but not executable
-- Manual W&B web UI inspection may be needed for detailed analysis
-
-**Future Phases**:
-- Phase 7: Automated W&B API integration for run querying and comparison
-- Phase 7: Executable W&B Analyst subagent with programmatic access
-- Phase 7: Automated generation of comparison visualizations
-
-For now, provide clear instructions for manual W&B inspection when detailed analysis is needed.
-
 ## References
 
-- **result-schema.md**: Defines results.yaml structure for recording comparison outcomes
-- **SKILL.md**: Defines overall evaluate-llm workflow
-- **project-plan.md**: Source of experiment metadata and resource quotas
-- **plan.md**: Source of primary metric, success criteria, and baseline definitions
-- **run.yaml**: Individual run metadata and metrics
+- **SKILL.md**: The overall evaluate-llm workflow.
+- **project-plan.md**: Stable project settings.
+- **plan.md**: The experiment's metric, success criterion (if any), and baseline.
+- **history.md**: The factual record of runs and their outcomes.
+- **W&B** (when enabled): source of run curves and metrics.
 
 ## Examples
 

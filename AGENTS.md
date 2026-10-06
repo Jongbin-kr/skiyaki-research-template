@@ -1,94 +1,86 @@
 # AI/ML Research Workflow
 
-## Core Principles
+This repository is a **convention template** for AI/ML research with an AI coding
+agent. It provides structure, conventions, and reusable skills — not a framework
+or runner. A human supervises the work in chat; the agent reads the project's own
+code and runs experiments adapted to it. There is no hidden harness, no code that
+gates or scores your work.
 
-This template provides a structured workflow for AI/ML research experiments with Codex assistance. The workflow emphasizes reproducibility, proper tracking, and systematic documentation of research findings.
+## How It Works: Stages and Skills
 
-## Workflow Rules
+Research progresses through three stages. Each stage groups the skills the agent
+uses in it. The agent moves through them with you, not autonomously.
 
-1. **Project History Review**: Before planning experiments, inspect:
-   - project-log.md for project-level conclusions
-   - experiments/*/journal.md for past findings
-   - experiments/*/results.yaml for comparable baselines
-   - Git history for related changes
+| Stage | Goal | Skills |
+|---|---|---|
+| **Plan** | Decide what to run: review prior work, resolve open questions, write the plan and run config | [`explore-project-history`](.agents/skills/explore-project-history/SKILL.md), [`grill-me`](.agents/skills/grill-me/SKILL.md), [`plan-ml-experiment`](.agents/skills/plan-ml-experiment/SKILL.md) |
+| **Run** | Execute training and evaluation, record what happened | [`train-llm`](.agents/skills/train-llm/SKILL.md), [`evaluate-llm`](.agents/skills/evaluate-llm/SKILL.md) |
+| **Finalize** | Interpret results, update records, propose a commit | [`finalize-experiment`](.agents/skills/finalize-experiment/SKILL.md) |
 
-2. **Research Grill**: Use the `grill-me` skill when:
-   - Research objectives are unclear
-   - Baseline comparisons are undefined
-   - Success criteria are not established
-   - Important experimental parameters are unspecified
+Skills are guidance the agent reads when relevant; they are plain markdown
+procedures, not scripts.
 
-3. **Stable Configuration**: Do not re-ask for:
-   - W&B entity and project (in project-plan.md)
-   - Hugging Face namespace (in project-plan.md)
-   - SSH host and remote paths (in project-plan.md)
-   - Slurm partition and account (in project-plan.md)
-   - Default resource limits (in project-plan.md)
+## Experiment Layout
 
-4. **Execution Requirements**:
-   - Store reproducible settings in YAML (jobs/*.yaml)
-   - Run GPU jobs in SSH environments through Slurm (`submit_slurm.py`), never on the login node
-   - Run CPU-heavy jobs in SSH environments through Slurm; only short, light CPU work may run locally (`run_local.py`)
-   - Track every execution attempt as a Run
+Each experiment is a self-contained folder:
 
-5. **Approval Gates**:
-   - Require explicit user approval before job execution
-   - Require approval after material experiment changes
-   - Require approval before creating Git commits
+```
+experiments/<experiment-id>/
+├── plan.md           # Objective, hypothesis, design, decisions (prose)
+├── run-config.yaml   # Reproducible run settings — passed to your training code
+├── history.md        # Factual timeline: what was run, when, Slurm IDs, outcomes
+├── journal.md        # Interpretation: findings, conclusions, next steps
+├── logs/             # Run/Slurm logs (kept locally, not committed)
+└── figures/          # Optional visualizations
+```
 
-6. **Version Control**:
-   - Do not commit secrets, tokens, or credentials
-   - Do not commit model checkpoints
-   - Do not commit W&B cache directories
-   - Do not commit raw or unbounded Slurm logs (*.out, *.err) by default
-   - Never commit logs (or excerpts) from failed or errored runs; instead record the exit status and a concise error summary in the Run record and history.md
-   - A small, curated excerpt from a successful run may be committed when it is genuine research or debugging evidence
-   - Always record job ID, log paths, exit status, and timestamps in the Run record
-   - Commit experiment plans, configurations, and results
+`run-config.yaml` is the one machine-read file: it is the input to the project's
+own training/evaluation code. Everything else is written for humans to read.
 
-7. **Completion Criteria**: An experiment is complete when:
-   - Required training runs finish successfully
-   - Evaluation completes with metric calculations
-   - Success criteria are assessed
-   - Required run comparisons are verified (W&B tracking via `track_wandb.py`, or local/user-provided evidence)
-   - Required checkpoint publication is verified by revision (Hugging Face Hub via `publish_hf.py`); an unverified required upload blocks completion
-   - results.yaml is written
-   - history.md is updated
-   - journal.md contains final conclusions
-   - project-log.md reflects project-level outcomes
-   - Git commit candidate is proposed
+## Conventions
 
-## Skills
+These are conventions the agent follows and you supervise — not enforced gates.
 
-The following skills implement standard research procedures:
+1. **Prior work first.** Before planning, inspect `project-log.md`,
+   `experiments/*/journal.md`, past `run-config.yaml` files, and relevant Git
+   history for related work and reusable settings.
 
-- `grill-me`: Clarify experimental decisions through targeted questions
-- `explore-project-history`: Inspect this repository's past experiments, results, project log, and Git history before planning new work
-- `plan-ml-experiment`: Create experiment plans and job configurations
-- `train-llm`: Execute training jobs with proper tracking
-- `evaluate-llm`: Run evaluation and compare results
-- `finalize-experiment`: Complete experiment documentation and propose commits
+2. **Clarify before planning.** When the objective, baseline, or metric is
+   unclear, ask focused questions (one at a time). A metric and success criterion
+   are encouraged but optional — exploratory runs are fine; just say so.
 
-See `.agents/skills/*/SKILL.md` for detailed workflow definitions.
+3. **Reproducible settings in YAML.** Put training/evaluation parameters in
+   `run-config.yaml` so a run can be reproduced and read by the project's code.
 
-## Subagents
+4. **Execution environment.** Run jobs in the project's environment
+   (`environment.yaml` / `uv` / `venv`). GPU and CPU-heavy jobs go through Slurm
+   (`sbatch`) on the configured cluster — never run heavy work on a login node.
+   Short CPU checks may run locally.
 
-Delegate only a bounded task that benefits from specialist expertise. Use these canonical routing names and preserved descriptions:
+5. **Tracking and artifacts.** Track runs with Weights & Biases when configured
+   (group by experiment, keep local data). Push checkpoints to the Hugging Face
+   Hub per the project's push policy; keep repositories private by default and
+   never make a private repository public without an explicit decision.
 
-| Routing name | Trigger | Preserved description | Scope |
-|---|---|---|---|
-| Research Journal & Git | Prior-work synthesis or experiment finalization and Git proposal | [`.agents/agents/research-journal-git.md`](.agents/agents/research-journal-git.md) | Local repository evidence and documentation; commits remain approval-gated |
-| W&B Analyst | Specialist comparison of training runs | [`.agents/agents/wandb-analyst.md`](.agents/agents/wandb-analyst.md) | W&B run metrics and local or user-provided exports |
-| Hugging Face Curator | Model-card or Hub artifact curation | [`.agents/agents/huggingface-curator.md`](.agents/agents/huggingface-curator.md) | Hub mutations remain approval-gated |
-| Visualization Specialist | Research figures from available results | [`.agents/agents/visualization-specialist.md`](.agents/agents/visualization-specialist.md) | Local results and exports |
-| Slurm Debugger | Diagnosis of a Slurm failure | [`.agents/agents/slurm-debugger.md`](.agents/agents/slurm-debugger.md) | Diagnosis of job failures, with mutating remote actions approval-gated |
+6. **Record every run.** Note each execution attempt in `history.md` (time, Slurm
+   job id, status, outcome), including failures. Write interpretation in
+   `journal.md`.
 
-Keep unmatched work in the Main Agent. For a match, select the narrowest specialist able to complete the task and load only its description immediately before delegation; never bulk-load all descriptions. If multiple specialists are needed, split the work into separate bounded delegations and repeat selection and selective loading for each.
+7. **Human-in-the-loop.** The agent proposes; you approve in chat. Nothing in a
+   file blocks execution — you are the approval gate. Ask the user before
+   submitting jobs, uploading artifacts, or committing.
 
-Each delegation packet must state:
+8. **Git safety (review before committing).** Commit plans, configs, results, and
+   documentation. Never commit secrets or credentials, model checkpoints, W&B
+   caches, or raw Slurm logs (`*.out`, `*.err`). A human reviews the diff before
+   any commit; raw logs stay local under each experiment's `logs/`.
 
-- **Objective:** one verifiable outcome.
-- **Scope:** permitted actions and excluded adjacent work.
-- **Inputs:** relevant paths and evidence.
-- **Expected output:** the required bounded result.
-- **Constraints:** applicable approval gates. Delegation never bypasses explicit user approval for job execution, material configuration changes, Git commits, artifact uploads, or destructive remote actions; work blocked on a missing approval or unset configuration (e.g. `wandb.entity`, `huggingface.namespace`) must say so and return a non-executing next step.
+9. **Completion.** An experiment is done when required runs finished, results are
+   recorded, `history.md` and `journal.md` are written, `project-log.md` reflects
+   the project-level outcome, and a commit is proposed for your approval.
+
+## Project Configuration
+
+`project-plan.md` holds stable project settings (environment, SSH/Slurm,
+W&B/Hugging Face) as readable notes — don't re-ask for values recorded there.
+`project-log.md` records project-level conclusions over time.

@@ -1,0 +1,45 @@
+# Reproducible run configuration.
+#
+# This is the one machine-read file in an experiment: it is passed as input to
+# the project's own training/evaluation code. Keep it reproducible and free of
+# secrets (tokens come from the environment, never from this file).
+#
+# Copy to experiments/<experiment-id>/run-config.yaml and adapt to your project.
+
+# What to run
+entrypoint: src/train.py        # the project's training/eval script
+type: train                     # train | evaluate
+
+# Parameters passed to the entrypoint (shape them to your project's CLI/config).
+parameters:
+  model_name: <model-name>
+  dataset_name: <dataset-name>
+  dataset_split: train
+  learning_rate: 2.0e-4
+  num_epochs: 3
+  batch_size: 8
+  seed: 42
+
+# Optional: ablation matrix. Each combination becomes one run.
+matrix:
+  # lora_rank: [8, 16, 32]
+  # seed: [17, 42, 73]
+
+# Compute. GPU / CPU-heavy jobs run via Slurm (sbatch); short CPU checks may run
+# locally. See project-plan.md for cluster, partition, account, and quotas.
+resources:
+  gpus: 1
+  cpus: 8
+  memory_gb: 32
+  time: "08:00:00"
+
+# Experiment tracking (Weights & Biases). Entity/project come from project-plan.md.
+wandb:
+  enabled: true
+  group: <experiment-id>
+  tags: []
+
+# Model artifact publishing (Hugging Face Hub). Namespace/policy from project-plan.md.
+huggingface:
+  push: milestone               # never | final_only | milestone | final_and_milestone | every_save
+  repo: null                    # defaults to the experiment id if left null

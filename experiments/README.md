@@ -1,136 +1,69 @@
-# Experiments Directory
+# Experiments
 
-This directory contains all experimental work for the project. Each experiment is a self-contained investigation with its own plan, configurations, runs, and results.
+This directory holds all experimental work. Each experiment is a self-contained
+folder with its plan, run config, and research records.
 
 ## Structure
 
-Each experiment follows this structure:
-
 ```
 <experiment-id>/
-├── plan.md              # Research question, hypothesis, and design
-├── jobs/                # Training and evaluation configurations
-│   ├── train.yaml
-│   └── evaluate.yaml
-├── runs/                # Execution attempts
-│   └── <run-id>/
-│       ├── run.yaml            # Run metadata and status
-│       ├── resolved-job.yaml   # Exact configuration used
-│       └── logs/               # Execution logs
-├── results.yaml         # Final metrics and outcomes
-├── history.md           # Chronological timeline of events
-├── journal.md           # Analysis, insights, and conclusions
-└── figures/             # Visualizations and plots
+├── plan.md           # Objective, hypothesis, design, decisions (prose)
+├── run-config.yaml   # Reproducible run settings — fed to your training code
+├── history.md        # Factual timeline of what was run and the outcomes
+├── journal.md        # Interpretation, conclusions, next steps
+├── logs/             # Run/Slurm logs (kept local, gitignored)
+└── figures/          # Visualizations
 ```
+
+`run-config.yaml` is the only machine-read file — it is passed to the project's
+training/evaluation code. The rest is written for people to read.
 
 ## Example Experiment
 
-### `example-lora-rank-ablation/`
-
-This is a **complete, realistic example** demonstrating the template's experiment structure. It shows:
-
-- ✅ Clear research question: "What is the optimal LoRA rank for fine-tuning?"
-- ✅ Hypothesis-driven design with baseline comparison
-- ✅ Ablation study with multiple configurations (ranks 4, 8, 16, 32)
-- ✅ Complete job configurations with resource requirements
-- ✅ Example run with logs and metadata
-- ✅ Comprehensive results with metrics and recommendations
-- ✅ Factual history timeline
-- ✅ Thoughtful journal with analysis and next steps
-
-**Purpose**: Reference this example when:
-- Planning your first experiment
-- Understanding experiment documentation
-- Learning the template's structure
-- Training new team members
-
-**Note**: This is an example only. The training was not actually executed. You can:
-- Keep it as a reference
-- Delete it when starting your own research
-- Use it as a template for your experiments
+`example-lora-rank-ablation/` is a complete worked example (LoRA rank ablation on
+RoBERTa/SST-2) — plan, run config, history, and journal. The training wasn't
+actually run; the numbers are illustrative. Keep it as a reference or delete it
+when you start your own work.
 
 ## Creating New Experiments
 
-### Using Codex
+### With the agent
 
-Request an experiment from Codex:
+Just describe the experiment, e.g. *"compare LoRA ranks 8 and 16 for fine-tuning
+RoBERTa on SST-2."* The agent reviews prior work, asks clarifying questions,
+writes `plan.md` + `run-config.yaml`, and — with your go-ahead — runs and
+documents it.
 
+### Manually
+
+```bash
+mkdir -p experiments/<experiment-id>/{logs,figures}
+cp templates/plan.md experiments/<experiment-id>/plan.md
+cp templates/run-config.yaml experiments/<experiment-id>/run-config.yaml
+cp templates/history.md experiments/<experiment-id>/history.md
+cp templates/journal.md experiments/<experiment-id>/journal.md
 ```
-"I want to compare LoRA ranks 8 and 16 for fine-tuning RoBERTa on SST-2"
-```
 
-Codex will:
-1. Search for related past experiments
-2. Ask clarifying questions about metrics and success criteria
-3. Generate a complete experiment plan and job configurations
-4. Request your approval before execution
+Then fill them in and follow the workflow in [AGENTS.md](../AGENTS.md).
 
-### Manual Creation
+## Lifecycle (stages)
 
-1. Create experiment directory:
-   ```bash
-   mkdir -p experiments/<experiment-id>/{jobs,runs,figures}
-   ```
+1. **Plan** — review prior work, clarify decisions, write `plan.md` + `run-config.yaml`
+2. **Run** — execute training/evaluation (Slurm for GPU/heavy jobs), record in `history.md`
+3. **Finalize** — interpret in `journal.md`, update `project-log.md`, propose a commit
 
-2. Copy templates:
-   ```bash
-   cp templates/experiment-plan.md experiments/<experiment-id>/plan.md
-   cp templates/train-job.yaml experiments/<experiment-id>/jobs/train.yaml
-   cp templates/evaluate-job.yaml experiments/<experiment-id>/jobs/evaluate.yaml
-   ```
+## Version Control
 
-3. Fill in the templates with your research question and configuration
-
-4. Execute and track runs following the workflow in AGENTS.md
-
-## Experiment Lifecycle
-
-1. **Planning**: Create `plan.md` with research question, hypothesis, baseline
-2. **Configuration**: Define jobs in `jobs/*.yaml` with reproducible settings
-3. **Approval**: Get explicit approval before execution (see AGENTS.md)
-4. **Execution**: Run training/evaluation, track in `runs/`
-5. **Evaluation**: Calculate metrics, compare to baseline
-6. **Finalization**: Write `results.yaml`, update `history.md` and `journal.md`
-7. **Archival**: Update `project-log.md`, commit experiment to Git
-
-## Best Practices
-
-### Research Questions
-- State clear, testable hypotheses
-- Define specific success criteria
-- Identify baseline for comparison
-
-### Configuration
-- Use YAML for reproducibility
-- Document all hyperparameters
-- Use matrix for ablation studies
-
-### Documentation
-- **history.md**: Factual, chronological events
-- **journal.md**: Analysis, interpretation, insights
-- Keep them distinct in purpose
-
-### Version Control
-- ✅ Commit: plans, configs, results, documentation
-- ❌ Don't commit: checkpoints, logs, W&B caches, secrets
+- ✅ Commit: plans, run configs, research notes, documentation
+- ❌ Don't commit: checkpoints, raw logs (`logs/*.out`/`*.err`), W&B caches, secrets
 
 ## Finding Related Work
 
-Before starting a new experiment:
-
-1. Search `project-log.md` for related conclusions
-2. Browse experiments in this directory for similar work
-3. Ask Codex to use the `explore-project-history` skill
-
-This prevents duplicating past work and helps identify reusable configurations.
-
-## Questions?
-
-- See [AGENTS.md](../AGENTS.md) for workflow rules
-- See [templates/](../templates/) for file formats
-- See [.agents/skills/](../.agents/skills/) for detailed workflows
-- See the example experiment as a reference
+Before a new experiment: check `project-log.md`, browse this directory, or ask
+the agent to use the `explore-project-history` skill. This avoids duplicating
+past work and surfaces reusable settings.
 
 ---
 
-**Start your first experiment by asking Codex, or manually create a directory following the structure above.**
+See [AGENTS.md](../AGENTS.md) for the workflow, [templates/](../templates/) for
+blank files, and [.agents/skills/](../.agents/skills/) for the stage skills.

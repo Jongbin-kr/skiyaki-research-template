@@ -83,12 +83,10 @@ outputs/*
 # Experiment Run Logs
 # ============================================================================
 
-# Slurm logs in experiment runs
-experiments/*/runs/*/logs/*.out
-experiments/*/runs/*/logs/*.err
-
-# All log files in run logs directories
-experiments/*/runs/*/logs/*.log
+# Raw Slurm/run logs in experiments (kept local only, never committed)
+experiments/*/logs/*.out
+experiments/*/logs/*.err
+experiments/*/logs/*.log
 
 # ============================================================================
 # Weights & Biases Cache

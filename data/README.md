@@ -92,7 +92,7 @@ data/
 Set dataset paths in your experiment job configurations:
 
 ```yaml
-# experiments/my-experiment/jobs/train.yaml
+# experiments/my-experiment/run-config.yaml
 parameters:
   dataset_path: data/glue/mnli
   cache_dir: data/huggingface_cache

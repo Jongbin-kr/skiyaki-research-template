@@ -1,0 +1,38 @@
+# Run configuration for the LoRA rank ablation example.
+# Passed as input to the project's training/evaluation code.
+
+entrypoint: src/train_lora.py
+type: train
+
+parameters:
+  model_name: roberta-base
+  dataset_name: glue
+  dataset_config: sst2
+  dataset_split: train
+  learning_rate: 2.0e-4
+  num_epochs: 3
+  batch_size: 8
+  gradient_accumulation_steps: 4
+  seed: 42
+  lora_alpha_rule: twice_rank      # alpha = 2 x rank
+  lora_dropout: 0.1
+  lora_target_modules: [query, value]
+
+# Ablation: one run per rank.
+matrix:
+  lora_rank: [4, 8, 16, 32]
+
+resources:
+  gpus: 1
+  cpus: 8
+  memory_gb: 32
+  time: "08:00:00"
+
+wandb:
+  enabled: true
+  group: example-lora-rank-ablation
+  tags: [lora, ablation, roberta, sst2, example]
+
+huggingface:
+  push: milestone
+  repo: null

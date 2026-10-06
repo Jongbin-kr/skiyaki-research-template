@@ -1,73 +1,51 @@
 # Grill Me Skill
 
-## Purpose
+**Stage:** Plan
 
-Resolve consequential scientific choices through focused questioning before plan creation. The grill clarifies decisions only; it does not design implementation details, create planning artifacts, execute jobs, initialize Runs, or contact external systems.
+Clarify the consequential scientific decisions before writing a plan, by asking
+focused questions one at a time. This skill resolves decisions only — it does not
+write the plan, create configs, or run anything.
 
 ## When to Use
 
-- The research objective or hypothesis is unclear.
-- The comparison baseline is undefined or unsupported by available evidence.
-- The primary metric or measurable success criterion is unresolved.
-- The ablation scope or a key controlled parameter changes experimental meaning.
-- A user choice conflicts with repository-backed prior research.
+When a material decision is unclear or unsupported, such as:
+
+- the research objective or hypothesis,
+- the comparison baseline,
+- the primary metric (if the run is meant to be measured),
+- the ablation scope or a controlled parameter that changes the experiment's meaning,
+- a conflict between the user's request and prior repository evidence.
 
 ## When NOT to Use
 
-- The value is a populated stable `Project_Settings` entry in `project-plan.md`.
-- The decision is already resolved in the current decision ledger.
-- The question concerns implementation details that belong to `plan-ml-experiment`.
-- Baseline, primary metric, and success criteria are resolved and remaining values can be inherited or recorded as labeled defaults.
-
-## Required Inputs
-
-- The current research request.
-- The prior-research discovery report, including evidence references, conflicts, and unresolved baseline facts.
-- Populated `Project_Settings` from `project-plan.md`; a template is not populated project configuration.
-- The current decision ledger, if grilling has already begun.
-
-Load [references/grill-policy.md](references/grill-policy.md) as the normative source for the structured turn format, canonical stable-setting keys, decision-ledger schema, and response rules.
+- The value is already recorded in `project-plan.md` (don't re-ask stable settings).
+- It's an implementation detail (logging cadence, directory layout) — leave that
+  to planning.
+- The run is explicitly exploratory and the user is fine without a fixed metric.
 
 ## Procedure
 
-1. **Initialize the decision ledger**
-   - Create entries for `research_objective`, `baseline`, `primary_metric`, `success_criteria`, `ablation_scope`, and `controlled_parameters`.
-   - Preserve any values resolved by the user, prior evidence, or inherited `Project_Settings`; record each value's origin.
-   - Never invent an unsupported baseline value.
+1. **Start from what's known.** Use findings from `explore-project-history` and
+   stable settings from `project-plan.md`. Don't re-ask settled values.
 
-2. **Consume stable settings**
-   - Read populated values using the canonical keys in `grill-policy.md`.
-   - Mark inherited values with origin `project_setting`; do not relabel them as `agent_default`.
-   - Do not ask the user to restate a populated stable setting. A missing setting may be asked only when it is material to experimental meaning, not merely to implementation.
+2. **Ask one question at a time.** Each turn, raise exactly one decision and ask
+   one focused question about it. Don't bundle several questions together.
 
-3. **Select one Material_Decision**
-   - Choose the highest-priority unresolved decision: primary metric, baseline, success criteria, then objective/scope or key controlled parameters as needed.
-   - While the `Research_Grill` is active, every assistant turn MUST contain exactly one structured `Material_Decision` target and exactly one semantic question about that target.
-   - Do not bundle alternatives as separate questions or append a second request for information.
+3. **Prefer the highest-impact decision first:** objective → baseline → primary
+   metric → success criterion → ablation scope → key controls.
 
-4. **Resolve the answer before moving on**
-   - Update or refine the matching ledger entry before selecting another decision.
-   - For an insufficient answer, ask one focused follow-up on the same decision or propose one clearly labeled `Agent_Default` with rationale and evidence or an explicit assumption.
-   - For an evidence conflict, ask one focused clarification that distinguishes an intentional deviation from a misunderstanding; do not silently override either source.
+4. **Offer a reasonable default when the user is unsure.** Propose a value,
+   explain why, and note it as your suggestion so the choice stays visible.
 
-5. **Terminate the grill**
-   - Continue grilling while any of `baseline`, `primary_metric`, or `success_criteria` is unresolved.
-   - Stop immediately once those three critical decisions are resolved and the required ledger record can be completed. Do not ask about implementation details or populated stable settings.
-   - Return the completed decision ledger to `plan-ml-experiment`. Approval-summary generation remains blocked if any critical decision is unresolved.
+5. **Metric and success criterion are encouraged but optional.** If the user says
+   the run is exploratory, record that and move on — do not force a threshold.
+
+6. **Record each resolved decision** (value, and whether it came from the user,
+   project settings, prior evidence, or your suggestion) so planning can reuse it.
 
 ## Output
 
-Return a decision ledger containing:
+A short summary of the resolved decisions, ready to hand to `plan-ml-experiment`.
 
-- Research objective.
-- Evidence-backed baseline or an explicit user-selected baseline.
-- Primary metric, direction, and evaluation split where known.
-- Measurable success criteria.
-- Ablation scope.
-- Key controlled parameters.
-- For every entry: value, origin, rationale, evidence references or explicit assumption, and resolved state.
-- Any intentional deviations from prior evidence.
-
-## Phase 4 Boundary
-
-This skill performs local repository reading, conversation, and decision synthesis only. It MUST NOT create or modify experiment plans, job YAML, Run directories, or Run metadata; invoke training or evaluation; use SSH or Slurm; query live W&B; access Hugging Face Hub; or create Git commits. Hand planning-ready decisions to `plan-ml-experiment` and preserve the no-execution boundary.
+See [references/grill-policy.md](references/grill-policy.md) for the detailed
+questioning policy and examples.

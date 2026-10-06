@@ -1,217 +1,50 @@
 # Train LLM Skill
 
-## Purpose
+**Stage:** Run
 
-Execute training jobs with proper environment activation, tracking, and logging.
+Execute a planned training run using the project's own training code, and record
+what happened. There is no built-in runner — you build and run the command from
+the project's conventions, then write the outcome to `history.md`.
 
 ## Prerequisites
 
-- Experiment plan is approved
-- Job YAML exists and is valid
-- Project environment is configured (environment.yaml or equivalent)
+- An approved `plan.md` and a `run-config.yaml` exist for the experiment.
+- The user has said to proceed (you are the human-in-the-loop; ask before
+  submitting jobs).
 
 ## Procedure
 
-### 1. Preflight Checks
+1. **Read the project's run method.** Inspect the project's README, `src/`, and
+   `environment.yaml` to learn how training is launched (e.g.
+   `python src/train.py`, `accelerate launch`, a Hydra config, a Slurm script).
+   Do not assume a framework.
 
-Before executing any training job, verify:
+2. **Build the command from `run-config.yaml`.** Map its entrypoint and
+   parameters to the project's expected invocation. Expand any ablation matrix
+   into one command per combination.
 
-- **Approval Status**: Check that `approval.status == "approved"` in plan.md
-- **Experiment ID**: Verify experiment-id is valid and experiment directory exists
-- **Job ID**: Verify job-id is valid and job YAML file exists in jobs/ directory
-- **Entrypoint**: Check that entrypoint file exists and is executable
-- **Environment**: Check that project environment exists (conda env, venv, etc.)
-- **Configuration**: Verify W&B and HF configurations exist in project-plan.md
-- **Slurm Requirements**: Check if job requires Slurm (GPU or CPU-heavy)
-- **Resources**: Check resource quotas and availability against project-plan.md limits
+3. **Choose where it runs.**
+   - Short CPU checks may run locally in the project environment.
+   - GPU and CPU-heavy jobs go through **Slurm** (`sbatch`) on the configured
+     cluster — never run heavy work on a login node. Generate an sbatch script
+     that activates the project environment and runs the command; write logs to
+     the experiment's `logs/` directory.
 
-If any preflight check fails, report the issue to the user and do not proceed.
+4. **Configure tracking.** If W&B is enabled, set the environment so runs group
+   by experiment and keep local data. If Hugging Face push is configured, honor
+   the project's push policy. Never print or commit tokens.
 
-### 2. Prepare Run
+5. **Run and capture.** Launch the job (ask the user first). Capture stdout/stderr
+   to `logs/`. For Slurm, record the job id.
 
-Before execution, set up the run tracking structure:
-
-- **Generate Run ID**: Create unique run ID using format `<job-id>__<timestamp>` where timestamp is `YYYYMMDDTHHMMSS`
-- **Create Directory**: Create `runs/<run-id>/` directory in experiment directory
-- **Create Logs Directory**: Create `runs/<run-id>/logs/` subdirectory
-- **Copy Job Configuration**: Copy job YAML to `runs/<run-id>/resolved-job.yaml`
-- **Create Run Record**: Create `runs/<run-id>/run.yaml` with initial state:
-  - run_id: `<job-id>__<timestamp>`
-  - experiment_id: from plan.md
-  - job_id: from job file
-  - job_file: path to original job YAML
-  - status: "created"
-  - started_at: null
-  - completed_at: null
-  - exit_code: null
-  - resolved_config: "resolved-job.yaml"
-
-### Local Execution Helper (Phase 5)
-
-Local execution is implemented by the deterministic helper
-`scripts/run_local.py`, which composes with `scripts/initialize_run.py`:
-
-1. `initialize_run.py` creates `runs/<run-id>/` with `run.yaml`
-   (`status: initialized`) and `resolved-job.yaml`.
-2. `run_local.py --run-dir <run-dir> --workspace <root>` then:
-   - reads `approval.status` from the experiment `plan.md` and runs only when it
-     equals `approved`;
-   - **hard-rejects GPU and CPU-heavy jobs**, recording a `deferred` outcome that
-     points to Slurm (Phase 6) and never spawning a local process;
-   - detects the environment (conda > uv > venv > system) and builds the command
-     from `entrypoint`, `parameters`, and `config_style` without framework
-     assumptions;
-   - captures stdout/stderr under `runs/<run-id>/logs/`, enforces a timeout, and
-     records the lifecycle status (`created → running → succeeded | failed |
-     timed_out | cancelled`), including failed runs;
-   - appends a `history.md` entry and parses a W&B URL from logs as plain text.
-
-The on-disk `initialized` status is normalized to the lifecycle `created` when
-read. See `scripts/README.md` for arguments, exit codes, and the composition
-note.
-
-**Roadmap boundaries:** SSH and Slurm execution are Phase 6; live W&B API is
-Phase 7; Hugging Face Hub uploads are Phase 8. Phase 5 performs no network calls
-and no Git operations.
-
-### 3. Execution (Phase 1: Local Only)
-
-Execute the training job locally:
-
-- **Activate Environment**: Activate project environment using the appropriate command:
-  - Conda: `conda activate <env-name>`
-  - venv: `source <venv-path>/bin/activate`
-  - uv: `uv run` (if using uv)
-- **Construct Command**: Build execution command from job entrypoint and parameters
-  - Parse parameters from job YAML
-  - Convert to appropriate format based on config_style (argument, hydra, json, yaml)
-  - Include all hyperparameters and dataset configurations
-- **Set Environment Variables**: Configure runtime environment:
-  - W&B environment variables (if wandb.enabled == true)
-    - WANDB_PROJECT, WANDB_ENTITY, WANDB_RUN_GROUP, WANDB_TAGS
-  - Hugging Face environment variables (if huggingface.push != never)
-    - HF_TOKEN (from user's environment or .env)
-    - Push policy configuration
-- **Update Status**: Update run.yaml status to "running" and set started_at timestamp
-- **Execute Command**: Run the training command with:
-  - stdout/stderr capture to logs directory
-  - Real-time output monitoring
-  - Process ID tracking
-- **Monitor Execution**: Watch for completion or failure
-
-### 4. Track Execution
-
-After execution completes (success or failure):
-
-- **Update Run Record**: Update `runs/<run-id>/run.yaml` with:
-  - status: "succeeded", "failed", "cancelled", or "timed_out"
-  - completed_at: timestamp
-  - exit_code: process exit code
-- **Save Logs**: Save captured stdout/stderr to `runs/<run-id>/logs/`:
-  - stdout.log
-  - stderr.log
-- **Extract W&B URL** (if enabled): Parse W&B run URL from logs and add to run.yaml:
-  - wandb.run_id
-  - wandb.url
-  - wandb.sync_status
-
-### 5. Update History
-
-After execution completes, record the attempt in history.md:
-
-- **Append Entry**: Add new entry to experiment's history.md with:
-  - Timestamp in format `[YYYY-MM-DD HH:MM]`
-  - Event description: "Training Run Started" or "Training Run Succeeded/Failed"
-  - Run ID
-  - Job reference
-  - Status
-  - Duration (if completed)
-  - W&B run URL (if available)
-  - Key observations (if any)
-
-Example entry format:
-```markdown
-## 2025-01-15 08:00 — Training Run Started
-
-- Run ID: train-baseline__20250115T080000
-- Job: jobs/train.yaml
-- Resources: 1 GPU, 8 CPUs, 32GB RAM
-- Status: running
-
-## 2025-01-15 12:30 — Training Run Succeeded
-
-- Run ID: train-baseline__20250115T080000
-- Status: succeeded
-- Duration: 4.5 hours
-- Exit code: 0
-- W&B: https://wandb.ai/my-lab/my-project/runs/abc123
-- Checkpoint saved: outputs/baseline-experiment/train-baseline__20250115T080000/checkpoint-final
-```
-
-## Output
-
-After successful execution, the skill produces:
-
-- `runs/<run-id>/run.yaml` with complete execution status
-- `runs/<run-id>/resolved-job.yaml` with exact configuration used
-- `runs/<run-id>/logs/stdout.log` and `stderr.log` with execution logs
-- Updated `history.md` entry documenting the execution
-- Training outputs in outputs directory (checkpoints, metrics, etc.)
-
-## Phase 1 Limitations
-
-Phase 1 implementation has the following limitations:
-
-- **Local Execution Only**: SSH execution not implemented (requires Phase 6)
-- **No Slurm Integration**: Slurm submission not implemented (requires Phase 6)
-- **Limited Suitability**: Local execution only suitable for:
-  - Smoke tests and debugging
-  - Small models and datasets
-  - CPU-only quick experiments
-- **Manual W&B**: W&B environment setup is basic (full integration in Phase 7)
-- **Manual HF Hub**: Hugging Face Hub push is basic (full integration in Phase 8)
+6. **Record in `history.md`.** Add an entry per run attempt: timestamp, Slurm job
+   id (if any), resources, status (succeeded / failed / timed out / cancelled),
+   and any W&B URL. Record failures with the same care as successes — note the
+   error cause briefly so it stays reproducible without committing the raw log.
 
 ## Notes
 
-### Future Phase Integration
-
-When Phase 6+ is implemented, this skill will:
-
-- **SSH Execution**: Transfer files to remote host and execute there
-- **Slurm Submission**: Generate sbatch scripts and submit to Slurm scheduler
-- **Job Monitoring**: Poll Slurm job status and retrieve logs when complete
-- **Advanced Tracking**: Track Slurm job IDs, node assignments, and queue times
-
-### Error Handling
-
-If execution fails:
-
-- Record failure status in run.yaml
-- Save error logs for debugging
-- Update history.md with failure entry
-- Suggest potential fixes based on error patterns:
-  - OOM errors: reduce batch size, enable gradient checkpointing
-  - Import errors: check environment dependencies
-  - File not found: verify data paths in job configuration
-  - W&B auth errors: check API token configuration
-
-Do NOT automatically retry failed runs without user approval.
-
-### Multi-Run Jobs
-
-For jobs with matrix parameters (ablations):
-
-- Each matrix combination generates a separate run ID
-- All runs share the same job-id prefix
-- Each run gets its own directory and tracking files
-- History.md contains an entry for each run
-- Consider generating summary table after all runs complete
-
-### Resource Management
-
-For local execution:
-
-- Be aware of system resource limits (RAM, disk space)
-- Warn user if job requirements exceed available resources
-- Monitor disk space during execution
-- Suggest remote execution for large jobs
+- Raw `logs/*.out` / `*.err` stay local (gitignored). Summarize outcomes in
+  `history.md`.
+- Do not retry a failed run automatically without asking the user.
+- For matrix jobs, record one `history.md` entry per combination.

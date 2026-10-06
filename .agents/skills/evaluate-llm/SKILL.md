@@ -1,61 +1,43 @@
 # Evaluate LLM Skill
 
-## Purpose
+**Stage:** Run
 
-Run evaluation jobs, calculate metrics, and compare results against baselines.
+Evaluate completed training runs, compare them against the baseline, and record
+the results in prose. Uses the project's own evaluation code; nothing is scored
+or gated automatically.
 
 ## Prerequisites
 
-- Training run completed successfully
-- Evaluation job YAML exists
-- Primary metric is defined in plan.md
+- Required training runs have finished (check `history.md`).
+- The experiment's `plan.md` states the metric and baseline (or that the run is
+  exploratory).
 
 ## Procedure
 
-1. **Check Training Completion**:
-   - Verify required training runs have status "succeeded"
-   - Identify best checkpoint based on validation metric
-   - Verify checkpoint exists locally or on HF Hub
+1. **Identify what to evaluate.** From `history.md`, find the successful runs and
+   the best candidate(s) by the planned metric. Locate their checkpoints (local
+   or on the Hugging Face Hub).
 
-2. **Prepare Evaluation**:
-   - Load evaluation job configuration
-   - Verify evaluation dataset and split
-   - Create evaluation run ID: <eval-job-id>__<timestamp>
-   - Create runs/<eval-run-id>/ directory
+2. **Run evaluation.** Use the project's evaluation entrypoint with the relevant
+   checkpoint and the evaluation dataset/split from `run-config.yaml`. Run short
+   evaluations locally or via Slurm as appropriate; capture logs to `logs/`.
 
-3. **Execute Evaluation**:
-   - Activate project environment
-   - Construct evaluation command
-   - Execute with proper checkpoint reference
-   - Capture metrics output
+3. **Compare runs.** Rank runs by the primary metric (respecting whether higher
+   or lower is better). Compute improvement over the baseline — be explicit about
+   absolute vs. relative. Note useful secondary metrics (time, memory).
 
-4. **Calculate Metrics**:
-   - Extract primary metric value
-   - Extract secondary metrics (if defined)
-   - Compare against baseline (from plan.md or prior experiments)
-   - Calculate improvement percentage
+4. **Assess against the plan.** If the plan defined a success criterion, state
+   plainly whether it was met and by how much, with the evidence. If the run was
+   exploratory, summarize what was observed instead of a pass/fail.
 
-5. **Compare W&B Runs** (Phase 1: Manual):
-   - List W&B run URLs from training runs
-   - Provide comparison instructions to user
-   - Document comparison results
+5. **Record results.** Write the comparison and conclusion into `journal.md`
+   (interpretation) and note the evaluation events in `history.md` (facts). Keep
+   source metric values exact; label any derived numbers.
 
-6. **Assess Success Criteria**:
-   - Apply success criteria from plan.md
-   - Determine if experiment succeeded or failed
-   - Document assessment rationale
+## Notes
 
-7. **Draft Results**:
-   - Use templates/results.yaml as base
-   - Fill best run reference
-   - Fill primary and secondary metrics
-   - Fill baseline comparison
-   - Fill success assessment
-   - Note any caveats or limitations
+- Compare only what the evidence supports; if it can't support a conclusion, say so.
+- For many runs or surprising patterns, consider producing figures under
+  `figures/` to make the comparison clear.
 
-## Output
-
-- runs/<eval-run-id>/run.yaml with evaluation status
-- Drafted results.yaml (not yet committed)
-- Updated history.md with evaluation entry
-- Success/failure assessment with rationale
+See [references/comparison-guidelines.md](references/comparison-guidelines.md).

@@ -552,17 +552,15 @@ Consolidated findings from lora-rank-ablation experiment:
 
 **Always commit**:
 - Experiment plans (`plan.md`)
-- Job configurations (`jobs/*.yaml`)
-- Run metadata (`runs/*/run.yaml`, `runs/*/resolved-job.yaml`)
-- Results summaries (`results.yaml`)
+- Run configs (`run-config.yaml`)
 - Research notes (`history.md`, `journal.md`)
 - Project conclusions (`project-log.md`)
 - Source code changes (`src/**/*.py`)
 - Documentation updates (`*.md`)
 
 **Never commit**:
-- Model checkpoints (use HuggingFace Hub)
-- Raw training logs (commit processed/structured logs only)
+- Model checkpoints (use the Hugging Face Hub)
+- Raw Slurm/run logs (`experiments/*/logs/*.out`, `*.err`) — kept local only
 - Secrets and credentials
 - Cache directories
 - Large datasets (commit download scripts instead)

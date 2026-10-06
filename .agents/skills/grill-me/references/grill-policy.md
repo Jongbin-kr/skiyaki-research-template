@@ -205,16 +205,14 @@ A user's request to move forward does not bypass unresolved critical decisions. 
 - **Unresolved handoff**: generating an approval request while baseline, primary metric, or success criteria is unresolved.
 - **Scope leakage**: writing plans/jobs, creating Runs, executing entrypoints, contacting SSH/Slurm/W&B/Hugging Face, or committing Git changes during grilling.
 
-## No-Execution Boundary
+## Clarification-Only Boundary
 
-Permitted actions are local repository reads, focused user clarification, and in-memory or local decision synthesis for handoff. The grill MUST NOT:
+Permitted actions are local repository reads, focused user clarification, and
+decision synthesis for handoff. The grill does not:
 
-- Create or modify `plan.md` or job YAML.
-- Create a Run directory, `run.yaml`, or resolved job record.
-- Invoke training or evaluation.
-- Access SSH or Slurm (unavailable until Phase 6).
-- Query live W&B (unavailable until Phase 7).
-- Access or upload to Hugging Face Hub (unavailable until Phase 8).
-- Create a Git commit.
+- write or modify `plan.md` or `run-config.yaml` (that is `plan-ml-experiment`),
+- run training or evaluation,
+- contact Slurm, W&B, or the Hugging Face Hub, or
+- create a Git commit.
 
-The only successful endpoint is a planning-ready decision ledger handed to `plan-ml-experiment`; execution remains outside Phase 4.
+The only output is a set of resolved decisions handed to `plan-ml-experiment`.

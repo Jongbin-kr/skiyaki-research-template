@@ -117,7 +117,7 @@ This file records the chronological sequence of events for the LoRA rank ablatio
 - Success criteria met: 2.1% improvement over baseline
 - Best model: rank 16 (0.874 accuracy)
 - Recommendation: Use rank 16 for production
-- Updated results.yaml, journal.md, project-log.md
+- Updated journal.md and project-log.md
 - Experiment marked as completed
 
 ---

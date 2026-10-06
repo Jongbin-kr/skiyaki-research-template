@@ -48,8 +48,8 @@ The report must account for every applicable source class. Use exact repository-
 | Project conclusions | Root `project-log.md` | Exact path as inspected, or missing/unpopulated |
 | Experiment plans | Relevant `experiments/*/plan.md` | One record per relevant path; explicit missing record where expected |
 | Experiment journals | Relevant `experiments/*/journal.md` | One record per relevant path; explicit missing record where expected |
-| Structured results | Relevant `experiments/*/results.yaml` | One record per relevant path; explicit missing record where expected |
-| Job configurations | Relevant `experiments/*/jobs/*.yaml` | One record per relevant path; explicit missing record where expected |
+| Experiment history | Relevant `experiments/*/history.md` | One record per relevant path; explicit missing record where expected |
+| Run configs | Relevant `experiments/*/run-config.yaml` | One record per relevant path; explicit missing record where expected |
 | Git history | Relevant local commits and diffs | Commit ID plus path/finding, or no relevant entry found |
 
 An inspected source stays in the inventory even when it yields no finding. A source discovered through a summary must still be inspected directly when available and relevant.
@@ -61,7 +61,7 @@ Only populated files at the repository root count as current project records:
 - `project-plan.md`
 - `project-log.md`
 
-Files such as `templates/project-plan.md`, `templates/project-log.md`, `templates/journal.md`, and `templates/results.yaml` define examples or schemas. They are not project evidence, do not satisfy a missing root-source check, and must not support a current finding or baseline. When only a template exists, record the corresponding root source as missing or unpopulated.
+Files such as `templates/project-plan.md`, `templates/project-log.md`, `templates/journal.md`, and `templates/plan.md` define examples or schemas. They are not project evidence, do not satisfy a missing root-source check, and must not support a current finding or baseline. When only a template exists, record the corresponding root source as missing or unpopulated.
 
 ## Search Procedure
 

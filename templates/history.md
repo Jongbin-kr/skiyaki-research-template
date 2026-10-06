@@ -32,7 +32,7 @@ This file records factual execution events in chronological order.
 - Metrics calculated and compared to baseline
 
 ### Finalization Events
-- Documentation updates (results.yaml, journal.md)
+- Documentation updates (journal.md)
 - Project log updated
 - Git commit proposed or created
 
@@ -77,9 +77,9 @@ This file records factual execution events in chronological order.
 ## 2025-01-15 03:30 — Training Run Started
 
 - Run ID: train-r16__20250115T080000
-- Job: jobs/train.yaml with lora_rank=16
+- Config: run-config.yaml with lora_rank=16
 - Resources: 1 GPU, 8 CPUs, 32GB RAM
-- Slurm Job ID: 123456 (Phase 6+)
+- Slurm Job ID: 123456
 
 ## 2025-01-14 16:00 — Experiment Approved
 
