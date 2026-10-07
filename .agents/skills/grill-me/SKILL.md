@@ -1,3 +1,8 @@
+---
+name: grill-me
+description: Clarify the consequential scientific decisions (objective, baseline, metric, success criterion, ablation scope) before writing an experiment plan. Use during the Plan stage when a material decision is unclear, unsupported, or conflicts with prior evidence. Asks one focused question at a time.
+---
+
 # Grill Me Skill
 
 **Stage:** Plan

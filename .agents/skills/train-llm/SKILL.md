@@ -1,3 +1,8 @@
+---
+name: train-llm
+description: Execute a planned training run using the project's own training code, and record what happened in history.md. Use in the Run stage after a plan and run-config.yaml are approved. Runs short CPU work locally and GPU/CPU-heavy jobs via Slurm; asks before submitting.
+---
+
 # Train LLM Skill
 
 **Stage:** Run

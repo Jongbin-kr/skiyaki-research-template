@@ -1,3 +1,8 @@
+---
+name: explore-project-history
+description: Inspect this repository's past experiments, results, project log, and Git history before planning new work. Use at the start of the Plan stage to find related prior work, reusable baselines and settings, and to avoid duplicating earlier experiments.
+---
+
 # Explore Project History Skill
 
 **Stage:** Plan

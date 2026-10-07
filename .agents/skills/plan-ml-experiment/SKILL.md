@@ -1,3 +1,8 @@
+---
+name: plan-ml-experiment
+description: Turn resolved decisions into a reviewable experiment folder — a prose plan.md and a reproducible run-config.yaml. Use in the Plan stage after prior work is reviewed and open questions are resolved, to create the experiment and present it for approval. Plans only; does not run anything.
+---
+
 # Plan ML Experiment Skill
 
 **Stage:** Plan

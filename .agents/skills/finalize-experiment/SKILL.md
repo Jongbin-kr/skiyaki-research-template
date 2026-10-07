@@ -1,3 +1,8 @@
+---
+name: finalize-experiment
+description: Complete an experiment's documentation, update the project log, review the diff for safety, and propose a Git commit for the user to approve. Use in the Finalize stage after runs and evaluation are recorded. Does not commit automatically.
+---
+
 # Finalize Experiment Skill
 
 **Stage:** Finalize

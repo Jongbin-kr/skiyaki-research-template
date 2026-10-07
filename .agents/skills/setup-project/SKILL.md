@@ -1,3 +1,8 @@
+---
+name: setup-project
+description: Configure a newly created research project for its first use. Use when project-plan.md still contains template placeholders, or when setting up the project's environment and stable infrastructure settings (SSH, Slurm, W&B, Hugging Face) before the first experiment.
+---
+
 # Setup Project Skill
 
 **Stage:** Setup (one-time, first run)

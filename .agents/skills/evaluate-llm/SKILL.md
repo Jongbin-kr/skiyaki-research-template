@@ -1,3 +1,8 @@
+---
+name: evaluate-llm
+description: Evaluate completed training runs, compare them against the baseline, and record results in prose. Use in the Run stage after required training runs finish, to assess the metric (or summarize an exploratory run) and write findings to history.md and journal.md.
+---
+
 # Evaluate LLM Skill
 
 **Stage:** Run
