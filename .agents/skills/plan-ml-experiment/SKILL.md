@@ -21,10 +21,16 @@ jobs or run anything.
 
 ## Procedure
 
-1. **Create the experiment folder.** Choose a kebab-case id and create
+1. **Create a branch (recommended).** Before creating the experiment folder,
+   recommend a dedicated branch `experiment/<experiment-id>` and confirm with the
+   user. Doing the experiment on its own branch keeps `main` clean and makes a
+   failed experiment easy to discard. If the user declines, continue on the
+   current branch.
+
+2. **Create the experiment folder.** Choose a kebab-case id and create
    `experiments/<experiment-id>/` with `logs/` and `figures/` subdirectories.
 
-2. **Write `plan.md` (prose, no frontmatter).** Include:
+3. **Write `plan.md` (prose, no frontmatter).** Include:
    - **Objective** — the resolved research question.
    - **Hypothesis** — a testable prediction (or note that the run is exploratory).
    - **Baseline** — what you compare against, with its source (path or commit).
@@ -36,17 +42,17 @@ jobs or run anything.
 
    Start from [the plan template](../../templates/plan.md).
 
-3. **Write `run-config.yaml`.** This is the reproducible, machine-read config that
+4. **Write `run-config.yaml`.** This is the reproducible, machine-read config that
    the project's training/evaluation code consumes. Capture entrypoint, parameters,
    any ablation matrix, seed, resources, and W&B / Hugging Face settings. Start
    from [the run-config template](../../templates/run-config.yaml). Do not
    embed secrets.
 
-4. **Estimate scope.** Expand any matrix to a run count, estimate wall time and
+5. **Estimate scope.** Expand any matrix to a run count, estimate wall time and
    GPU-hours, and compare against the project's quotas in `project-plan.md`. Note
    this in `plan.md`.
 
-5. **Summarize for the user.** Present a concise summary — recommended plan, the
+6. **Summarize for the user.** Present a concise summary — recommended plan, the
    decisions you made, objective/hypothesis, baseline, metric & criterion (if
    any), run count & resources, and where the files are — then ask for approval
    or changes. Do not run anything; execution belongs to the Run stage.

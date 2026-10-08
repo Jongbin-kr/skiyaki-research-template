@@ -44,7 +44,13 @@ commit — you prepare and the user decides.
 6. **Propose the commit.** Present the file list and a clear commit message to the
    user. Do not commit until the user approves. Push only if asked.
 
+7. **Branch decision (if the experiment used its own branch).** Ask the user how
+   to resolve the `experiment/<experiment-id>` branch: merge it into `main` to
+   consolidate the record, or keep it as a standalone branch. Both are fine; do
+   neither without the user's choice.
+
 ## Output
 
 - Finalized `journal.md`, updated `history.md` and `project-log.md`.
 - A proposed commit (file list + message) awaiting user approval.
+- The user's decision on merging or keeping the experiment branch.

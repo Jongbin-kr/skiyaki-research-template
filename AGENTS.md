@@ -48,37 +48,45 @@ These are conventions the agent follows and you supervise — not enforced gates
    `experiments/*/journal.md`, past `run-config.yaml` files, and relevant Git
    history for related work and reusable settings.
 
-2. **Clarify before planning.** When the objective, baseline, or metric is
+2. **A branch per experiment (recommended).** When starting an experiment, it is
+   recommended to create a dedicated branch `experiment/<experiment-id>` and do
+   the experiment's work there (plan, run config, records). This keeps `main`
+   clean, makes a failed experiment easy to discard, and allows parallel
+   experiments. Confirm with the user when the plan is created. At Finalize, the
+   user decides whether to merge the branch into `main` or keep it as a
+   standalone record — both are fine.
+
+3. **Clarify before planning.** When the objective, baseline, or metric is
    unclear, ask focused questions (one at a time). A metric and success criterion
    are encouraged but optional — exploratory runs are fine; just say so.
 
-3. **Reproducible settings in YAML.** Put training/evaluation parameters in
+4. **Reproducible settings in YAML.** Put training/evaluation parameters in
    `run-config.yaml` so a run can be reproduced and read by the project's code.
 
-4. **Execution environment.** Run jobs in the project's environment
+5. **Execution environment.** Run jobs in the project's environment
    (`environment.yaml` / `uv` / `venv`). GPU and CPU-heavy jobs go through Slurm
    (`sbatch`) on the configured cluster — never run heavy work on a login node.
    Short CPU checks may run locally.
 
-5. **Tracking and artifacts.** Track runs with Weights & Biases when configured
+6. **Tracking and artifacts.** Track runs with Weights & Biases when configured
    (group by experiment, keep local data). Push checkpoints to the Hugging Face
    Hub per the project's push policy; keep repositories private by default and
    never make a private repository public without an explicit decision.
 
-6. **Record every run.** Note each execution attempt in `history.md` (time, Slurm
+7. **Record every run.** Note each execution attempt in `history.md` (time, Slurm
    job id, status, outcome), including failures. Write interpretation in
    `journal.md`.
 
-7. **Human-in-the-loop.** The agent proposes; you approve in chat. Nothing in a
+8. **Human-in-the-loop.** The agent proposes; you approve in chat. Nothing in a
    file blocks execution — you are the approval gate. Ask the user before
    submitting jobs, uploading artifacts, or committing.
 
-8. **Git safety (review before committing).** Commit plans, configs, results, and
+9. **Git safety (review before committing).** Commit plans, configs, results, and
    documentation. Never commit secrets or credentials, model checkpoints, W&B
    caches, or raw Slurm logs (`*.out`, `*.err`). A human reviews the diff before
    any commit; raw logs stay local under each experiment's `logs/`.
 
-9. **Completion.** An experiment is done when required runs finished, results are
+10. **Completion.** An experiment is done when required runs finished, results are
    recorded, `history.md` and `journal.md` are written, `project-log.md` reflects
    the project-level outcome, and a commit is proposed for your approval.
 
