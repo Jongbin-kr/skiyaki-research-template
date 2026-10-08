@@ -34,12 +34,12 @@ jobs or run anything.
    - **Metric & success criterion** — if defined; otherwise state it's exploratory.
    - **Risks / limitations.**
 
-   Start from [templates/plan.md](../../../templates/plan.md).
+   Start from [the plan template](../../templates/plan.md).
 
 3. **Write `run-config.yaml`.** This is the reproducible, machine-read config that
    the project's training/evaluation code consumes. Capture entrypoint, parameters,
    any ablation matrix, seed, resources, and W&B / Hugging Face settings. Start
-   from [templates/run-config.yaml](../../../templates/run-config.yaml). Do not
+   from [the run-config template](../../templates/run-config.yaml). Do not
    embed secrets.
 
 4. **Estimate scope.** Expand any matrix to a run count, estimate wall time and

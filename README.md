@@ -28,8 +28,8 @@ human-supervised.
 
 Click **Use this template** on GitHub to make a new repository, then clone it.
 (To wrap an existing research repo, copy this template's convention files —
-`AGENTS.md`, `.agents/`, `templates/`, `experiments/`, `project-plan.md`,
-`project-log.md` — into it.)
+`AGENTS.md`, `.agents/`, `experiments/`, `project-plan.md`, `project-log.md`
+— into it.)
 
 ### 2. Let the agent set you up *(one-time)*
 
@@ -91,16 +91,17 @@ your-project/
 ├── project-plan.md           # Stable project settings (prose)
 ├── project-log.md            # Project-level conclusions over time
 │
-├── .agents/skills/           # Skills (markdown procedures), grouped by stage
-│   ├── setup-project/
-│   ├── explore-project-history/
-│   ├── grill-me/
-│   ├── plan-ml-experiment/
-│   ├── train-llm/
-│   ├── evaluate-llm/
-│   └── finalize-experiment/
+├── .agents/
+│   ├── skills/               # Skills (markdown procedures), grouped by stage
+│   │   ├── setup-project/
+│   │   ├── explore-project-history/
+│   │   ├── grill-me/
+│   │   ├── plan-ml-experiment/
+│   │   ├── train-llm/
+│   │   ├── evaluate-llm/
+│   │   └── finalize-experiment/
+│   └── templates/            # Blank templates the skills copy from
 │
-├── templates/                # Blank templates (plan.md, run-config.yaml, history.md, journal.md)
 ├── experiments/              # Your experiments
 │   ├── example-lora-rank-ablation/   # Worked example (safe to delete)
 │   └── <experiment-id>/

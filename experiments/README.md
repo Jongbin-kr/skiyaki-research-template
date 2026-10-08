@@ -38,10 +38,10 @@ documents it.
 
 ```bash
 mkdir -p experiments/<experiment-id>/{logs,figures}
-cp templates/plan.md experiments/<experiment-id>/plan.md
-cp templates/run-config.yaml experiments/<experiment-id>/run-config.yaml
-cp templates/history.md experiments/<experiment-id>/history.md
-cp templates/journal.md experiments/<experiment-id>/journal.md
+cp .agents/templates/plan.md experiments/<experiment-id>/plan.md
+cp .agents/templates/run-config.yaml experiments/<experiment-id>/run-config.yaml
+cp .agents/templates/history.md experiments/<experiment-id>/history.md
+cp .agents/templates/journal.md experiments/<experiment-id>/journal.md
 ```
 
 Then fill them in and follow the workflow in [AGENTS.md](../AGENTS.md).
@@ -65,5 +65,5 @@ past work and surfaces reusable settings.
 
 ---
 
-See [AGENTS.md](../AGENTS.md) for the workflow, [templates/](../templates/) for
-blank files, and [.agents/skills/](../.agents/skills/) for the stage skills.
+See [AGENTS.md](../AGENTS.md) for the workflow, [.agents/templates/](../.agents/templates/)
+for blank files, and [.agents/skills/](../.agents/skills/) for the stage skills.
