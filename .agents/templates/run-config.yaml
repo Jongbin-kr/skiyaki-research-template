@@ -43,3 +43,13 @@ wandb:
 huggingface:
   push: milestone               # never | final_only | milestone | final_and_milestone | every_save
   repo: null                    # defaults to the experiment id if left null
+
+# Local checkpoint/output saving. Adjust field names to your training code.
+output:
+  local_dir: outputs/<experiment-id>/<run-id>   # checkpoints/outputs (gitignored)
+  save_strategy: epoch          # epoch | steps | best_only — how often to save
+  # Disk-retention default: if nothing is pushed to the Hub (huggingface.push:
+  # never), keep ALL checkpoints locally (local copy is the only one). If
+  # anything is pushed to the Hub, keep only the best 3 locally (the Hub is the
+  # backup) and prune the rest.
+  keep_local: best_3_if_pushed_else_all

@@ -72,6 +72,10 @@ These are conventions the agent follows and you supervise — not enforced gates
    (group by experiment, keep local data). Push checkpoints to the Hugging Face
    Hub per the project's push policy; keep repositories private by default and
    never make a private repository public without an explicit decision.
+   **Local checkpoints** go under `outputs/<experiment-id>/<run-id>/` (gitignored).
+   Disk retention: if nothing is pushed to the Hub, keep all local checkpoints
+   (the local copy is the only one); if checkpoints are pushed to the Hub, keep
+   only the best 3 locally and prune the rest (the Hub is the backup).
 
 7. **Record every run.** Note each execution attempt in `history.md` (time, Slurm
    job id, status, outcome), including failures. Write interpretation in

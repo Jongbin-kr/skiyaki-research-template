@@ -36,3 +36,9 @@ wandb:
 huggingface:
   push: milestone
   repo: null
+
+# Pushes to the Hub (milestone), so keep only the best 3 checkpoints locally.
+output:
+  local_dir: outputs/example-lora-rank-ablation/<run-id>
+  save_strategy: epoch
+  keep_local: best_3_if_pushed_else_all
