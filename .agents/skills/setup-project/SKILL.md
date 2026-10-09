@@ -26,17 +26,43 @@ then write it into the right file.
 
 ### 1. Environment
 
-- If the project already has an environment manifest (a cloned repo's
-  `environment.yaml`, `pyproject.toml` + `uv.lock`, or `requirements.txt`),
-  **use it** — don't override the project's own setup. Detect the manager it
-  implies (conda / uv / venv).
-- Otherwise, default to a **conda** environment: confirm a name, Python version,
-  and the core frameworks/dependencies, and write `environment.yaml`.
-- Record the chosen manager and manifest in `project-plan.md` under
-  `environment`. The project then uses this environment for all runs; prefer it
-  over system Python.
-- Point the user at creating it (e.g. `conda env create -f environment.yaml`).
-  Don't assume a specific training framework beyond what the project declares.
+**Never assume the environment or the manager. Discover what exists, ask the
+user, then record the decision.** Picking the wrong interpreter is a common cause
+of failed runs (e.g. a bare `torchrun` silently resolving to base conda instead
+of the intended env).
+
+1. **Discover existing environments.** Inspect what the machine/cluster already
+   has before proposing anything:
+   - conda envs: `conda env list`
+   - the project's own manifest, if any: `environment.yaml`, `pyproject.toml` +
+     `uv.lock`, or `requirements.txt`
+   - active/available managers: `which conda uv`, `$VIRTUAL_ENV`, `$CONDA_DEFAULT_ENV`
+   Report what you found (e.g. "there's a conda env `MoE` with PyTorch 2.11 /
+   CUDA 13.0, and the project declares no manifest").
+
+2. **Ask the user which environment to use.** Do not silently pick one. Present
+   the options you found and let the user choose:
+   - reuse an existing env (e.g. their `MoE` conda env),
+   - create a new dedicated env (recommended when version compatibility matters —
+     e.g. the project needs a specific Transformers/PyTorch/CUDA combo that would
+     disturb a shared env),
+   - or, if nothing suitable exists, ask whether to create a **conda** or **uv**
+     environment and build it.
+   When creating a new env, confirm the Python version and the key
+   framework/CUDA versions the project code requires (check the project's
+   README/setup/requirements), and prefer an isolated env over mutating a shared one.
+
+3. **Record the decision in `project-plan.md`** under `environment`: the chosen
+   `manager` (conda / uv / venv), the env name or path, and the manifest. This is
+   a stable setting — all later runs use this environment.
+
+4. **Pin how jobs invoke it, so runs don't drift to the wrong interpreter.**
+   Record the exact activation/invocation to use in every run — e.g.
+   `conda run -n <env> python ...` or the env's absolute Python
+   (`/path/to/envs/<env>/bin/python`), and for distributed launches the env's own
+   `torchrun`/`accelerate`. Avoid bare `torchrun`/`python` that can resolve to
+   base conda or system Python. Don't assume a training framework beyond what the
+   project declares.
 
 ### 2. Stable project settings → `project-plan.md`
 

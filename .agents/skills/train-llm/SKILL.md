@@ -27,13 +27,21 @@ the project's conventions, then write the outcome to `history.md`.
 2. **Build the command from `run-config.yaml`.** Map its entrypoint and
    parameters to the project's expected invocation. Expand any ablation matrix
    into one command per combination.
+   - **Use the environment recorded in `project-plan.md`, invoked explicitly.**
+     Run through that env's interpreter — `conda run -n <env> python ...` or the
+     env's absolute Python — and for distributed launches use that env's own
+     `torchrun` / `accelerate`. **Never** use a bare `torchrun` / `python`: on a
+     cluster it can silently resolve to base conda or system Python with the
+     wrong PyTorch/CUDA and fail at the first GPU op. If no environment is
+     recorded yet, stop and run Setup first.
 
 3. **Choose where it runs.**
-   - Short CPU checks may run locally in the project environment.
+   - Short CPU checks may run locally in the recorded project environment.
    - GPU and CPU-heavy jobs go through **Slurm** (`sbatch`) on the configured
      cluster — never run heavy work on a login node. Generate an sbatch script
-     that activates the project environment and runs the command; write logs to
-     the experiment's `logs/` directory.
+     that **activates the recorded environment and invokes its interpreter
+     explicitly** (not a bare `torchrun`/`python`); write logs to the
+     experiment's `logs/` directory.
 
 4. **Configure tracking.** If W&B is enabled, set the environment so runs group
    by experiment and keep local data. If Hugging Face push is configured, honor
