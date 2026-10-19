@@ -32,19 +32,13 @@ commit — you prepare and the user decides.
    conclusion, best run, link to the experiment folder, key metrics, and the next
    step. Don't duplicate the full experiment detail here.
 
-5. **Review the diff for safety.** Before proposing a commit, review what would be
-   staged and exclude anything that must not be committed:
-   - secrets, tokens, credentials,
-   - model checkpoints and large binaries,
-   - W&B caches,
-   - raw Slurm logs (`experiments/*/logs/*.out`, `*.err`).
+5. **Review and commit — use the `review-and-commit` skill.** Hand the commit off
+   to [`review-and-commit`](../review-and-commit/SKILL.md): it runs the safety
+   review (no secrets, checkpoints, W&B caches, or raw logs), writes the commit
+   message following the STE-KO coding surface, and commits only after the user
+   approves. Commit plans, run configs, results, and documentation only.
 
-   Commit plans, configs, results, and documentation only.
-
-6. **Propose the commit.** Present the file list and a clear commit message to the
-   user. Do not commit until the user approves. Push only if asked.
-
-7. **Branch decision (if the experiment used its own branch).** Ask the user how
+6. **Branch decision (if the experiment used its own branch).** Ask the user how
    to resolve the `experiment/<experiment-id>` branch: merge it into `main` to
    consolidate the record, or keep it as a standalone branch. Both are fine; do
    neither without the user's choice.
@@ -52,5 +46,5 @@ commit — you prepare and the user decides.
 ## Output
 
 - Finalized `journal.md`, updated `history.md` and `project-log.md`.
-- A proposed commit (file list + message) awaiting user approval.
+- A commit proposed via `review-and-commit`, awaiting user approval.
 - The user's decision on merging or keeping the experiment branch.
