@@ -27,7 +27,28 @@ STE-KO rules live in [`references/ste-ko-SPEC.md`](references/ste-ko-SPEC.md)
 Show the user what changed (`git status`, `git diff`). Summarize it in one or
 two sentences: what changed and why.
 
-### 2. Safety review (before staging)
+### 2. Branch check (before staging)
+
+Confirm the change lands on the right branch. This project keeps a branch per
+experiment (`experiment/<experiment-id>`), so an experiment's commit must not
+slip onto `main`.
+
+1. Read the current branch: `git branch --show-current`. Show it to the user.
+2. Decide where the change belongs:
+   - **Experiment work** (anything under `experiments/<id>/`, `outputs/<id>/`, or
+     a run for that experiment): it belongs on `experiment/<id>`. If the current
+     branch is not that branch (for example you are on `main`), stop and tell the
+     user. Do not commit. Ask whether to switch to the experiment branch or
+     create it (`git switch -c experiment/<id>`).
+   - **Project-level work** (templates, skills, AGENTS.md, project-plan.md,
+     project-log.md, shared config): `main` is correct.
+3. If the staged change mixes experiment work and project-level work, stop and
+   tell the user — split it into separate commits on the right branches.
+
+Never switch branches or create one without the user's approval. This step
+checks; the user decides.
+
+### 3. Safety review (before staging)
 
 Exclude anything that must not be committed:
 - secrets, tokens, credentials (`.env`, `*.token`, `credentials.json`, `*.pem`, keys)
@@ -38,7 +59,7 @@ Exclude anything that must not be committed:
 Stage specific files by name rather than `git add -A`, so nothing unexpected
 slips in. If a credential-bearing file is staged, stop and tell the user.
 
-### 3. Write the commit message — STE-KO coding surface
+### 4. Write the commit message — STE-KO coding surface
 
 Apply the STE-KO coding surface (SPEC.md chapter 10 plus the always-on rules).
 The load-bearing rules for a commit message:
@@ -61,7 +82,7 @@ The load-bearing rules for a commit message:
   follow the language-neutral coding-surface principles above (what and why, no
   false check claims, list what is left, conclusion first).
 
-### 4. Propose, then commit on approval
+### 5. Propose, then commit on approval
 
 Present the file list and the drafted message. **Do not commit until the user
 approves.** On approval, stage the reviewed files and commit. Push only if the
@@ -69,6 +90,8 @@ user asks.
 
 ## Output
 
+- The change confirmed to land on the right branch (`main` for project-level
+  work, `experiment/<id>` for experiment work), with mixed changes split.
 - A safety-reviewed set of staged files (no secrets, checkpoints, caches, or raw logs).
 - A commit message that follows the STE-KO coding surface.
 - A commit created only after explicit user approval.
