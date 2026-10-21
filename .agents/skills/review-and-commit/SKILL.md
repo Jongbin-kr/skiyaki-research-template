@@ -30,23 +30,31 @@ two sentences: what changed and why.
 ### 2. Branch check (before staging)
 
 Confirm the change lands on the right branch. This project keeps a branch per
-experiment (`experiment/<experiment-id>`), so an experiment's commit must not
-slip onto `main`.
+experiment (`experiment/<experiment-id>`). A commit must match its branch: an
+experiment's commit belongs only on that experiment's branch, not on `main` and
+not on another experiment's branch.
 
 1. Read the current branch: `git branch --show-current`. Show it to the user.
-2. Decide where the change belongs:
-   - **Experiment work** (anything under `experiments/<id>/`, `outputs/<id>/`, or
-     a run for that experiment): it belongs on `experiment/<id>`. If the current
-     branch is not that branch (for example you are on `main`), stop and tell the
-     user. Do not commit. Ask whether to switch to the experiment branch or
-     create it (`git switch -c experiment/<id>`).
-   - **Project-level work** (templates, skills, AGENTS.md, project-plan.md,
-     project-log.md, shared config): `main` is correct.
-3. If the staged change mixes experiment work and project-level work, stop and
-   tell the user — split it into separate commits on the right branches.
+2. Find which experiment ids the change touches. Look at the changed paths:
+   `experiments/<id>/...` and `outputs/<id>/...` each name an experiment id.
+   Collect the set of ids the diff touches.
+3. Classify the change:
+   - **Project-level work** — no experiment id in the paths (templates, skills,
+     AGENTS.md, project-plan.md, project-log.md, shared config). Belongs on
+     `main`. If the current branch is not `main`, stop and tell the user.
+   - **Single-experiment work** — exactly one experiment id. Belongs on
+     `experiment/<id>` with that exact id. Stop and tell the user if the current
+     branch is anything else — whether `main`, or a different experiment branch
+     such as `experiment/<other-id>`. Compare the id in the branch name to the id
+     in the paths; they must be identical.
+4. Stop and tell the user to split the commit when the change mixes categories:
+   - more than one experiment id in one diff, or
+   - experiment work together with project-level work.
+   Each part commits separately on its own branch.
 
-Never switch branches or create one without the user's approval. This step
-checks; the user decides.
+When you stop, do not commit. Ask whether to switch to the right branch or create
+it (`git switch -c experiment/<id>`). Never switch branches or create one without
+the user's approval. This step checks; the user decides.
 
 ### 3. Safety review (before staging)
 
@@ -90,8 +98,9 @@ user asks.
 
 ## Output
 
-- The change confirmed to land on the right branch (`main` for project-level
-  work, `experiment/<id>` for experiment work), with mixed changes split.
+- The change confirmed to land on the matching branch: `main` for project-level
+  work, `experiment/<id>` for that exact experiment id — never `main`, never
+  another experiment's branch. Mixed or multi-experiment changes split first.
 - A safety-reviewed set of staged files (no secrets, checkpoints, caches, or raw logs).
 - A commit message that follows the STE-KO coding surface.
 - A commit created only after explicit user approval.
