@@ -21,11 +21,24 @@ jobs or run anything.
 
 ## Procedure
 
-1. **Create a branch (recommended).** Before creating the experiment folder,
-   recommend a dedicated branch `experiment/<experiment-id>` and confirm with the
-   user. Doing the experiment on its own branch keeps `main` clean and makes a
-   failed experiment easy to discard. If the user declines, continue on the
-   current branch.
+1. **Decide the branch — ask before creating one.** Never create or switch a
+   branch on your own. Before any `git branch` or `git switch -c`, propose the
+   exact name and ask the user, in one question: "`experiment/<id>` 브랜치를
+   파도 될까요?" Create it only after the user says yes.
+
+   Which case you are in decides whether a new branch is even needed:
+   - **A new line of work** (first experiment, or a topic clearly different from
+     the current branch's work): propose a new `experiment/<id>` branch and ask.
+   - **A follow-up in the same line** (another run of the same topic while the
+     conversation continues — a tweaked hyperparameter, one more ablation cell,
+     a re-run): do NOT open a new branch. Stay on the current
+     `experiment/<id>` branch. A branch holds a line of related experiments, not
+     a single run.
+   - **Unsure whether the topic has drifted far enough to warrant a new branch:**
+     ask. Say what changed, and ask whether to finalize the current experiment
+     and open a new branch, or keep going on this one. Let the user decide.
+
+   If the user declines a branch, continue on the current branch.
 
 2. **Create the experiment folder.** Choose a kebab-case id and create
    `experiments/<experiment-id>/` with `logs/` and `figures/` subdirectories.

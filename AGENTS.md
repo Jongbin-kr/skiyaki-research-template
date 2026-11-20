@@ -48,13 +48,20 @@ These are conventions the agent follows and you supervise — not enforced gates
    `experiments/*/journal.md`, past `run-config.yaml` files, and relevant Git
    history for related work and reusable settings.
 
-2. **A branch per experiment (recommended).** When starting an experiment, it is
-   recommended to create a dedicated branch `experiment/<experiment-id>` and do
-   the experiment's work there (plan, run config, records). This keeps `main`
-   clean, makes a failed experiment easy to discard, and allows parallel
-   experiments. Confirm with the user when the plan is created. At Finalize, the
-   user decides whether to merge the branch into `main` or keep it as a
-   standalone record — both are fine.
+2. **A branch per line of experiments — ask before creating one.** A branch
+   `experiment/<experiment-id>` holds a line of related experiments, not a single
+   run. Keep the plan, run config, and records for that line on its branch. This
+   keeps `main` clean, makes a failed line easy to discard, and allows parallel
+   work.
+
+   The agent never creates or switches a branch on its own. Before any branch
+   operation it proposes the exact name and asks the user. Follow-up runs on the
+   same topic stay on the current branch — do not open a new branch per run. When
+   the topic drifts far from the current branch's work, the agent asks whether to
+   finalize the current experiment and open a new branch, rather than piling
+   unrelated work onto a branch that is effectively done. At Finalize, the user
+   decides whether to merge the branch into `main` or keep it as a standalone
+   record — both are fine.
 
 3. **Clarify before planning.** When the objective, baseline, or metric is
    unclear, ask focused questions (one at a time). A metric and success criterion

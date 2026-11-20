@@ -38,10 +38,15 @@ commit — you prepare and the user decides.
    message following the STE-KO coding surface, and commits only after the user
    approves. Commit plans, run configs, results, and documentation only.
 
-6. **Branch decision (if the experiment used its own branch).** Ask the user how
-   to resolve the `experiment/<experiment-id>` branch: merge it into `main` to
-   consolidate the record, or keep it as a standalone branch. Both are fine; do
-   neither without the user's choice.
+6. **Branch decision (if the experiment used its own branch).** Finalizing closes
+   this line of work on the branch. Ask the user how to resolve the
+   `experiment/<experiment-id>` branch: merge it into `main` to consolidate the
+   record, or keep it as a standalone branch. Both are fine; do neither without
+   the user's choice.
+
+   After this, treat the branch as done. Do not pile a new, different experiment
+   onto it. When the next experiment starts, `plan-ml-experiment` decides the
+   branch again and asks before creating one.
 
 ## Output
 
