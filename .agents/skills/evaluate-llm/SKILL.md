@@ -42,5 +42,7 @@ or gated automatically.
 ## Notes
 
 - Compare only what the evidence supports; if it can't support a conclusion, say so.
-- For many runs or surprising patterns, consider producing figures under
-  `figures/` to make the comparison clear.
+- For many runs or surprising patterns, produce figures to make the comparison
+  clear. Use the [`visualize-with-html`](../visualize-with-html/SKILL.md) skill:
+  figures are single self-contained HTML files under `figures/`, and large chart
+  data goes to CSV under the experiment's `data/`.

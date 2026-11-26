@@ -17,7 +17,7 @@ experiment.
 |---|---|---|
 | **Setup** *(one-time)* | Configure the environment and `project-plan.md` for a new project, then hand off to Plan | [`setup-project`](.agents/skills/setup-project/SKILL.md) |
 | **Plan** | Decide what to run: review prior work, resolve open questions, write the plan and run config | [`explore-project-history`](.agents/skills/explore-project-history/SKILL.md), [`grill-me`](.agents/skills/grill-me/SKILL.md), [`plan-ml-experiment`](.agents/skills/plan-ml-experiment/SKILL.md) |
-| **Run** | Execute training and evaluation, record what happened | [`train-llm`](.agents/skills/train-llm/SKILL.md), [`evaluate-llm`](.agents/skills/evaluate-llm/SKILL.md) |
+| **Run** | Execute training and evaluation, record what happened | [`train-llm`](.agents/skills/train-llm/SKILL.md), [`evaluate-llm`](.agents/skills/evaluate-llm/SKILL.md), [`visualize-with-html`](.agents/skills/visualize-with-html/SKILL.md) |
 | **Finalize** | Interpret results, update records, propose a commit | [`finalize-experiment`](.agents/skills/finalize-experiment/SKILL.md) |
 
 Skills are guidance the agent reads when relevant; they are plain markdown
@@ -33,12 +33,16 @@ experiments/<experiment-id>/
 ├── run-config.yaml   # Reproducible run settings — passed to your training code
 ├── history.md        # Factual timeline: what was run, when, Slurm IDs, outcomes
 ├── journal.md        # Interpretation: findings, conclusions, next steps
-├── logs/             # Run/Slurm logs (kept locally, not committed)
-└── figures/          # Optional visualizations
+├── logs/             # Raw run logs (.out/.err/.log) — local, gitignored; commit a summary.md instead
+├── data/             # Large tabular results as CSV (optional, see convention 11)
+└── figures/          # Visualizations — single self-contained HTML files
 ```
 
 `run-config.yaml` is the one machine-read file: it is the input to the project's
 own training/evaluation code. Everything else is written for humans to read.
+
+Figures are single self-contained HTML files, not PNGs — see the
+[`visualize-with-html`](.agents/skills/visualize-with-html/SKILL.md) skill.
 
 ## Conventions
 
@@ -77,8 +81,9 @@ These are conventions the agent follows and you supervise — not enforced gates
 
 6. **Tracking and artifacts.** Track runs with Weights & Biases when configured
    (group by experiment, keep local data). Push checkpoints to the Hugging Face
-   Hub per the project's push policy; keep repositories private by default and
-   never make a private repository public without an explicit decision.
+   Hub per the project's push policy; repositories are public by default. Confirm
+   with the user before pushing anything that must stay private, and never make a
+   public repository private (or vice versa) without an explicit decision.
    **Local checkpoints** go under `outputs/<experiment-id>/<run-id>/` (gitignored).
    Disk retention: if nothing is pushed to the Hub, keep all local checkpoints
    (the local copy is the only one); if checkpoints are pushed to the Hub, keep
@@ -93,11 +98,21 @@ These are conventions the agent follows and you supervise — not enforced gates
    submitting jobs, uploading artifacts, or committing.
 
 9. **Git safety (review before committing).** Commit plans, configs, results, and
-   documentation. Never commit secrets or credentials, model checkpoints, W&B
-   caches, or raw Slurm logs (`*.out`, `*.err`). A human reviews the diff before
-   any commit; raw logs stay local under each experiment's `logs/`.
+   documentation. Never commit secrets or credentials, model checkpoints, or W&B
+   caches. Raw run/Slurm logs (`*.out`, `*.err`, `*.log`) are what tools emit;
+   they stay local under each experiment's `logs/` and are gitignored. What we
+   read and commit is a human-written summary (e.g. a `summary.md`), not the raw
+   log. A human reviews the diff before any commit.
 
-10. **Completion.** An experiment is done when required runs finished, results are
+10. **Visualization and large data.** Save visualizations as single
+   self-contained HTML files under `figures/` — not PNGs. Interactivity, when
+   needed, uses Plotly loaded from a CDN; never embed the Plotly JS bundle in the
+   file. Keep a figure's data light enough to write inline; when a chart's data
+   is large, store it as CSV under the experiment's `data/` and have the figure
+   read from it rather than inlining thousands of values. See the
+   [`visualize-with-html`](.agents/skills/visualize-with-html/SKILL.md) skill.
+
+11. **Completion.** An experiment is done when required runs finished, results are
    recorded, `history.md` and `journal.md` are written, `project-log.md` reflects
    the project-level outcome, and a commit is proposed for your approval.
 

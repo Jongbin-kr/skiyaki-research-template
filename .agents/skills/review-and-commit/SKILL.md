@@ -62,7 +62,9 @@ Exclude anything that must not be committed:
 - secrets, tokens, credentials (`.env`, `*.token`, `credentials.json`, `*.pem`, keys)
 - model checkpoints and large binaries (`*.pt`, `*.bin`, `*.safetensors`, `*.ckpt`)
 - W&B caches (`wandb/`)
-- raw run/Slurm logs (`experiments/*/logs/*.out`, `*.err`)
+- raw run/Slurm logs (`experiments/*/logs/*.out`, `*.err`, `*.log`) — these are
+  what tools emit; they are gitignored and stay local. Commit a human-written
+  summary (e.g. `summary.md`) instead, not the raw log.
 
 Stage specific files by name rather than `git add -A`, so nothing unexpected
 slips in. If a credential-bearing file is staged, stop and tell the user.
